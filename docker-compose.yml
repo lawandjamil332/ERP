@@ -1,0 +1,33 @@
+version: '3.9'
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: iraq-erp-db
+    environment:
+      POSTGRES_USER: erp
+      POSTGRES_PASSWORD: erp
+      POSTGRES_DB: iraq_erp
+    ports: ['5432:5432']
+    volumes:
+      - erp_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD', 'pg_isready', '-U', 'erp', '-d', 'iraq_erp']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  app:
+    build: { context: ., dockerfile: Dockerfile }
+    container_name: iraq-erp-app
+    ports: ['3000:3000']
+    environment:
+      DATABASE_URL: postgresql://erp:erp@db:5432/iraq_erp?schema=public
+      JWT_SECRET: change-me-in-production
+      SESSION_COOKIE_NAME: iraq_erp_session
+      NEXT_PUBLIC_APP_NAME: Iraq ERP
+      NEXT_PUBLIC_DEFAULT_LOCALE: ar
+    depends_on:
+      db: { condition: service_healthy }
+
+volumes:
+  erp_pg: {}
