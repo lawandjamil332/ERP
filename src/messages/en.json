@@ -1,0 +1,105 @@
+{
+  "app": {
+    "name": "Iraq ERP System",
+    "shortName": "Iraq ERP",
+    "tagline": "Built end-to-end for Iraqi compliance"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "accounting": "Accounting",
+    "sales": "Sales",
+    "invoices": "Invoices",
+    "purchases": "Purchases",
+    "inventory": "Inventory",
+    "products": "Products",
+    "contacts": "Customers & Suppliers",
+    "hr": "Human Resources",
+    "payroll": "Payroll",
+    "pos": "Point of Sale",
+    "crm": "CRM",
+    "reports": "Reports",
+    "settings": "Settings",
+    "logout": "Log out"
+  },
+  "auth": {
+    "login": "Sign in",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Sign in",
+    "invalidCredentials": "Invalid email or password",
+    "welcome": "Welcome to the Iraq ERP"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "salesToday": "Sales today",
+    "salesMonth": "Sales this month",
+    "openInvoices": "Open invoices",
+    "stockAlerts": "Stock alerts",
+    "cashBalance": "Cash balance",
+    "employeeCount": "Employees",
+    "upcomingDeadlines": "Upcoming deadlines",
+    "filingsTitle": "GCT filing deadlines",
+    "monthlySS": "Monthly social security filing",
+    "annualSS": "Annual social security forms",
+    "annualPIT": "Annual employee PIT (D/4A)",
+    "annualCIT": "Annual corporate income tax"
+  },
+  "invoice": {
+    "title": "Invoices",
+    "new": "New invoice",
+    "number": "Invoice #",
+    "date": "Date",
+    "dueDate": "Due date",
+    "customer": "Customer",
+    "currency": "Currency",
+    "subtotal": "Subtotal",
+    "tax": "Tax",
+    "discount": "Discount",
+    "total": "Total",
+    "status": "Status",
+    "kind": { "domesticSale": "Domestic sale", "export": "Export", "import": "Import" },
+    "line": {
+      "description": "Description",
+      "hsCode": "HS code",
+      "countryOfOrigin": "Country of origin",
+      "trademark": "Trademark",
+      "qty": "Quantity",
+      "uom": "UoM",
+      "unitPrice": "Unit price",
+      "lineTotal": "Line total"
+    },
+    "validation": {
+      "hsRequired": "HS code (>=6 digits) is required on cross-border invoices",
+      "originRequired": "Country of origin is required on cross-border invoices",
+      "trademarkRequired": "Trademark is required on cross-border invoices"
+    }
+  },
+  "payroll": {
+    "title": "Payroll",
+    "newRun": "New payroll run",
+    "period": "Period",
+    "employee": "Employee",
+    "baseSalary": "Base salary",
+    "gross": "Gross",
+    "ssEmployee": "Soc. Sec. (Employee 5%)",
+    "ssEmployer": "Soc. Sec. (Employer)",
+    "incomeTax": "Income tax",
+    "net": "Net pay",
+    "employerCost": "Employer cost",
+    "ssEmployerNote": "Employer: 12% (25% oil & gas)",
+    "calculate": "Calculate",
+    "post": "Post"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "search": "Search",
+    "loading": "Loading...",
+    "noData": "No data",
+    "all": "All",
+    "yes": "Yes",
+    "no": "No"
+  }
+}
