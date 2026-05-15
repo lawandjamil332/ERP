@@ -1,5 +1,6 @@
 import { Sidebar } from '@/components/layout/Sidebar';
 import { TopBar } from '@/components/layout/TopBar';
+import { MobileNav } from '@/components/layout/MobileNav';
 import { verifySession } from '@/lib/auth/session';
 import { db } from '@/lib/db';
 import { redirect } from 'next/navigation';
@@ -23,8 +24,11 @@ export default async function DashboardLayout({
     <div className="flex h-screen w-full overflow-hidden bg-background">
       <Sidebar locale={locale} />
       <div className="flex flex-1 flex-col overflow-hidden">
+        <div className="flex items-center md:hidden">
+          <MobileNav locale={locale} />
+        </div>
         <TopBar locale={locale} userEmail={session.email} tenantName={tenantName ?? ''} />
-        <main className="flex-1 overflow-y-auto p-6">{children}</main>
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6">{children}</main>
       </div>
     </div>
   );
