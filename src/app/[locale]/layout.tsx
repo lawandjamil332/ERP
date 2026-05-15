@@ -2,6 +2,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { isRtl, LOCALES, type Locale } from '@/lib/i18n/config';
 import { notFound } from 'next/navigation';
+import { Toaster } from '@/components/Toaster';
 
 export function generateStaticParams() {
   return LOCALES.map((locale) => ({ locale }));
@@ -24,6 +25,7 @@ export default async function LocaleLayout({
       <body className="min-h-screen bg-background antialiased">
         <NextIntlClientProvider messages={messages} locale={locale}>
           {children}
+          <Toaster />
         </NextIntlClientProvider>
       </body>
     </html>
