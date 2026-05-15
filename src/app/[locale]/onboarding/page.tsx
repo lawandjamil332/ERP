@@ -50,9 +50,11 @@ export default function OnboardingWizard({ params }: { params: Promise<{ locale:
       });
       const body = await res.json().catch(() => ({} as any));
       if (!res.ok) {
-        const detail = body.issues
-          ? body.issues.map((i: any) => `${i.path.join('.')}: ${i.message}`).join(' · ')
-          : body.error ?? `HTTP ${res.status}`;
+        const issuesText = Array.isArray(body.issues) && body.issues.length
+          ? body.issues.map((i: any) => `${(i.path ?? []).join('.') || '(root)'}: ${i.message}`).join(' · ')
+          : '';
+        const detail = [body.error, issuesText].filter(Boolean).join(' — ') ||
+          `HTTP ${res.status} ${JSON.stringify(body)}`;
         setError(detail);
         toast.error(detail);
         return;
@@ -196,12 +198,18 @@ export default function OnboardingWizard({ params }: { params: Promise<{ locale:
               </Button>
               {step !== 'owner' ? (
                 <Button onClick={next} disabled={
-                  (step === 'company' && (!form.nameAr || !form.nameEn))
+                  (step === 'company' && (form.nameAr.trim().length < 2 || form.nameEn.trim().length < 2))
                 }>
                   Next <ArrowRight className="h-4 w-4 flip-rtl" />
                 </Button>
               ) : (
-                <Button onClick={submit} disabled={busy || !form.fullName || !form.email || form.password.length < 8}>
+                <Button onClick={submit} disabled={busy ||
+                  form.fullName.trim().length < 2 ||
+                  !form.email.includes('@') ||
+                  form.password.length < 8 ||
+                  form.nameAr.trim().length < 2 ||
+                  form.nameEn.trim().length < 2
+                }>
                   {busy ? 'Creating…' : 'Create company'}
                 </Button>
               )}
