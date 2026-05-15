@@ -4,6 +4,7 @@ import { MobileNav } from '@/components/layout/MobileNav';
 import { verifySession } from '@/lib/auth/session';
 import { db } from '@/lib/db';
 import { redirect } from 'next/navigation';
+import { setRequestLocale } from 'next-intl/server';
 
 export default async function DashboardLayout({
   children,
@@ -13,6 +14,7 @@ export default async function DashboardLayout({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  setRequestLocale(locale);
   const session = await verifySession();
   if (!session) redirect(`/${locale}/auth/login`);
 

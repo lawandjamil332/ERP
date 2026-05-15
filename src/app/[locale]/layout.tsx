@@ -1,5 +1,5 @@
 import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
+import { getMessages, setRequestLocale } from 'next-intl/server';
 import { isRtl, LOCALES, type Locale } from '@/lib/i18n/config';
 import { notFound } from 'next/navigation';
 import { Toaster } from '@/components/Toaster';
@@ -17,6 +17,7 @@ export default async function LocaleLayout({
 }) {
   const { locale } = await params;
   if (!LOCALES.includes(locale as Locale)) notFound();
+  setRequestLocale(locale);
   const messages = await getMessages();
   const dir = isRtl(locale as Locale) ? 'rtl' : 'ltr';
 
