@@ -15,6 +15,8 @@ export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [totp, setTotp] = useState('');
+  const [requiresTotp, setRequiresTotp] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -25,15 +27,21 @@ export default function LoginPage() {
     const res = await fetch('/api/auth/login', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email, password, totp: totp || undefined }),
     });
     setLoading(false);
     if (res.ok) {
-      router.push('/dashboard');
+      router.push(`/${locale}/dashboard`);
       router.refresh();
-    } else {
-      setError(t('auth.invalidCredentials'));
+      return;
     }
+    const body = await res.json().catch(() => ({}));
+    if (body.requiresTotp) {
+      setRequiresTotp(true);
+      setError('Enter the 6-digit code from your authenticator app.');
+      return;
+    }
+    setError(t('auth.invalidCredentials'));
   }
 
   return (
@@ -52,20 +60,33 @@ export default function LoginPage() {
               <Label htmlFor="email">{t('auth.email')}</Label>
               <Input id="email" type="email" value={email}
                 onChange={(e) => setEmail(e.target.value)} required
-                autoComplete="username" dir="ltr" />
+                autoComplete="username" dir="ltr" disabled={requiresTotp} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">{t('auth.password')}</Label>
               <Input id="password" type="password" value={password}
                 onChange={(e) => setPassword(e.target.value)} required
-                autoComplete="current-password" dir="ltr" />
+                autoComplete="current-password" dir="ltr" disabled={requiresTotp} />
             </div>
+            {requiresTotp && (
+              <div className="space-y-2">
+                <Label htmlFor="totp">6-digit authenticator code</Label>
+                <Input id="totp" inputMode="numeric" pattern="\d{6}" maxLength={6}
+                  value={totp} onChange={(e) => setTotp(e.target.value)} required dir="ltr"
+                  placeholder="000000" />
+              </div>
+            )}
             {error && <p className="text-sm text-destructive">{error}</p>}
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? t('common.loading') : t('auth.submit')}
             </Button>
           </form>
           <p className="mt-4 text-center text-sm text-muted-foreground">
+            <Link href={`/${locale}/auth/forgot`} className="text-primary hover:underline">
+              Forgot password?
+            </Link>
+          </p>
+          <p className="mt-2 text-center text-sm text-muted-foreground">
             New here?{' '}
             <Link href={`/${locale}/onboarding`} className="font-medium text-primary hover:underline">
               Create a company account
