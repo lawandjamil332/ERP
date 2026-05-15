@@ -91,7 +91,13 @@ model RecurringInvoiceTemplate {
   createdAt    DateTime @default(now())
 }
 
-enum RecurringCadence { DAILY  WEEKLY  MONTHLY  QUARTERLY  ANNUALLY }
+enum RecurringCadence {
+  DAILY
+  WEEKLY
+  MONTHLY
+  QUARTERLY
+  ANNUALLY
+}
 
 model RecurringInvoiceLine {
   id          String   @id @default(cuid())
@@ -142,7 +148,12 @@ model LeaveRequest {
   @@index([tenantId, employeeId, status])
 }
 
-enum LeaveStatus { PENDING  APPROVED  REJECTED  CANCELLED }
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
 
 model LeaveBalance {
   id          String   @id @default(cuid())
@@ -233,8 +244,19 @@ model Cheque {
   @@index([tenantId, status])
 }
 
-enum ChequeDirection { IN  OUT }
-enum ChequeStatus { REGISTERED  DEPOSITED  CLEARED  BOUNCED  CANCELLED  REPLACED }
+enum ChequeDirection {
+  IN
+  OUT
+}
+
+enum ChequeStatus {
+  REGISTERED
+  DEPOSITED
+  CLEARED
+  BOUNCED
+  CANCELLED
+  REPLACED
+}
 
 model StockMovement {
   id            String   @id @default(cuid())
@@ -338,7 +360,11 @@ model HotelFolio {
   @@unique([tenantId, number])
 }
 
-enum FolioStatus { OPEN  CHECKED_OUT  CANCELLED }
+enum FolioStatus {
+  OPEN
+  CHECKED_OUT
+  CANCELLED
+}
 
 model HotelFolioCharge {
   id        String  @id @default(cuid())
@@ -389,7 +415,13 @@ model WorkOrder {
   @@unique([tenantId, number])
 }
 
-enum WoStatus { DRAFT  RELEASED  IN_PROGRESS  COMPLETED  CANCELLED }
+enum WoStatus {
+  DRAFT
+  RELEASED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
 
 model BankAccount {
   id        String   @id @default(cuid())
@@ -494,11 +526,23 @@ model FixedAsset {
   @@unique([tenantId, assetCode])
 }
 
-enum TaxRegion { FEDERAL  KURDISTAN }
+enum TaxRegion {
+  FEDERAL
+  KURDISTAN
+}
 
 enum BusinessSector {
-  GENERAL OIL_GAS TELECOM HOSPITALITY CONSTRUCTION
-  RETAIL MANUFACTURING AGRICULTURE HEALTHCARE EDUCATION TRANSPORT
+  GENERAL
+  OIL_GAS
+  TELECOM
+  HOSPITALITY
+  CONSTRUCTION
+  RETAIL
+  MANUFACTURING
+  AGRICULTURE
+  HEALTHCARE
+  EDUCATION
+  TRANSPORT
 }
 
 model Branch {
@@ -537,8 +581,16 @@ model User {
 }
 
 enum UserRole {
-  OWNER ADMIN ACCOUNTANT SALES PURCHASES
-  INVENTORY HR CASHIER STAFF AUDITOR_READONLY
+  OWNER
+  ADMIN
+  ACCOUNTANT
+  SALES
+  PURCHASES
+  INVENTORY
+  HR
+  CASHIER
+  STAFF
+  AUDITOR_READONLY
 }
 
 model Account {
@@ -559,7 +611,13 @@ model Account {
   @@unique([tenantId, code])
 }
 
-enum AccountType { ASSET LIABILITY EQUITY INCOME EXPENSE }
+enum AccountType {
+  ASSET
+  LIABILITY
+  EQUITY
+  INCOME
+  EXPENSE
+}
 
 model Journal {
   id          String        @id @default(cuid())
@@ -581,8 +639,15 @@ model Journal {
 }
 
 enum JournalSource {
-  MANUAL SALES_INVOICE PURCHASE_BILL PAYMENT PAYROLL
-  POS INVENTORY_ADJUSTMENT YEAR_END_CLOSING OPENING_BALANCE
+  MANUAL
+  SALES_INVOICE
+  PURCHASE_BILL
+  PAYMENT
+  PAYROLL
+  POS
+  INVENTORY_ADJUSTMENT
+  YEAR_END_CLOSING
+  OPENING_BALANCE
 }
 
 model JournalLine {
@@ -617,7 +682,13 @@ model TaxRate {
   @@unique([tenantId, code])
 }
 
-enum TaxKind { SALES WITHHOLDING CUSTOMS VAT STAMP }
+enum TaxKind {
+  SALES
+  WITHHOLDING
+  CUSTOMS
+  VAT
+  STAMP
+}
 
 model ExchangeRate {
   id        String   @id @default(cuid())
@@ -660,7 +731,11 @@ model Contact {
   @@index([tenantId, kind])
 }
 
-enum ContactKind { CUSTOMER SUPPLIER BOTH }
+enum ContactKind {
+  CUSTOMER
+  SUPPLIER
+  BOTH
+}
 
 model Warehouse {
   id        String  @id @default(cuid())
@@ -760,9 +835,23 @@ model Invoice {
   @@index([tenantId, date])
 }
 
-enum InvoiceStatus { DRAFT POSTED PARTIALLY_PAID PAID OVERDUE CANCELLED REVERSED }
+enum InvoiceStatus {
+  DRAFT
+  POSTED
+  PARTIALLY_PAID
+  PAID
+  OVERDUE
+  CANCELLED
+  REVERSED
+}
 
-enum InvoiceKind { DOMESTIC_SALE EXPORT IMPORT CREDIT_NOTE DEBIT_NOTE }
+enum InvoiceKind {
+  DOMESTIC_SALE
+  EXPORT
+  IMPORT
+  CREDIT_NOTE
+  DEBIT_NOTE
+}
 
 model InvoiceLine {
   id          String  @id @default(cuid())
@@ -800,7 +889,13 @@ model PurchaseOrder {
   @@unique([tenantId, number])
 }
 
-enum POStatus { DRAFT APPROVED RECEIVED CLOSED CANCELLED }
+enum POStatus {
+  DRAFT
+  APPROVED
+  RECEIVED
+  CLOSED
+  CANCELLED
+}
 
 model Bill {
   id            String     @id @default(cuid())
@@ -829,7 +924,14 @@ model Bill {
   @@unique([tenantId, number])
 }
 
-enum BillStatus { DRAFT POSTED PARTIALLY_PAID PAID OVERDUE CANCELLED }
+enum BillStatus {
+  DRAFT
+  POSTED
+  PARTIALLY_PAID
+  PAID
+  OVERDUE
+  CANCELLED
+}
 
 model BillLine {
   id          String  @id @default(cuid())
@@ -868,8 +970,21 @@ model Payment {
   @@unique([tenantId, number])
 }
 
-enum PaymentDirection { IN OUT }
-enum PaymentMethod { CASH BANK_TRANSFER CHEQUE CARD ZAIN_CASH ASIA_HAWALA FIB OTHER }
+enum PaymentDirection {
+  IN
+  OUT
+}
+
+enum PaymentMethod {
+  CASH
+  BANK_TRANSFER
+  CHEQUE
+  CARD
+  ZAIN_CASH
+  ASIA_HAWALA
+  FIB
+  OTHER
+}
 
 model PaymentApplication {
   id        String   @id @default(cuid())
@@ -911,7 +1026,10 @@ model Employee {
   @@unique([tenantId, empNo])
 }
 
-enum Gender { MALE FEMALE }
+enum Gender {
+  MALE
+  FEMALE
+}
 
 model PayrollRun {
   id          String          @id @default(cuid())
@@ -927,7 +1045,12 @@ model PayrollRun {
   @@unique([tenantId, period])
 }
 
-enum PayrollStatus { DRAFT CALCULATED POSTED PAID }
+enum PayrollStatus {
+  DRAFT
+  CALCULATED
+  POSTED
+  PAID
+}
 
 model PayrollLine {
   id            String     @id @default(cuid())
