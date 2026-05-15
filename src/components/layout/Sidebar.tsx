@@ -7,7 +7,7 @@ import {
   LayoutDashboard, FileText, ShoppingCart, Package, Users, Wallet,
   ScrollText, BarChart3, Settings, Building2, Store, Briefcase,
   Receipt, CreditCard, Factory, Hotel, ShieldCheck, Repeat,
-  CalendarCheck, BanknoteIcon, Boxes, TrendingDown,
+  CalendarCheck, BanknoteIcon, Boxes, TrendingDown, Upload, Lock,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -37,6 +37,8 @@ export function Sidebar({ locale }: { locale: string }) {
     { href: `/${locale}/dashboard/reports`,             label: t('reports'),    icon: BarChart3 },
     { href: `/${locale}/dashboard/reports/aging`,       label: 'Aged AR/AP',    icon: TrendingDown },
     { href: `/${locale}/dashboard/audit`,               label: 'Audit',         icon: ShieldCheck },
+    { href: `/${locale}/dashboard/import`,              label: 'Data import',   icon: Upload },
+    { href: `/${locale}/dashboard/accounting/close`,    label: 'Year-end close',icon: Lock },
     { href: `/${locale}/dashboard/settings`,            label: t('settings'),   icon: Settings },
   ];
 

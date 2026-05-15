@@ -6,6 +6,7 @@ import { Dates } from '@/lib/iraq';
 import { getTranslations } from 'next-intl/server';
 import { Calendar, AlertCircle, Wallet, Users, FileText, Package } from 'lucide-react';
 import { formatMoney } from '@/lib/iraq/money';
+import { DashboardCharts } from '@/components/dashboard/Charts';
 
 export default async function DashboardHome({
   params,
@@ -79,6 +80,8 @@ export default async function DashboardHome({
           <Deadline label={t('annualCIT')} date={fmtDate(annualCit)} />
         </CardContent>
       </Card>
+
+      <DashboardCharts />
 
       <Card>
         <CardHeader>
