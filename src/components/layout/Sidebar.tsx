@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, FileText, ShoppingCart, Package, Users, Wallet,
   ScrollText, BarChart3, Settings, Building2, Store, Briefcase,
+  Receipt, CreditCard, Factory, Hotel, ShieldCheck,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -14,18 +15,23 @@ export function Sidebar({ locale }: { locale: string }) {
   const pathname = usePathname();
 
   const items = [
-    { href: `/${locale}/dashboard`,             label: t('dashboard'),  icon: LayoutDashboard },
-    { href: `/${locale}/dashboard/invoices`,    label: t('invoices'),   icon: FileText },
-    { href: `/${locale}/dashboard/purchases`,   label: t('purchases'),  icon: ShoppingCart },
-    { href: `/${locale}/dashboard/inventory`,   label: t('inventory'),  icon: Package },
-    { href: `/${locale}/dashboard/contacts`,    label: t('contacts'),   icon: Users },
-    { href: `/${locale}/dashboard/accounting`,  label: t('accounting'), icon: Wallet },
-    { href: `/${locale}/dashboard/payroll`,     label: t('payroll'),    icon: ScrollText },
-    { href: `/${locale}/dashboard/hr`,          label: t('hr'),         icon: Briefcase },
-    { href: `/${locale}/dashboard/pos`,         label: t('pos'),        icon: Store },
-    { href: `/${locale}/dashboard/crm`,         label: t('crm'),        icon: Building2 },
-    { href: `/${locale}/dashboard/reports`,     label: t('reports'),    icon: BarChart3 },
-    { href: `/${locale}/dashboard/settings`,    label: t('settings'),   icon: Settings },
+    { href: `/${locale}/dashboard`,                label: t('dashboard'),  icon: LayoutDashboard },
+    { href: `/${locale}/dashboard/invoices`,       label: t('invoices'),   icon: FileText },
+    { href: `/${locale}/dashboard/bills`,          label: 'Bills',         icon: ShoppingCart },
+    { href: `/${locale}/dashboard/payments`,       label: 'Payments',      icon: CreditCard },
+    { href: `/${locale}/dashboard/cheques`,        label: 'Cheques',       icon: Receipt },
+    { href: `/${locale}/dashboard/inventory`,      label: t('inventory'),  icon: Package },
+    { href: `/${locale}/dashboard/contacts`,       label: t('contacts'),   icon: Users },
+    { href: `/${locale}/dashboard/accounting`,     label: t('accounting'), icon: Wallet },
+    { href: `/${locale}/dashboard/payroll`,        label: t('payroll'),    icon: ScrollText },
+    { href: `/${locale}/dashboard/hr`,             label: t('hr'),         icon: Briefcase },
+    { href: `/${locale}/dashboard/pos`,            label: t('pos'),        icon: Store },
+    { href: `/${locale}/dashboard/projects`,       label: 'Projects',      icon: Building2 },
+    { href: `/${locale}/dashboard/manufacturing`,  label: 'Manufacturing', icon: Factory },
+    { href: `/${locale}/dashboard/hospitality`,    label: 'Hospitality',   icon: Hotel },
+    { href: `/${locale}/dashboard/reports`,        label: t('reports'),    icon: BarChart3 },
+    { href: `/${locale}/dashboard/audit`,          label: 'Audit',         icon: ShieldCheck },
+    { href: `/${locale}/dashboard/settings`,       label: t('settings'),   icon: Settings },
   ];
 
   return (
@@ -36,7 +42,7 @@ export function Sidebar({ locale }: { locale: string }) {
         </div>
         <div>
           <p className="text-sm font-semibold">Iraq ERP</p>
-          <p className="text-xs text-muted-foreground">v0.1</p>
+          <p className="text-xs text-muted-foreground">v0.2</p>
         </div>
       </div>
       <nav className="flex-1 space-y-1 overflow-y-auto p-3">
