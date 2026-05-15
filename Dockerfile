@@ -16,11 +16,13 @@ RUN npm run build
 
 FROM base AS runner
 ENV NODE_ENV=production
+ENV PORT=8080
+ENV HOSTNAME=0.0.0.0
 WORKDIR /app
 COPY --from=build /app/.next ./.next
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/prisma ./prisma
 COPY --from=build /app/public ./public
 COPY --from=build /app/package.json ./package.json
-EXPOSE 3000
-CMD ["sh", "-c", "npx prisma migrate deploy && npm start"]
+EXPOSE 8080
+CMD ["sh", "-c", "npx prisma migrate deploy && npx next start -H 0.0.0.0 -p ${PORT:-8080}"]
