@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -26,6 +27,8 @@ const ENDPOINTS: Record<string, string> = {
 };
 
 export default function ImportPage() {
+  const t = useTranslations('import');
+  const tc = useTranslations('common');
   const [tab, setTab] = useState<keyof typeof SAMPLES>('contacts');
   const [text, setText] = useState('');
   const [busy, setBusy] = useState(false);
@@ -37,7 +40,7 @@ export default function ImportPage() {
 
   async function submit() {
     if (!text.trim()) {
-      toast.error('Paste or upload a CSV first');
+      toast.error(t('needCsv'));
       return;
     }
     setBusy(true);
@@ -50,7 +53,7 @@ export default function ImportPage() {
       });
       const body = await res.json();
       setResult(body);
-      if (res.ok) toast.success(`Imported: ${(body.inserted ?? 0) + (body.updated ?? 0)} rows`);
+      if (res.ok) toast.success(t('importedCount', { count: (body.inserted ?? 0) + (body.updated ?? 0) }));
       else toast.error(body.error ?? `HTTP ${res.status}`);
     } catch (e: any) {
       toast.error(e.message);
@@ -61,44 +64,45 @@ export default function ImportPage() {
 
   function useSample() {
     setText(SAMPLES[tab]);
-    toast.success('Sample loaded — edit and click Import');
+    toast.success(t('loadSample'));
   }
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">Data import</h1>
-        <p className="text-muted-foreground">
-          Bulk-load customers, suppliers, products, and opening balances from CSV.
-          UTF-8 with header row required.
-        </p>
+        <h1 className="text-2xl font-bold">{t('title')}</h1>
+        <p className="text-muted-foreground">{t('intro')}</p>
       </div>
 
       <Tabs value={tab} onValueChange={(v: string) => { setTab(v as keyof typeof SAMPLES); setText(''); setResult(null); }}>
         <TabsList>
-          <TabsTrigger value="contacts">Contacts</TabsTrigger>
-          <TabsTrigger value="products">Products</TabsTrigger>
-          <TabsTrigger value="openings">Opening balances</TabsTrigger>
+          <TabsTrigger value="contacts">{t('tabContacts')}</TabsTrigger>
+          <TabsTrigger value="products">{t('tabProducts')}</TabsTrigger>
+          <TabsTrigger value="openings">{t('tabOpenings')}</TabsTrigger>
         </TabsList>
 
         <TabsContent value={tab} className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle className="capitalize">{tab}</CardTitle>
+              <CardTitle>
+                {tab === 'contacts' && t('tabContacts')}
+                {tab === 'products' && t('tabProducts')}
+                {tab === 'openings' && t('tabOpenings')}
+              </CardTitle>
               <CardDescription>
-                {tab === 'contacts' && 'Columns: kind (CUSTOMER/SUPPLIER/BOTH), nameAr, nameEn, taxNumber, commercialReg, phone, email, addressAr, governorate, currency, creditLimit'}
-                {tab === 'products' && 'Columns: sku, barcode, nameAr, nameEn, hsCode, countryOfOrigin, trademark, unitOfMeasure, category, salePrice, cost, isService'}
-                {tab === 'openings' && 'Columns: accountCode, debit, credit, memo. Debits must equal credits across the file.'}
+                {tab === 'contacts' && t('helpContacts')}
+                {tab === 'products' && t('helpProducts')}
+                {tab === 'openings' && t('helpOpenings')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex gap-2">
-                <Button variant="outline" onClick={useSample}>Load sample</Button>
+                <Button variant="outline" onClick={useSample}>{t('loadSample')}</Button>
                 <label className="inline-flex items-center">
                   <input type="file" accept=".csv,text/csv" className="hidden"
                     onChange={(e) => { const f = e.target.files?.[0]; if (f) onUpload(f); }} />
                   <Button variant="outline" type="button" asChild>
-                    <span>Upload CSV…</span>
+                    <span>{t('uploadCsv')}</span>
                   </Button>
                 </label>
               </div>
@@ -106,12 +110,13 @@ export default function ImportPage() {
                 className="h-72 w-full rounded-md border bg-background p-3 font-mono text-xs"
                 value={text}
                 onChange={(e) => setText(e.target.value)}
-                placeholder="Paste CSV here or upload a file"
+                placeholder={t('placeholder')}
+                dir="ltr"
               />
-              <Button onClick={submit} disabled={busy}>{busy ? 'Importing…' : 'Import'}</Button>
+              <Button onClick={submit} disabled={busy}>{busy ? t('importing') : t('submit')}</Button>
 
               {result && (
-                <pre className="max-h-72 overflow-auto rounded-md border bg-muted p-3 text-xs">
+                <pre className="max-h-72 overflow-auto rounded-md border bg-muted p-3 text-xs" dir="ltr">
                   {JSON.stringify(result, null, 2)}
                 </pre>
               )}

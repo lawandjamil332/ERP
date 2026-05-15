@@ -8,6 +8,7 @@ import {
   LayoutDashboard, FileText, ShoppingCart, Package, Users, Wallet,
   ScrollText, BarChart3, Settings, Building2, Store, Briefcase,
   Receipt, CreditCard, Factory, Hotel, ShieldCheck, Repeat, CalendarCheck,
+  BanknoteIcon, Boxes, TrendingDown, Upload, Lock,
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
@@ -15,28 +16,34 @@ import { cn } from '@/lib/utils';
 export function MobileNav({ locale }: { locale: string }) {
   const [open, setOpen] = useState(false);
   const t = useTranslations('nav');
+  const tApp = useTranslations('app');
   const pathname = usePathname();
 
   const items = [
-    { href: `/${locale}/dashboard`,                label: t('dashboard'),  icon: LayoutDashboard },
-    { href: `/${locale}/dashboard/invoices`,       label: t('invoices'),   icon: FileText },
-    { href: `/${locale}/dashboard/bills`,          label: 'Bills',         icon: ShoppingCart },
-    { href: `/${locale}/dashboard/payments`,       label: 'Payments',      icon: CreditCard },
-    { href: `/${locale}/dashboard/cheques`,        label: 'Cheques',       icon: Receipt },
-    { href: `/${locale}/dashboard/recurring`,      label: 'Recurring',     icon: Repeat },
-    { href: `/${locale}/dashboard/inventory`,      label: t('inventory'),  icon: Package },
-    { href: `/${locale}/dashboard/contacts`,       label: t('contacts'),   icon: Users },
-    { href: `/${locale}/dashboard/accounting`,     label: t('accounting'), icon: Wallet },
-    { href: `/${locale}/dashboard/payroll`,        label: t('payroll'),    icon: ScrollText },
-    { href: `/${locale}/dashboard/leave`,          label: 'Leave',         icon: CalendarCheck },
-    { href: `/${locale}/dashboard/hr`,             label: t('hr'),         icon: Briefcase },
-    { href: `/${locale}/dashboard/pos`,            label: t('pos'),        icon: Store },
-    { href: `/${locale}/dashboard/projects`,       label: 'Projects',      icon: Building2 },
-    { href: `/${locale}/dashboard/manufacturing`,  label: 'Manufacturing', icon: Factory },
-    { href: `/${locale}/dashboard/hospitality`,    label: 'Hospitality',   icon: Hotel },
-    { href: `/${locale}/dashboard/reports`,        label: t('reports'),    icon: BarChart3 },
-    { href: `/${locale}/dashboard/audit`,          label: 'Audit',         icon: ShieldCheck },
-    { href: `/${locale}/dashboard/settings`,       label: t('settings'),   icon: Settings },
+    { href: `/${locale}/dashboard`,                  label: t('dashboard'),      icon: LayoutDashboard },
+    { href: `/${locale}/dashboard/invoices`,         label: t('invoices'),       icon: FileText },
+    { href: `/${locale}/dashboard/bills`,            label: t('bills'),          icon: ShoppingCart },
+    { href: `/${locale}/dashboard/payments`,         label: t('payments'),       icon: CreditCard },
+    { href: `/${locale}/dashboard/cheques`,          label: t('cheques'),        icon: Receipt },
+    { href: `/${locale}/dashboard/recurring`,        label: t('recurring'),      icon: Repeat },
+    { href: `/${locale}/dashboard/inventory`,        label: t('inventory'),      icon: Package },
+    { href: `/${locale}/dashboard/lots`,             label: t('lots'),           icon: Boxes },
+    { href: `/${locale}/dashboard/contacts`,         label: t('contacts'),       icon: Users },
+    { href: `/${locale}/dashboard/accounting`,       label: t('accounting'),     icon: Wallet },
+    { href: `/${locale}/dashboard/payroll`,          label: t('payroll'),        icon: ScrollText },
+    { href: `/${locale}/dashboard/salary-advances`,  label: t('salaryAdvances'), icon: BanknoteIcon },
+    { href: `/${locale}/dashboard/leave`,            label: t('leave'),          icon: CalendarCheck },
+    { href: `/${locale}/dashboard/hr`,               label: t('hr'),             icon: Briefcase },
+    { href: `/${locale}/dashboard/pos`,              label: t('pos'),            icon: Store },
+    { href: `/${locale}/dashboard/projects`,         label: t('projects'),       icon: Building2 },
+    { href: `/${locale}/dashboard/manufacturing`,    label: t('manufacturing'),  icon: Factory },
+    { href: `/${locale}/dashboard/hospitality`,      label: t('hospitality'),    icon: Hotel },
+    { href: `/${locale}/dashboard/reports`,          label: t('reports'),        icon: BarChart3 },
+    { href: `/${locale}/dashboard/reports/aging`,    label: t('aging'),          icon: TrendingDown },
+    { href: `/${locale}/dashboard/audit`,            label: t('audit'),          icon: ShieldCheck },
+    { href: `/${locale}/dashboard/import`,           label: t('import'),         icon: Upload },
+    { href: `/${locale}/dashboard/accounting/close`, label: t('yearEndClose'),   icon: Lock },
+    { href: `/${locale}/dashboard/settings`,         label: t('settings'),       icon: Settings },
   ];
 
   return (
@@ -61,7 +68,7 @@ export function MobileNav({ locale }: { locale: string }) {
             <div className="flex h-16 items-center justify-between border-b px-4">
               <div className="flex items-center gap-2">
                 <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-base font-bold text-primary-foreground">ع</div>
-                <span className="text-sm font-semibold">Iraq ERP</span>
+                <span className="text-sm font-semibold">{tApp('shortName')}</span>
               </div>
               <button onClick={() => setOpen(false)} className="rounded-md p-2 hover:bg-accent" aria-label="Close">
                 <X className="h-5 w-5" />

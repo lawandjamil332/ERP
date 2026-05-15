@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 
 export default function ForgotPasswordPage() {
   const locale = useLocale();
+  const t = useTranslations();
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -30,34 +31,32 @@ export default function ForgotPasswordPage() {
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-emerald-50 to-stone-100 p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Reset your password</CardTitle>
-          <CardDescription>
-            Enter the email you signed up with. We'll send you a link to choose a new password.
-          </CardDescription>
+          <CardTitle>{t('auth.resetTitle')}</CardTitle>
+          <CardDescription>{t('auth.resetIntro')}</CardDescription>
         </CardHeader>
         <CardContent>
           {submitted ? (
             <div className="space-y-4">
               <div className="rounded-md border border-emerald-300 bg-emerald-50 p-4 text-sm text-emerald-800">
-                If an account exists for <strong>{email}</strong>, we've sent a reset link. Check your inbox (and spam).
+                {t('auth.resetSentBody', { email })}
               </div>
               <Link href={`/${locale}/auth/login`} className="text-sm text-primary hover:underline">
-                ← Back to login
+                ← {t('auth.backToLogin')}
               </Link>
             </div>
           ) : (
             <form onSubmit={onSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t('auth.email')}</Label>
                 <Input id="email" type="email" dir="ltr" value={email}
                   onChange={(e) => setEmail(e.target.value)} required autoComplete="username" />
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? 'Sending…' : 'Send reset link'}
+                {loading ? t('auth.sending') : t('auth.sendResetLink')}
               </Button>
               <p className="text-center text-sm">
                 <Link href={`/${locale}/auth/login`} className="text-primary hover:underline">
-                  Back to login
+                  {t('auth.backToLogin')}
                 </Link>
               </p>
             </form>

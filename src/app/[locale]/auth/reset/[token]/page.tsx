@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -11,6 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 
 export default function ResetPasswordPage() {
   const locale = useLocale();
+  const t = useTranslations();
   const router = useRouter();
   const params = useParams<{ token: string }>();
   const [password, setPassword] = useState('');
@@ -23,11 +24,11 @@ export default function ResetPasswordPage() {
     e.preventDefault();
     setError(null);
     if (password !== confirm) {
-      setError('Passwords do not match');
+      setError(t('auth.passwordsMismatch'));
       return;
     }
     if (password.length < 8) {
-      setError('Password must be at least 8 characters');
+      setError(t('auth.passwordTooShort'));
       return;
     }
     setLoading(true);
@@ -50,23 +51,23 @@ export default function ResetPasswordPage() {
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-emerald-50 to-stone-100 p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle>Choose a new password</CardTitle>
-          <CardDescription>Pick something only you would know. Min 8 characters.</CardDescription>
+          <CardTitle>{t('auth.newPasswordTitle')}</CardTitle>
+          <CardDescription>{t('auth.newPasswordIntro')}</CardDescription>
         </CardHeader>
         <CardContent>
           {done ? (
             <div className="rounded-md border border-emerald-300 bg-emerald-50 p-4 text-sm text-emerald-800">
-              Password updated. Redirecting to login…
+              {t('auth.passwordUpdated')}
             </div>
           ) : (
             <form onSubmit={onSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label>New password</Label>
+                <Label>{t('auth.newPassword')}</Label>
                 <Input type="password" dir="ltr" minLength={8} value={password}
                   onChange={(e) => setPassword(e.target.value)} required autoComplete="new-password" />
               </div>
               <div className="space-y-2">
-                <Label>Confirm password</Label>
+                <Label>{t('auth.confirmPassword')}</Label>
                 <Input type="password" dir="ltr" minLength={8} value={confirm}
                   onChange={(e) => setConfirm(e.target.value)} required autoComplete="new-password" />
               </div>
@@ -76,11 +77,11 @@ export default function ResetPasswordPage() {
                 </div>
               )}
               <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? 'Updating…' : 'Update password'}
+                {loading ? t('auth.sending') : t('auth.updatePassword')}
               </Button>
               <p className="text-center text-sm">
                 <Link href={`/${locale}/auth/login`} className="text-primary hover:underline">
-                  Back to login
+                  {t('auth.backToLogin')}
                 </Link>
               </p>
             </form>

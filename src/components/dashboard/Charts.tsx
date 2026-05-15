@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import {
   Line, LineChart, Bar, BarChart, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, CartesianGrid,
 } from 'recharts';
@@ -13,6 +14,7 @@ interface ChartData {
 }
 
 export function DashboardCharts() {
+  const t = useTranslations('dashboard');
   const [data, setData] = useState<ChartData | null>(null);
 
   useEffect(() => {
@@ -23,7 +25,7 @@ export function DashboardCharts() {
     return (
       <Card>
         <CardContent className="py-10 text-center text-sm text-muted-foreground">
-          Loading charts…
+          {t('loadingCharts')}
         </CardContent>
       </Card>
     );
@@ -33,8 +35,8 @@ export function DashboardCharts() {
     <div className="grid gap-4 lg:grid-cols-2">
       <Card>
         <CardHeader>
-          <CardTitle>Sales — 12 months</CardTitle>
-          <CardDescription>Posted invoices, by month</CardDescription>
+          <CardTitle>{t('salesTrend')}</CardTitle>
+          <CardDescription>{t('salesTrendCaption')}</CardDescription>
         </CardHeader>
         <CardContent className="h-72">
           <ResponsiveContainer width="100%" height="100%">
@@ -51,8 +53,8 @@ export function DashboardCharts() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Cashflow — 12 months</CardTitle>
-          <CardDescription>Payments in vs out</CardDescription>
+          <CardTitle>{t('cashflow')}</CardTitle>
+          <CardDescription>{t('cashflowCaption')}</CardDescription>
         </CardHeader>
         <CardContent className="h-72">
           <ResponsiveContainer width="100%" height="100%">
@@ -62,8 +64,8 @@ export function DashboardCharts() {
               <YAxis tick={{ fontSize: 11 }} />
               <Tooltip />
               <Legend />
-              <Bar dataKey="inflow" fill="#16a34a" />
-              <Bar dataKey="outflow" fill="#dc2626" />
+              <Bar dataKey="inflow" name={t('inflow')} fill="#16a34a" />
+              <Bar dataKey="outflow" name={t('outflow')} fill="#dc2626" />
             </BarChart>
           </ResponsiveContainer>
         </CardContent>
@@ -71,14 +73,14 @@ export function DashboardCharts() {
 
       <Card className="lg:col-span-2">
         <CardHeader>
-          <CardTitle>Top customers</CardTitle>
-          <CardDescription>Last 12 months</CardDescription>
+          <CardTitle>{t('topCustomers')}</CardTitle>
+          <CardDescription>{t('topCustomersCaption')}</CardDescription>
         </CardHeader>
         <CardContent className="h-72">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={data.topCustomers} layout="vertical">
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis type="number" tick={{ fontSize: 11 }} />
+              <XAxis type="number" tick={{ fontSize: 11 }} width={140} />
               <YAxis type="category" dataKey="name" tick={{ fontSize: 11 }} width={140} />
               <Tooltip />
               <Bar dataKey="total" fill="#22574b" />

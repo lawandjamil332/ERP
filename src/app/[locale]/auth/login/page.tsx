@@ -38,7 +38,7 @@ export default function LoginPage() {
     const body = await res.json().catch(() => ({}));
     if (body.requiresTotp) {
       setRequiresTotp(true);
-      setError('Enter the 6-digit code from your authenticator app.');
+      setError(t('auth.totpRequired'));
       return;
     }
     setError(t('auth.invalidCredentials'));
@@ -70,7 +70,7 @@ export default function LoginPage() {
             </div>
             {requiresTotp && (
               <div className="space-y-2">
-                <Label htmlFor="totp">6-digit authenticator code</Label>
+                <Label htmlFor="totp">{t('auth.totpLabel')}</Label>
                 <Input id="totp" inputMode="numeric" pattern="\d{6}" maxLength={6}
                   value={totp} onChange={(e) => setTotp(e.target.value)} required dir="ltr"
                   placeholder="000000" />
@@ -78,18 +78,18 @@ export default function LoginPage() {
             )}
             {error && <p className="text-sm text-destructive">{error}</p>}
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? t('common.loading') : t('auth.submit')}
+              {loading ? t('auth.submitting') : t('auth.submit')}
             </Button>
           </form>
           <p className="mt-4 text-center text-sm text-muted-foreground">
             <Link href={`/${locale}/auth/forgot`} className="text-primary hover:underline">
-              Forgot password?
+              {t('auth.forgotPassword')}
             </Link>
           </p>
           <p className="mt-2 text-center text-sm text-muted-foreground">
-            New here?{' '}
+            {t('auth.noAccount')}{' '}
             <Link href={`/${locale}/onboarding`} className="font-medium text-primary hover:underline">
-              Create a company account
+              {t('auth.createAccount')}
             </Link>
           </p>
         </CardContent>

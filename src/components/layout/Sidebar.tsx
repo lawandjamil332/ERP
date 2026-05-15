@@ -13,33 +13,34 @@ import { cn } from '@/lib/utils';
 
 export function Sidebar({ locale }: { locale: string }) {
   const t = useTranslations('nav');
+  const tApp = useTranslations('app');
   const pathname = usePathname();
 
   const items = [
-    { href: `/${locale}/dashboard`,                     label: t('dashboard'),  icon: LayoutDashboard },
-    { href: `/${locale}/dashboard/invoices`,            label: t('invoices'),   icon: FileText },
-    { href: `/${locale}/dashboard/bills`,               label: 'Bills',         icon: ShoppingCart },
-    { href: `/${locale}/dashboard/payments`,            label: 'Payments',      icon: CreditCard },
-    { href: `/${locale}/dashboard/cheques`,             label: 'Cheques',       icon: Receipt },
-    { href: `/${locale}/dashboard/recurring`,           label: 'Recurring',     icon: Repeat },
-    { href: `/${locale}/dashboard/inventory`,           label: t('inventory'),  icon: Package },
-    { href: `/${locale}/dashboard/lots`,                label: 'Lots & expiry', icon: Boxes },
-    { href: `/${locale}/dashboard/contacts`,            label: t('contacts'),   icon: Users },
-    { href: `/${locale}/dashboard/accounting`,          label: t('accounting'), icon: Wallet },
-    { href: `/${locale}/dashboard/payroll`,             label: t('payroll'),    icon: ScrollText },
-    { href: `/${locale}/dashboard/salary-advances`,     label: 'Advances',      icon: BanknoteIcon },
-    { href: `/${locale}/dashboard/leave`,               label: 'Leave',         icon: CalendarCheck },
-    { href: `/${locale}/dashboard/hr`,                  label: t('hr'),         icon: Briefcase },
-    { href: `/${locale}/dashboard/pos`,                 label: t('pos'),        icon: Store },
-    { href: `/${locale}/dashboard/projects`,            label: 'Projects',      icon: Building2 },
-    { href: `/${locale}/dashboard/manufacturing`,       label: 'Manufacturing', icon: Factory },
-    { href: `/${locale}/dashboard/hospitality`,         label: 'Hospitality',   icon: Hotel },
-    { href: `/${locale}/dashboard/reports`,             label: t('reports'),    icon: BarChart3 },
-    { href: `/${locale}/dashboard/reports/aging`,       label: 'Aged AR/AP',    icon: TrendingDown },
-    { href: `/${locale}/dashboard/audit`,               label: 'Audit',         icon: ShieldCheck },
-    { href: `/${locale}/dashboard/import`,              label: 'Data import',   icon: Upload },
-    { href: `/${locale}/dashboard/accounting/close`,    label: 'Year-end close',icon: Lock },
-    { href: `/${locale}/dashboard/settings`,            label: t('settings'),   icon: Settings },
+    { href: `/${locale}/dashboard`,                     label: t('dashboard'),       icon: LayoutDashboard },
+    { href: `/${locale}/dashboard/invoices`,            label: t('invoices'),        icon: FileText },
+    { href: `/${locale}/dashboard/bills`,               label: t('bills'),           icon: ShoppingCart },
+    { href: `/${locale}/dashboard/payments`,            label: t('payments'),        icon: CreditCard },
+    { href: `/${locale}/dashboard/cheques`,             label: t('cheques'),         icon: Receipt },
+    { href: `/${locale}/dashboard/recurring`,           label: t('recurring'),       icon: Repeat },
+    { href: `/${locale}/dashboard/inventory`,           label: t('inventory'),       icon: Package },
+    { href: `/${locale}/dashboard/lots`,                label: t('lots'),            icon: Boxes },
+    { href: `/${locale}/dashboard/contacts`,            label: t('contacts'),        icon: Users },
+    { href: `/${locale}/dashboard/accounting`,          label: t('accounting'),      icon: Wallet },
+    { href: `/${locale}/dashboard/payroll`,             label: t('payroll'),         icon: ScrollText },
+    { href: `/${locale}/dashboard/salary-advances`,     label: t('salaryAdvances'),  icon: BanknoteIcon },
+    { href: `/${locale}/dashboard/leave`,               label: t('leave'),           icon: CalendarCheck },
+    { href: `/${locale}/dashboard/hr`,                  label: t('hr'),              icon: Briefcase },
+    { href: `/${locale}/dashboard/pos`,                 label: t('pos'),             icon: Store },
+    { href: `/${locale}/dashboard/projects`,            label: t('projects'),        icon: Building2 },
+    { href: `/${locale}/dashboard/manufacturing`,       label: t('manufacturing'),   icon: Factory },
+    { href: `/${locale}/dashboard/hospitality`,         label: t('hospitality'),     icon: Hotel },
+    { href: `/${locale}/dashboard/reports`,             label: t('reports'),         icon: BarChart3 },
+    { href: `/${locale}/dashboard/reports/aging`,       label: t('aging'),           icon: TrendingDown },
+    { href: `/${locale}/dashboard/audit`,               label: t('audit'),           icon: ShieldCheck },
+    { href: `/${locale}/dashboard/import`,              label: t('import'),          icon: Upload },
+    { href: `/${locale}/dashboard/accounting/close`,    label: t('yearEndClose'),    icon: Lock },
+    { href: `/${locale}/dashboard/settings`,            label: t('settings'),        icon: Settings },
   ];
 
   return (
@@ -49,8 +50,8 @@ export function Sidebar({ locale }: { locale: string }) {
           ع
         </div>
         <div>
-          <p className="text-sm font-semibold">Iraq ERP</p>
-          <p className="text-xs text-muted-foreground">v0.3</p>
+          <p className="text-sm font-semibold">{tApp('shortName')}</p>
+          <p className="text-xs text-muted-foreground">v0.4</p>
         </div>
       </div>
       <nav className="flex-1 space-y-1 overflow-y-auto p-3">
