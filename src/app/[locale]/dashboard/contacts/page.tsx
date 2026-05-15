@@ -1,8 +1,11 @@
+import Link from 'next/link';
 import { db } from '@/lib/db';
 import { requireSession } from '@/lib/auth/session';
 import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { Table, THead, TBody, TR, TH, TD } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { Plus } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 
 export default async function ContactsPage({ params }: { params: Promise<{ locale: string }> }) {
@@ -13,7 +16,14 @@ export default async function ContactsPage({ params }: { params: Promise<{ local
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">{t('contacts')}</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold">{t('contacts')}</h1>
+        <Button asChild>
+          <Link href={`/${locale}/dashboard/contacts/new`}>
+            <Plus className="h-4 w-4" /> New
+          </Link>
+        </Button>
+      </div>
       <Card>
         <Table>
           <THead>
