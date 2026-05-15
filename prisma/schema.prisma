@@ -66,6 +66,9 @@ model Tenant {
   uomConversions  UomConversion[]
   stockLots       StockLot[]
   salaryAdvances  SalaryAdvance[]
+  passwordResetTokens PasswordResetToken[]
+  einvoiceSubmissions EInvoiceSubmission[]
+  consolidatedGroups  ConsolidatedGroup[]
 }
 
 /// Recurring invoices — subscriptions, monthly rent, retainers.
@@ -339,6 +342,43 @@ model CustomerPortalToken {
   contactId  String
   token      String   @unique
   expiresAt  DateTime
+  createdAt  DateTime @default(now())
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  tenantId  String
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  userId    String
+  tokenHash String   @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model EInvoiceSubmission {
+  id           String   @id @default(cuid())
+  tenantId     String
+  tenant       Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  invoiceId    String
+  uuid         String?
+  submittedAt  DateTime @default(now())
+  status       String
+  responseCode String?
+  responseBody String?
+
+  @@index([tenantId, invoiceId])
+}
+
+model ConsolidatedGroup {
+  id         String   @id @default(cuid())
+  tenantId   String
+  tenant     Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  name       String
+  parentCode String?
+  memberTenantIds String[]
   createdAt  DateTime @default(now())
 }
 
