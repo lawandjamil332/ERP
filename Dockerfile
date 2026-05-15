@@ -1,12 +1,18 @@
 FROM node:20-bookworm-slim AS base
-RUN apt-get update && apt-get install -y --no-install-recommends openssl && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      openssl \
+      ca-certificates \
+      python3 \
+      make \
+      g++ \
+    && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 
 FROM base AS deps
 COPY package.json package-lock.json* pnpm-lock.yaml* ./
 RUN if [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i --frozen-lockfile; \
     elif [ -f package-lock.json ]; then npm ci; \
-    else npm i; fi
+    else npm install --no-audit --no-fund; fi
 
 FROM base AS build
 COPY --from=deps /app/node_modules ./node_modules
