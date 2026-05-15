@@ -16,6 +16,7 @@ export default function OnboardingWizard({ params }: { params: Promise<{ locale:
   const router = useRouter();
   const [step, setStep] = useState<Step>('company');
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [form, setForm] = useState({
     nameAr: '', nameEn: '', taxNumber: '', commercialReg: '',
     governorate: 'Baghdad',
@@ -31,30 +32,38 @@ export default function OnboardingWizard({ params }: { params: Promise<{ locale:
 
   async function submit() {
     setBusy(true);
-    const promise = fetch('/api/tenants/signup', {
-      method: 'POST', headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({
-        tenant: {
-          nameAr: form.nameAr, nameEn: form.nameEn,
-          taxNumber: form.taxNumber || undefined,
-          commercialReg: form.commercialReg || undefined,
-          governorate: form.governorate,
-          region: form.region, sector: form.sector,
-          defaultLocale: form.defaultLocale,
-        },
-        owner: { email: form.email, password: form.password, fullName: form.fullName },
-      }),
-    });
-    toast.promise(promise, {
-      loading: 'Creating your company…',
-      success: 'Company created — redirecting',
-      error: 'Signup failed',
-    });
+    setError(null);
     try {
-      const res = await promise;
-      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error ?? 'signup failed');
+      const res = await fetch('/api/tenants/signup', {
+        method: 'POST', headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          tenant: {
+            nameAr: form.nameAr, nameEn: form.nameEn,
+            taxNumber: form.taxNumber || undefined,
+            commercialReg: form.commercialReg || undefined,
+            governorate: form.governorate,
+            region: form.region, sector: form.sector,
+            defaultLocale: form.defaultLocale,
+          },
+          owner: { email: form.email, password: form.password, fullName: form.fullName },
+        }),
+      });
+      const body = await res.json().catch(() => ({} as any));
+      if (!res.ok) {
+        const detail = body.issues
+          ? body.issues.map((i: any) => `${i.path.join('.')}: ${i.message}`).join(' · ')
+          : body.error ?? `HTTP ${res.status}`;
+        setError(detail);
+        toast.error(detail);
+        return;
+      }
+      toast.success('Company created — redirecting');
       setStep('done');
       setTimeout(() => router.push(`/${form.defaultLocale}/dashboard`), 1200);
+    } catch (e: any) {
+      const msg = e?.message ?? 'Network error';
+      setError(msg);
+      toast.error(msg);
     } finally {
       setBusy(false);
     }
@@ -171,6 +180,12 @@ export default function OnboardingWizard({ params }: { params: Promise<{ locale:
               <p className="mt-2 text-muted-foreground">
                 Your tenant <strong>{form.nameAr}</strong> is ready with the full Iraqi Unified Accounting System.
               </p>
+            </div>
+          )}
+
+          {error && (
+            <div className="rounded-md border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
+              <strong>Signup failed:</strong> {error}
             </div>
           )}
 
