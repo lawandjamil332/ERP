@@ -9,7 +9,7 @@ const intlMiddleware = createMiddleware({
   localePrefix: 'always',
 });
 
-const PUBLIC_PATHS = ['/auth/login', '/auth/register'];
+const PUBLIC_PATHS = ['/auth/login', '/auth/register', '/onboarding'];
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;

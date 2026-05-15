@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,6 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 
 export default function LoginPage() {
   const t = useTranslations();
+  const locale = useLocale();
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -63,6 +65,12 @@ export default function LoginPage() {
               {loading ? t('common.loading') : t('auth.submit')}
             </Button>
           </form>
+          <p className="mt-4 text-center text-sm text-muted-foreground">
+            New here?{' '}
+            <Link href={`/${locale}/onboarding`} className="font-medium text-primary hover:underline">
+              Create a company account
+            </Link>
+          </p>
         </CardContent>
       </Card>
     </div>
