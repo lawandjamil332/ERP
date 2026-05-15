@@ -1,14 +1,17 @@
 {
   "name": "iraq-erp",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
-  "description": "Iraq ERP System — trilingual (AR/KU/EN), Iraq-tax-compliant, multi-tenant",
+  "description": "Iraq ERP — trilingual (AR/KU/EN), Iraq-tax-compliant, multi-tenant",
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
@@ -34,8 +37,6 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
-    "date-fns-jalali": "^4.1.0-0",
-    "hijri-converter": "^1.0.0",
     "jose": "^5.9.6",
     "lucide-react": "^0.460.0",
     "next": "15.0.3",
@@ -54,6 +55,7 @@
     "@types/node": "^22.9.0",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
+    "@vitest/coverage-v8": "^2.1.5",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.15.0",
     "eslint-config-next": "15.0.3",
@@ -61,6 +63,7 @@
     "prisma": "^5.22.0",
     "tailwindcss": "^3.4.15",
     "tsx": "^4.19.2",
-    "typescript": "^5.6.3"
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.5"
   }
 }
