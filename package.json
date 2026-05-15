@@ -1,6 +1,6 @@
 {
   "name": "iraq-erp",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "description": "Iraq ERP — trilingual (AR/KU/EN), Iraq-tax-compliant, multi-tenant",
   "scripts": {
@@ -16,7 +16,8 @@
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
     "db:seed": "tsx prisma/seed.ts",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "bootstrap": "prisma generate && prisma migrate dev --name init && tsx prisma/seed.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
@@ -41,6 +42,7 @@
     "lucide-react": "^0.460.0",
     "next": "15.0.3",
     "next-intl": "^3.25.1",
+    "pino": "^9.5.0",
     "react": "19.0.0-rc-66855b96-20241106",
     "react-dom": "19.0.0-rc-66855b96-20241106",
     "react-hook-form": "^7.53.2",
@@ -65,5 +67,9 @@
     "tsx": "^4.19.2",
     "typescript": "^5.6.3",
     "vitest": "^2.1.5"
+  },
+  "optionalDependencies": {
+    "@aws-sdk/client-sesv2": "^3.700.0",
+    "nodemailer": "^6.9.16"
   }
 }
