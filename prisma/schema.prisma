@@ -10,36 +10,19 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-/// ─────────────────────────────────────────────────────────────────────
-/// Tenancy & access control
-/// ─────────────────────────────────────────────────────────────────────
-
 model Tenant {
   id              String   @id @default(cuid())
-  /// Trade name (Arabic)
   nameAr          String
-  /// Trade name (Kurdish, optional)
   nameKu          String?
-  /// Trade name (English)
   nameEn          String
-  /// Iraqi tax number (الرقم الضريبي)
   taxNumber       String?  @unique
-  /// Commercial registration number (رقم السجل التجاري)
   commercialReg   String?  @unique
-  /// Governorate (محافظة) — e.g. Baghdad, Erbil, Basra
   governorate     String?
-  /// Tax region — federal Iraq or Kurdistan Region (KRG has distinct rules:
-  /// PIT practically 5%, CIT filing deadline June 30, different SS practice)
   region          TaxRegion @default(FEDERAL)
-  /// Sector — affects payroll SS rate (oil & gas = 25% employer)
   sector          BusinessSector @default(GENERAL)
-  /// Default currency for ledger (almost always IQD)
   baseCurrency    String   @default("IQD")
-  /// Fiscal year start month (Iraq usually calendar year)
   fiscalYearStart Int      @default(1)
-  /// Default locale: ar | ku | en
   defaultLocale   String   @default("ar")
-
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
@@ -56,16 +39,256 @@ model Tenant {
   bills           Bill[]
   payments        Payment[]
   employees       Employee[]
-  payrollRuns    PayrollRun[]
+  payrollRuns     PayrollRun[]
   posTerminals    PosTerminal[]
   exchangeRates   ExchangeRate[]
   auditLogs       AuditLog[]
   costCenters     CostCenter[]
   projects        Project[]
   fixedAssets     FixedAsset[]
+  cheques         Cheque[]
+  stockMovements  StockMovement[]
+  depreciationRuns DepreciationRun[]
+  approvalRules   ApprovalRule[]
+  notifications   Notification[]
+  totpSecrets     TotpSecret[]
+  portalTokens    CustomerPortalToken[]
+  hotelFolios     HotelFolio[]
+  bom             Bom[]
+  workOrders      WorkOrder[]
+  bankAccounts    BankAccount[]
+  bankStatements  BankStatement[]
 }
 
-/// Cost centres (IUAS levels 5-9 are reserved for cost accounting)
+model Cheque {
+  id           String   @id @default(cuid())
+  tenantId     String
+  tenant       Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  number       String
+  direction    ChequeDirection
+  bank         String
+  branch       String?
+  drawer       String
+  beneficiary  String
+  amount       Decimal  @db.Decimal(20, 4)
+  currency     String   @default("IQD")
+  issueDate    DateTime
+  dueDate      DateTime
+  status       ChequeStatus @default(REGISTERED)
+  contactId    String?
+  invoiceId    String?
+  billId       String?
+  notes        String?
+  clearedAt    DateTime?
+
+  @@unique([tenantId, number, direction])
+  @@index([tenantId, status])
+}
+
+enum ChequeDirection { IN  OUT }
+enum ChequeStatus { REGISTERED  DEPOSITED  CLEARED  BOUNCED  CANCELLED  REPLACED }
+
+model StockMovement {
+  id            String   @id @default(cuid())
+  tenantId      String
+  tenant        Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  kind          StockMovementKind
+  date          DateTime
+  reference     String
+  fromWarehouseId String?
+  toWarehouseId   String?
+  productId     String
+  quantity      Decimal  @db.Decimal(20, 4)
+  unitCost      Decimal  @default(0) @db.Decimal(20, 4)
+  reason        String?
+  postedJournalId String?
+
+  @@index([tenantId, productId])
+}
+
+enum StockMovementKind {
+  TRANSFER
+  ADJUSTMENT_IN
+  ADJUSTMENT_OUT
+  WRITE_OFF
+  OPENING_BALANCE
+}
+
+model DepreciationRun {
+  id        String   @id @default(cuid())
+  tenantId  String
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  period    String
+  runDate   DateTime
+  total     Decimal  @db.Decimal(20, 4)
+  postedJournalId String?
+
+  @@unique([tenantId, period])
+}
+
+model ApprovalRule {
+  id          String  @id @default(cuid())
+  tenantId    String
+  tenant      Tenant  @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  entity      String
+  thresholdAmount Decimal @db.Decimal(20, 4)
+  currency    String   @default("IQD")
+  approverRole String
+  isActive    Boolean  @default(true)
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  tenantId  String
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  userId    String?
+  kind      String
+  title     String
+  body      String?
+  link      String?
+  readAt    DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([tenantId, userId, readAt])
+}
+
+model TotpSecret {
+  id        String   @id @default(cuid())
+  tenantId  String
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  userId    String   @unique
+  secret    String
+  enabledAt DateTime?
+  createdAt DateTime @default(now())
+}
+
+model CustomerPortalToken {
+  id         String   @id @default(cuid())
+  tenantId   String
+  tenant     Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  contactId  String
+  token      String   @unique
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+}
+
+model HotelFolio {
+  id           String   @id @default(cuid())
+  tenantId     String
+  tenant       Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  number       String
+  guestName    String
+  guestIdType  String?
+  guestIdNumber String?
+  roomNumber   String
+  checkIn      DateTime
+  checkOut     DateTime?
+  status       FolioStatus  @default(OPEN)
+  notes        String?
+  charges      HotelFolioCharge[]
+
+  @@unique([tenantId, number])
+}
+
+enum FolioStatus { OPEN  CHECKED_OUT  CANCELLED }
+
+model HotelFolioCharge {
+  id        String  @id @default(cuid())
+  folioId   String
+  folio     HotelFolio @relation(fields: [folioId], references: [id], onDelete: Cascade)
+  date      DateTime  @default(now())
+  description String
+  amount    Decimal @db.Decimal(20, 4)
+  taxRate   Decimal @default(0.10) @db.Decimal(8, 4)
+  taxAmount Decimal @db.Decimal(20, 4)
+}
+
+model Bom {
+  id        String   @id @default(cuid())
+  tenantId  String
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  productId String
+  version   String   @default("1")
+  isActive  Boolean  @default(true)
+  components BomComponent[]
+  workOrders WorkOrder[]
+
+  @@unique([tenantId, productId, version])
+}
+
+model BomComponent {
+  id        String  @id @default(cuid())
+  bomId     String
+  bom       Bom     @relation(fields: [bomId], references: [id], onDelete: Cascade)
+  componentProductId String
+  quantity  Decimal @db.Decimal(20, 4)
+  unitOfMeasure String @default("PCS")
+}
+
+model WorkOrder {
+  id         String   @id @default(cuid())
+  tenantId   String
+  tenant     Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  number     String
+  bomId      String
+  bom        Bom      @relation(fields: [bomId], references: [id])
+  quantity   Decimal  @db.Decimal(20, 4)
+  status     WoStatus @default(DRAFT)
+  startDate  DateTime?
+  endDate    DateTime?
+  notes      String?
+
+  @@unique([tenantId, number])
+}
+
+enum WoStatus { DRAFT  RELEASED  IN_PROGRESS  COMPLETED  CANCELLED }
+
+model BankAccount {
+  id        String   @id @default(cuid())
+  tenantId  String
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  code      String
+  bankName  String
+  iban      String?
+  accountNumber String
+  currency  String   @default("IQD")
+  isActive  Boolean  @default(true)
+  statements BankStatement[]
+
+  @@unique([tenantId, accountNumber])
+}
+
+model BankStatement {
+  id          String   @id @default(cuid())
+  tenantId    String
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  bankAccountId String
+  bankAccount BankAccount @relation(fields: [bankAccountId], references: [id], onDelete: Cascade)
+  date        DateTime
+  reference   String?
+  description String?
+  debit       Decimal  @default(0) @db.Decimal(20, 4)
+  credit      Decimal  @default(0) @db.Decimal(20, 4)
+  balance     Decimal? @db.Decimal(20, 4)
+  matchedJournalLineId String?
+  reconciledAt DateTime?
+
+  @@index([tenantId, bankAccountId, date])
+}
+
+model ProjectMilestone {
+  id         String   @id @default(cuid())
+  projectId  String
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  name       String
+  percentage Decimal  @db.Decimal(8, 4)
+  amount     Decimal  @db.Decimal(20, 4)
+  retention  Decimal  @default(0) @db.Decimal(20, 4)
+  invoicedAt DateTime?
+  invoiceId  String?
+  notes      String?
+}
+
 model CostCenter {
   id        String  @id @default(cuid())
   tenantId  String
@@ -81,7 +304,6 @@ model CostCenter {
   @@unique([tenantId, code])
 }
 
-/// Projects (especially for construction sector — very common in Iraq)
 model Project {
   id           String   @id @default(cuid())
   tenantId     String
@@ -96,11 +318,11 @@ model Project {
   currency     String   @default("IQD")
   status       String   @default("ACTIVE")
   notes        String?
+  milestones   ProjectMilestone[]
 
   @@unique([tenantId, code])
 }
 
-/// Fixed assets register — IUAS requires asset tracking and depreciation
 model FixedAsset {
   id              String   @id @default(cuid())
   tenantId        String
@@ -124,23 +346,11 @@ model FixedAsset {
   @@unique([tenantId, assetCode])
 }
 
-enum TaxRegion {
-  FEDERAL
-  KURDISTAN
-}
+enum TaxRegion { FEDERAL  KURDISTAN }
 
 enum BusinessSector {
-  GENERAL
-  OIL_GAS
-  TELECOM
-  HOSPITALITY
-  CONSTRUCTION
-  RETAIL
-  MANUFACTURING
-  AGRICULTURE
-  HEALTHCARE
-  EDUCATION
-  TRANSPORT
+  GENERAL OIL_GAS TELECOM HOSPITALITY CONSTRUCTION
+  RETAIL MANUFACTURING AGRICULTURE HEALTHCARE EDUCATION TRANSPORT
 }
 
 model Branch {
@@ -153,7 +363,6 @@ model Branch {
   governorate  String?
   address      String?
   phone        String?
-
   warehouses   Warehouse[]
   posTerminals PosTerminal[]
 
@@ -165,7 +374,6 @@ model User {
   tenantId      String
   tenant        Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   email         String
-  /// Argon2id hash
   passwordHash  String
   fullName      String
   phone         String?
@@ -175,29 +383,15 @@ model User {
   lastLoginAt   DateTime?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-
   auditLogs     AuditLog[]
 
   @@unique([tenantId, email])
 }
 
 enum UserRole {
-  OWNER
-  ADMIN
-  ACCOUNTANT
-  SALES
-  PURCHASES
-  INVENTORY
-  HR
-  CASHIER
-  STAFF
-  AUDITOR_READONLY
+  OWNER ADMIN ACCOUNTANT SALES PURCHASES
+  INVENTORY HR CASHIER STAFF AUDITOR_READONLY
 }
-
-/// ─────────────────────────────────────────────────────────────────────
-/// Accounting — Chart of Accounts, Journals, Ledger
-/// Based on the Iraqi Unified Accounting System (النظام المحاسبي الموحد)
-/// ─────────────────────────────────────────────────────────────────────
 
 model Account {
   id          String       @id @default(cuid())
@@ -212,19 +406,12 @@ model Account {
   children    Account[]    @relation("AccountTree")
   isPostable  Boolean      @default(true)
   isActive    Boolean      @default(true)
-
   lines       JournalLine[]
 
   @@unique([tenantId, code])
 }
 
-enum AccountType {
-  ASSET
-  LIABILITY
-  EQUITY
-  INCOME
-  EXPENSE
-}
+enum AccountType { ASSET LIABILITY EQUITY INCOME EXPENSE }
 
 model Journal {
   id          String        @id @default(cuid())
@@ -238,7 +425,6 @@ model Journal {
   isPosted    Boolean       @default(false)
   postedAt    DateTime?
   postedById  String?
-
   createdAt   DateTime      @default(now())
   lines       JournalLine[]
 
@@ -247,15 +433,8 @@ model Journal {
 }
 
 enum JournalSource {
-  MANUAL
-  SALES_INVOICE
-  PURCHASE_BILL
-  PAYMENT
-  PAYROLL
-  POS
-  INVENTORY_ADJUSTMENT
-  YEAR_END_CLOSING
-  OPENING_BALANCE
+  MANUAL SALES_INVOICE PURCHASE_BILL PAYMENT PAYROLL
+  POS INVENTORY_ADJUSTMENT YEAR_END_CLOSING OPENING_BALANCE
 }
 
 model JournalLine {
@@ -290,13 +469,7 @@ model TaxRate {
   @@unique([tenantId, code])
 }
 
-enum TaxKind {
-  SALES
-  WITHHOLDING
-  CUSTOMS
-  VAT
-  STAMP
-}
+enum TaxKind { SALES WITHHOLDING CUSTOMS VAT STAMP }
 
 model ExchangeRate {
   id        String   @id @default(cuid())
@@ -330,7 +503,6 @@ model Contact {
   notes         String?
   isActive      Boolean     @default(true)
   createdAt     DateTime    @default(now())
-
   invoices       Invoice[]
   purchaseOrders PurchaseOrder[]
   bills          Bill[]
@@ -339,11 +511,7 @@ model Contact {
   @@index([tenantId, kind])
 }
 
-enum ContactKind {
-  CUSTOMER
-  SUPPLIER
-  BOTH
-}
+enum ContactKind { CUSTOMER SUPPLIER BOTH }
 
 model Warehouse {
   id        String  @id @default(cuid())
@@ -356,7 +524,6 @@ model Warehouse {
   nameEn    String
   address   String?
   isActive  Boolean @default(true)
-
   stockItems Stock[]
 
   @@unique([tenantId, code])
@@ -383,7 +550,6 @@ model Product {
   isService    Boolean  @default(false)
   isActive     Boolean  @default(true)
   createdAt    DateTime @default(now())
-
   stock        Stock[]
   invoiceLines InvoiceLine[]
   billLines    BillLine[]
@@ -412,7 +578,6 @@ model Invoice {
   contact       Contact       @relation(fields: [contactId], references: [id])
   date          DateTime
   dueDate       DateTime?
-  /// Iraq Nov-2025 invoice fields
   paymentTerms  String?
   shippingTerms String?
   importerAddress String?
@@ -430,10 +595,8 @@ model Invoice {
   postedJournalId String?
   eInvoiceUuid    String?
   eInvoiceStatus  String?
-
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
-
   lines         InvoiceLine[]
   payments      PaymentApplication[]
 
@@ -442,14 +605,7 @@ model Invoice {
   @@index([tenantId, date])
 }
 
-enum InvoiceStatus {
-  DRAFT
-  POSTED
-  PARTIALLY_PAID
-  PAID
-  OVERDUE
-  CANCELLED
-}
+enum InvoiceStatus { DRAFT POSTED PARTIALLY_PAID PAID OVERDUE CANCELLED }
 
 model InvoiceLine {
   id          String  @id @default(cuid())
@@ -482,13 +638,12 @@ model PurchaseOrder {
   currency  String   @default("IQD")
   total     Decimal  @default(0) @db.Decimal(20, 4)
   notes     String?
-
   bills     Bill[]
 
   @@unique([tenantId, number])
 }
 
-enum POStatus { DRAFT  APPROVED  RECEIVED  CLOSED  CANCELLED }
+enum POStatus { DRAFT APPROVED RECEIVED CLOSED CANCELLED }
 
 model Bill {
   id            String     @id @default(cuid())
@@ -510,14 +665,13 @@ model Bill {
   amountPaid    Decimal    @default(0) @db.Decimal(20, 4)
   status        BillStatus @default(DRAFT)
   postedJournalId String?
-
   lines         BillLine[]
   payments      PaymentApplication[]
 
   @@unique([tenantId, number])
 }
 
-enum BillStatus { DRAFT  POSTED  PARTIALLY_PAID  PAID  OVERDUE  CANCELLED }
+enum BillStatus { DRAFT POSTED PARTIALLY_PAID PAID OVERDUE CANCELLED }
 
 model BillLine {
   id          String  @id @default(cuid())
@@ -550,14 +704,13 @@ model Payment {
   amount       Decimal             @db.Decimal(20, 4)
   notes        String?
   postedJournalId String?
-
   applications PaymentApplication[]
 
   @@unique([tenantId, number])
 }
 
-enum PaymentDirection { IN  OUT }
-enum PaymentMethod { CASH  BANK_TRANSFER  CHEQUE  CARD  ZAIN_CASH  ASIA_HAWALA  FIB  OTHER }
+enum PaymentDirection { IN OUT }
+enum PaymentMethod { CASH BANK_TRANSFER CHEQUE CARD ZAIN_CASH ASIA_HAWALA FIB OTHER }
 
 model PaymentApplication {
   id        String   @id @default(cuid())
@@ -593,13 +746,12 @@ model Employee {
   dependents         Int             @default(0)
   ssEnrolled         Boolean         @default(true)
   isActive           Boolean         @default(true)
-
   payrollLines       PayrollLine[]
 
   @@unique([tenantId, empNo])
 }
 
-enum Gender { MALE  FEMALE }
+enum Gender { MALE FEMALE }
 
 model PayrollRun {
   id          String          @id @default(cuid())
@@ -610,13 +762,12 @@ model PayrollRun {
   status      PayrollStatus   @default(DRAFT)
   notes       String?
   postedJournalId String?
-
   lines       PayrollLine[]
 
   @@unique([tenantId, period])
 }
 
-enum PayrollStatus { DRAFT  CALCULATED  POSTED  PAID }
+enum PayrollStatus { DRAFT CALCULATED POSTED PAID }
 
 model PayrollLine {
   id            String     @id @default(cuid())
@@ -647,7 +798,6 @@ model PosTerminal {
   nameAr    String
   nameEn    String
   isActive  Boolean  @default(true)
-
   sessions  PosSession[]
 
   @@unique([tenantId, code])
@@ -678,7 +828,6 @@ model PosOrder {
   paid       Decimal  @default(0) @db.Decimal(20, 4)
   method     PaymentMethod @default(CASH)
   postedJournalId String?
-
   lines      PosOrderLine[]
 }
 
