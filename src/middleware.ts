@@ -14,7 +14,7 @@ const PUBLIC_PATHS = ['/auth/login', '/auth/register', '/onboarding'];
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  if (pathname.startsWith('/_next') || pathname.startsWith('/api/auth')) {
+  if (pathname.startsWith('/_next') || pathname.startsWith('/api/')) {
     return NextResponse.next();
   }
 
@@ -35,5 +35,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!api/auth|_next|favicon.ico|.*\\..*).*)'],
+  matcher: ['/((?!api|_next|favicon.ico|.*\\..*).*)'],
 };
