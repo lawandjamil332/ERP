@@ -56,9 +56,9 @@ export default async function InvoicesPage({ params }: { params: Promise<{ local
               <TR><TD colSpan={6} className="py-12 text-center text-muted-foreground">No invoices yet</TD></TR>
             )}
             {invoices.map((inv) => (
-              <TR key={inv.id}>
-                <TD className="font-mono text-xs">{inv.number}</TD>
-                <TD>{new Intl.DateTimeFormat(locale).format(inv.date)}</TD>
+              <TR key={inv.id} className="cursor-pointer">
+                <TD className="font-mono text-xs"><Link href={`/${locale}/dashboard/invoices/${inv.id}`}>{inv.number}</Link></TD>
+                <TD><Link href={`/${locale}/dashboard/invoices/${inv.id}`}>{new Intl.DateTimeFormat(locale).format(inv.date)}</Link></TD>
                 <TD>{locale === 'ar' ? inv.contact.nameAr : (inv.contact.nameEn ?? inv.contact.nameAr)}</TD>
                 <TD>{inv.currency}</TD>
                 <TD className="text-end tabular-nums">{formatMoney(Number(inv.total), inv.currency as 'IQD', locale as 'ar')}</TD>
