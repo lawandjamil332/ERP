@@ -5,8 +5,10 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, THead, TBody, TR, TH, TD } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Plus } from 'lucide-react';
+import { Plus, Repeat } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
+import { PageHeader } from '@/components/ui/page-header';
+import { EmptyState } from '@/components/ui/empty-state';
 import { RunNowButton } from './RunNowButton';
 
 export default async function RecurringInvoicesPage({ params }: { params: Promise<{ locale: string }> }) {
@@ -28,54 +30,65 @@ export default async function RecurringInvoicesPage({ params }: { params: Promis
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold">{t('title')}</h1>
-        </div>
-        <div className="flex gap-2">
-          <RunNowButton />
-          <Button asChild>
-            <Link href={`/${locale}/dashboard/recurring/new`}>
-              <Plus className="h-4 w-4" /> {t('new')}
-            </Link>
-          </Button>
-        </div>
-      </div>
+      <PageHeader
+        title={t('title')}
+        actions={
+          <>
+            <RunNowButton />
+            <Button asChild>
+              <Link href={`/${locale}/dashboard/recurring/new`}>
+                <Plus className="h-4 w-4" /> {t('new')}
+              </Link>
+            </Button>
+          </>
+        }
+      />
 
-      <Card>
-        <Table>
-          <THead>
-            <TR>
-              <TH>{tc('name')}</TH>
-              <TH>{t('cadence')}</TH>
-              <TH>{t('nextIssue')}</TH>
-              <TH>{t('startDate')}</TH>
-              <TH>{t('autoPost')}</TH>
-            </TR>
-          </THead>
-          <TBody>
-            {templates.length === 0 && (
-              <TR><TD colSpan={5} className="py-12 text-center text-muted-foreground">{tc('noData')}</TD></TR>
-            )}
-            {templates.map((tpl) => {
-              const c = cmap.get(tpl.contactId);
-              const cadenceLabel = t(`frequencies.${tpl.cadence}` as any);
-              return (
-                <TR key={tpl.id}>
-                  <TD className="font-medium">
-                    {tpl.name}
-                    {c && <div className="text-xs text-muted-foreground">{locale === 'ar' ? c.nameAr : (c.nameEn ?? c.nameAr)}</div>}
-                  </TD>
-                  <TD><Badge variant="outline">{cadenceLabel}{tpl.cadenceDay ? ` · ${tpl.cadenceDay}` : ''}</Badge></TD>
-                  <TD className="tabular-nums">{new Intl.DateTimeFormat(locale).format(tpl.nextIssueAt)}</TD>
-                  <TD className="tabular-nums">{new Intl.DateTimeFormat(locale).format(tpl.startDate)}</TD>
-                  <TD>{tpl.autoPost ? <Badge variant="success">{tc('yes')}</Badge> : <Badge variant="outline">{tc('no')}</Badge>}</TD>
-                </TR>
-              );
-            })}
-          </TBody>
-        </Table>
-      </Card>
+      {templates.length === 0 ? (
+        <EmptyState
+          icon={Repeat}
+          title={tc('noData')}
+          action={
+            <Button asChild>
+              <Link href={`/${locale}/dashboard/recurring/new`}>
+                <Plus className="h-4 w-4" /> {t('new')}
+              </Link>
+            </Button>
+          }
+        />
+      ) : (
+        <Card>
+          <Table>
+            <THead>
+              <TR>
+                <TH>{tc('name')}</TH>
+                <TH>{t('cadence')}</TH>
+                <TH>{t('nextIssue')}</TH>
+                <TH>{t('startDate')}</TH>
+                <TH>{t('autoPost')}</TH>
+              </TR>
+            </THead>
+            <TBody>
+              {templates.map((tpl) => {
+                const c = cmap.get(tpl.contactId);
+                const cadenceLabel = t(`frequencies.${tpl.cadence}` as any);
+                return (
+                  <TR key={tpl.id}>
+                    <TD className="font-medium">
+                      {tpl.name}
+                      {c && <div className="text-xs text-muted-foreground">{locale === 'ar' ? c.nameAr : (c.nameEn ?? c.nameAr)}</div>}
+                    </TD>
+                    <TD><Badge variant="outline">{cadenceLabel}{tpl.cadenceDay ? ` · ${tpl.cadenceDay}` : ''}</Badge></TD>
+                    <TD className="tabular-nums">{new Intl.DateTimeFormat(locale).format(tpl.nextIssueAt)}</TD>
+                    <TD className="tabular-nums">{new Intl.DateTimeFormat(locale).format(tpl.startDate)}</TD>
+                    <TD>{tpl.autoPost ? <Badge variant="success">{tc('yes')}</Badge> : <Badge variant="outline">{tc('no')}</Badge>}</TD>
+                  </TR>
+                );
+              })}
+            </TBody>
+          </Table>
+        </Card>
+      )}
     </div>
   );
 }

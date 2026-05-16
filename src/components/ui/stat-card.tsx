@@ -13,7 +13,7 @@ export function StatCard({
   label: React.ReactNode;
   value: React.ReactNode;
   icon?: LucideIcon;
-  trend?: number;
+  trend?: number;            // 0.05 → +5%
   trendLabel?: string;
   tone?: 'default' | 'primary' | 'success' | 'warning' | 'destructive';
   className?: string;
