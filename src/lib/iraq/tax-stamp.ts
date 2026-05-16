@@ -29,6 +29,8 @@ const DEFAULT_POLICY: StampPolicy = {
 
 const GOVERNORATE_POLICIES: Record<string, StampPolicy> = {
   // Most governorates use the federal default; override exceptions here when verified.
+  // Example for Basra (placeholder values; verify with local CoT branch):
+  // 'Basra': { thresholdIqd: 100_000, flatIqd: 500, perBracketIqd: 500, bracketSizeIqd: 100_000 },
 };
 
 export function policyFor(governorate?: string | null): StampPolicy {
@@ -40,7 +42,7 @@ export function policyFor(governorate?: string | null): StampPolicy {
 
 export interface StampResult {
   applies: boolean;
-  stampAmount: string;
+  stampAmount: string;     // IQD, integer string
   reasonAr: string;
   reasonEn: string;
 }

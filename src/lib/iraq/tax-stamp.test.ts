@@ -15,6 +15,7 @@ describe('computeTaxStamp', () => {
   });
 
   it('adds incremental bracket fees above threshold', () => {
+    // 1,250,000 IQD = base + 4 brackets of 250k above threshold
     const r = computeTaxStamp({ invoiceTotalIqd: 1_250_000 });
     expect(r.applies).toBe(true);
     expect(r.stampAmount).toBe('5000');

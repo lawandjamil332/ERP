@@ -14,9 +14,9 @@ import BigNumber from 'bignumber.js';
 export interface PscPeriodInputs {
   grossRevenue: BigNumber.Value;
   recoverableCosts: BigNumber.Value;
-  costRecoveryCap: BigNumber.Value;
-  contractorProfitShare: BigNumber.Value;
-  royaltyRate: BigNumber.Value;
+  costRecoveryCap: BigNumber.Value;       // 0..1
+  contractorProfitShare: BigNumber.Value; // 0..1
+  royaltyRate: BigNumber.Value;           // 0..1
 }
 
 export interface PscPeriodResult {
