@@ -4,8 +4,9 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { LOCALES, LOCALE_LABELS, type Locale } from '@/lib/i18n/config';
-import { LogOut, Languages, Search, Bell, ChevronDown, Settings as SettingsIcon, Shield } from 'lucide-react';
+import { LogOut, Languages, Search, ChevronDown, Settings as SettingsIcon, Shield } from 'lucide-react';
 import Link from 'next/link';
+import { NotificationBell } from './NotificationBell';
 
 export function TopBar({ locale, userEmail, tenantName }: {
   locale: string; userEmail: string; tenantName: string;
@@ -44,14 +45,7 @@ export function TopBar({ locale, userEmail, tenantName }: {
       </div>
 
       <div className="ms-auto flex items-center gap-2">
-        <button
-          type="button"
-          className="relative inline-flex h-9 w-9 items-center justify-center rounded-lg border bg-background text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-          aria-label="Notifications"
-        >
-          <Bell className="h-4 w-4" />
-          <span className="absolute top-1.5 end-1.5 h-1.5 w-1.5 rounded-full bg-destructive" />
-        </button>
+        <NotificationBell />
 
         <div className="relative">
           <button
