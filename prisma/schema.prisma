@@ -78,6 +78,9 @@ model Tenant {
   amlReports          AmlReport[]
   beneficialOwners    BeneficialOwner[]
   pscContracts        PscContract[]
+  quotations          Quotation[]
+  installmentPlans    InstallmentPlan[]
+  documentTemplates   DocumentTemplate[]
 }
 
 /// Recurring invoices — subscriptions, monthly rent, retainers.
@@ -1415,4 +1418,139 @@ model AuditLog {
   createdAt DateTime @default(now())
 
   @@index([tenantId, createdAt])
+}
+
+/// Sales quotation — pre-invoice price offer. Converts to an Invoice on accept.
+model Quotation {
+  id            String   @id @default(cuid())
+  tenantId      String
+  tenant        Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  number        String
+  contactId     String
+  date          DateTime
+  validUntil    DateTime?
+  currency      String   @default("IQD")
+  fxRate        Decimal  @default(1) @db.Decimal(20, 8)
+  subtotal      Decimal  @default(0) @db.Decimal(20, 4)
+  taxTotal      Decimal  @default(0) @db.Decimal(20, 4)
+  discountTotal Decimal  @default(0) @db.Decimal(20, 4)
+  total         Decimal  @default(0) @db.Decimal(20, 4)
+  status        QuotationStatus @default(DRAFT)
+  notes         String?
+  convertedInvoiceId String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  lines         QuotationLine[]
+
+  @@unique([tenantId, number])
+  @@index([tenantId, status])
+}
+
+enum QuotationStatus {
+  DRAFT
+  SENT
+  ACCEPTED
+  REJECTED
+  EXPIRED
+  CONVERTED
+}
+
+model QuotationLine {
+  id          String     @id @default(cuid())
+  quotationId String
+  quotation   Quotation  @relation(fields: [quotationId], references: [id], onDelete: Cascade)
+  productId   String?
+  description String
+  quantity    Decimal    @db.Decimal(20, 4)
+  unitOfMeasure String   @default("PCS")
+  unitPrice   Decimal    @db.Decimal(20, 4)
+  discount    Decimal    @default(0) @db.Decimal(20, 4)
+  taxRate     Decimal    @default(0) @db.Decimal(8, 4)
+  taxAmount   Decimal    @default(0) @db.Decimal(20, 4)
+  lineTotal   Decimal    @db.Decimal(20, 4)
+}
+
+/// Installment plan (تقسيط) — Iraqi retail standard for phones / electronics / furniture.
+model InstallmentPlan {
+  id              String   @id @default(cuid())
+  tenantId        String
+  tenant          Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  reference       String
+  contactId       String
+  invoiceId       String?
+  productSummary  String
+  totalAmount     Decimal  @db.Decimal(20, 4)
+  downPayment     Decimal  @default(0) @db.Decimal(20, 4)
+  financedAmount  Decimal  @db.Decimal(20, 4)
+  numberOfInstallments Int
+  interestRatePct Decimal  @default(0) @db.Decimal(8, 4)
+  installmentAmount Decimal @db.Decimal(20, 4)
+  currency        String   @default("IQD")
+  startDate       DateTime
+  status          InstallmentStatus @default(ACTIVE)
+  guarantorName   String?
+  guarantorPhone  String?
+  guarantorId     String?
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  schedule        InstallmentSchedule[]
+
+  @@unique([tenantId, reference])
+  @@index([tenantId, status])
+}
+
+enum InstallmentStatus {
+  ACTIVE
+  COMPLETED
+  DEFAULTED
+  CANCELLED
+}
+
+model InstallmentSchedule {
+  id          String   @id @default(cuid())
+  planId      String
+  plan        InstallmentPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  sequence    Int
+  dueDate     DateTime
+  amount      Decimal  @db.Decimal(20, 4)
+  paidAmount  Decimal  @default(0) @db.Decimal(20, 4)
+  paidDate    DateTime?
+  status      InstallmentScheduleStatus @default(PENDING)
+
+  @@unique([planId, sequence])
+  @@index([planId, dueDate])
+}
+
+enum InstallmentScheduleStatus {
+  PENDING
+  PAID
+  PARTIAL
+  OVERDUE
+  WAIVED
+}
+
+/// Customisable document template (invoices, quotations, receipts).
+model DocumentTemplate {
+  id          String   @id @default(cuid())
+  tenantId    String
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  name        String
+  kind        TemplateKind
+  isDefault   Boolean   @default(false)
+  /// Stored as a JSON blob with sections, colours, accents and notes.
+  config      Json
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([tenantId, name, kind])
+}
+
+enum TemplateKind {
+  INVOICE
+  QUOTATION
+  RECEIPT
+  PAYSLIP
+  PURCHASE_ORDER
+  DELIVERY_NOTE
 }
