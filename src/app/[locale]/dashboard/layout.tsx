@@ -26,11 +26,16 @@ export default async function DashboardLayout({
     <div className="flex h-screen w-full overflow-hidden bg-background">
       <Sidebar locale={locale} />
       <div className="flex flex-1 flex-col overflow-hidden">
-        <div className="flex items-center md:hidden">
+        <div className="flex items-center border-b bg-card px-3 py-2 md:hidden">
           <MobileNav locale={locale} />
+          <span className="ms-2 text-sm font-semibold">{tenantName ?? ''}</span>
         </div>
         <TopBar locale={locale} userEmail={session.email} tenantName={tenantName ?? ''} />
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6">{children}</main>
+        <main className="scrollbar-thin flex-1 overflow-y-auto">
+          <div className="mx-auto w-full max-w-7xl p-4 sm:p-6 lg:p-8">
+            {children}
+          </div>
+        </main>
       </div>
     </div>
   );
