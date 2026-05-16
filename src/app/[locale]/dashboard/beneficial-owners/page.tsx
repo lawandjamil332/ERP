@@ -90,7 +90,7 @@ export default function BeneficialOwnersPage() {
         <StatCard
           tone={totalPct >= 99.9 ? 'success' : totalPct >= 75 ? 'warning' : 'destructive'}
           icon={Users}
-          label={isAr ? 'إجمالي الملكية المُسَجَّلة' : 'Total registered ownership'}
+          label={isAr ? 'إجمالي الملكية المُسَجَّلة' : 'Total registered ownership'}
           value={`${totalPct.toFixed(2)}%`}
         />
         <StatCard
@@ -110,7 +110,7 @@ export default function BeneficialOwnersPage() {
       {totalPct < 100 && rows && rows.length > 0 && (
         <div className="rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-900">
           ⚠ {isAr
-            ? `الملكية المُسَجَّلة (${totalPct.toFixed(2)}%) أقل من 100%. تأكد من تسجيل جميع المستفيدين.`
+            ? `الملكية المُسَجَّلة (${totalPct.toFixed(2)}%) أقل من 100%. تأكد من تسجيل جميع المستفيدين.`
             : `Registered ownership (${totalPct.toFixed(2)}%) is below 100%. Ensure all owners are recorded.`}
         </div>
       )}
