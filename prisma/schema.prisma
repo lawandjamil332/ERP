@@ -88,6 +88,10 @@ model Tenant {
   brands              Brand[]
   productCategories   ProductCategory[]
   printableTemplates  PrintableTemplate[]
+  stockOrders         StockOrder[]
+  expenseCategories   ExpenseCategory[]
+  incomeCategories    IncomeCategory[]
+  roles               Role[]
   uiSettings          Json?
 }
 
@@ -915,6 +919,98 @@ enum PrintableTemplateKind {
   PAYMENT_RECEIPT
   EXPENSE_VOUCHER
   DELIVERY_NOTE
+}
+
+/// Internal stock movement orders — transfer, adjustment, write-off documents
+/// independent of invoices. DAN-style "Stock Orders" module.
+model StockOrder {
+  id           String   @id @default(cuid())
+  tenantId     String
+  tenant       Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  reference    String
+  kind         StockOrderKind
+  status       StockOrderStatus @default(DRAFT)
+  fromWarehouseId String?
+  toWarehouseId   String?
+  date         DateTime @default(now())
+  notes        String?
+  lines        StockOrderLine[]
+  createdAt    DateTime @default(now())
+
+  @@unique([tenantId, reference])
+  @@index([tenantId, kind, status])
+}
+
+model StockOrderLine {
+  id           String   @id @default(cuid())
+  stockOrderId String
+  stockOrder   StockOrder @relation(fields: [stockOrderId], references: [id], onDelete: Cascade)
+  productId    String
+  qty          Decimal  @db.Decimal(20, 4)
+  unitCost     Decimal? @db.Decimal(20, 4)
+  notes        String?
+}
+
+enum StockOrderKind {
+  TRANSFER
+  ADJUSTMENT_IN
+  ADJUSTMENT_OUT
+  WRITE_OFF
+  OPENING_BALANCE
+}
+
+enum StockOrderStatus {
+  DRAFT
+  POSTED
+  CANCELLED
+}
+
+/// Expense categorization — DAN-style classification master list.
+model ExpenseCategory {
+  id        String   @id @default(cuid())
+  tenantId  String
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  nameAr    String
+  nameEn    String
+  parentId  String?
+  parent    ExpenseCategory? @relation("ExpenseCategoryTree", fields: [parentId], references: [id])
+  children  ExpenseCategory[] @relation("ExpenseCategoryTree")
+  accountCode String?
+  isActive  Boolean  @default(true)
+
+  @@index([tenantId, parentId])
+}
+
+/// Income / receipt categorization.
+model IncomeCategory {
+  id        String   @id @default(cuid())
+  tenantId  String
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  nameAr    String
+  nameEn    String
+  parentId  String?
+  parent    IncomeCategory? @relation("IncomeCategoryTree", fields: [parentId], references: [id])
+  children  IncomeCategory[] @relation("IncomeCategoryTree")
+  accountCode String?
+  isActive  Boolean  @default(true)
+
+  @@index([tenantId, parentId])
+}
+
+/// RBAC roles — per-tenant custom role definitions beyond built-in UserRole enum.
+/// permissions JSON shape: { sections: { sales: ['view','create','edit'], ... } }
+model Role {
+  id          String   @id @default(cuid())
+  tenantId    String
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  isSystem    Boolean  @default(false)
+  permissions Json
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([tenantId, name])
 }
 
 model User {
