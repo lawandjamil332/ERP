@@ -20,9 +20,15 @@ export default async function ManufacturingOrdersPage({ params }: { params: Prom
 
   const rows = await db.workOrder.findMany({
     where: { tenantId: session.tenantId },
-    include: { bom: { include: { product: true } } },
-    orderBy: { createdAt: 'desc' }, take: 100,
+    include: { bom: true },
+    orderBy: { startDate: 'desc' }, take: 100,
   });
+  const productIds = rows.map((w) => w.bom.productId);
+  const products = await db.product.findMany({
+    where: { id: { in: productIds } },
+    select: { id: true, nameAr: true, nameEn: true, sku: true },
+  });
+  const productMap = new Map(products.map((p) => [p.id, p]));
 
   return (
     <div className="space-y-6">
@@ -42,21 +48,24 @@ export default async function ManufacturingOrdersPage({ params }: { params: Prom
               <TR>
                 <TH>{isAr ? 'الرقم' : 'Number'}</TH>
                 <TH>{isAr ? 'المنتج' : 'Product'}</TH>
-                <TH>{isAr ? 'الكمية المخطّطة' : 'Planned qty'}</TH>
-                <TH>{isAr ? 'الكمية المنجزة' : 'Done qty'}</TH>
+                <TH>{isAr ? 'الكمية' : 'Quantity'}</TH>
+                <TH>{isAr ? 'تاريخ البدء' : 'Start date'}</TH>
                 <TH>{isAr ? 'الحالة' : 'Status'}</TH>
               </TR>
             </THead>
             <TBody>
-              {rows.map((w) => (
-                <TR key={w.id}>
-                  <TD className="font-mono text-xs">{w.number}</TD>
-                  <TD>{isAr ? w.bom.product.nameAr : w.bom.product.nameEn}</TD>
-                  <TD className="tabular-nums">{w.plannedQty.toString()}</TD>
-                  <TD className="tabular-nums">{w.doneQty.toString()}</TD>
-                  <TD><Badge variant={STATUS_VARIANT[w.status] ?? 'outline'}>{w.status}</Badge></TD>
-                </TR>
-              ))}
+              {rows.map((w) => {
+                const p = productMap.get(w.bom.productId);
+                return (
+                  <TR key={w.id}>
+                    <TD className="font-mono text-xs">{w.number}</TD>
+                    <TD>{p ? (isAr ? p.nameAr : p.nameEn) : w.bom.productId}</TD>
+                    <TD className="tabular-nums">{w.quantity.toString()}</TD>
+                    <TD className="tabular-nums">{w.startDate ? new Intl.DateTimeFormat(locale).format(w.startDate) : '—'}</TD>
+                    <TD><Badge variant={STATUS_VARIANT[w.status] ?? 'outline'}>{w.status}</Badge></TD>
+                  </TR>
+                );
+              })}
             </TBody>
           </Table>
         </Card>

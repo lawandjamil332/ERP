@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Table, THead, TBody, TR, TH, TD } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { EmptyState } from '@/components/ui/empty-state';
-import { Plus, RefreshCw, Component } from 'lucide-react';
+import { Plus, Component } from 'lucide-react';
 
 export default async function BomListPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -17,9 +17,15 @@ export default async function BomListPage({ params }: { params: Promise<{ locale
 
   const rows = await db.bom.findMany({
     where: { tenantId: session.tenantId },
-    include: { product: true, components: true },
-    orderBy: { createdAt: 'desc' }, take: 100,
+    include: { _count: { select: { components: true } } },
+    orderBy: { version: 'desc' }, take: 100,
   });
+  const productIds = rows.map((b) => b.productId);
+  const products = await db.product.findMany({
+    where: { id: { in: productIds } },
+    select: { id: true, nameAr: true, nameEn: true, sku: true },
+  });
+  const productMap = new Map(products.map((p) => [p.id, p]));
 
   return (
     <div className="space-y-6">
@@ -47,20 +53,23 @@ export default async function BomListPage({ params }: { params: Promise<{ locale
             <THead>
               <TR>
                 <TH>{isAr ? 'المنتج' : 'Product'}</TH>
-                <TH>{isAr ? 'الكمية' : 'Output qty'}</TH>
+                <TH>{isAr ? 'الإصدار' : 'Version'}</TH>
                 <TH>{isAr ? 'المكونات' : 'Components'}</TH>
                 <TH>{isAr ? 'الحالة' : 'Status'}</TH>
               </TR>
             </THead>
             <TBody>
-              {rows.map((b) => (
-                <TR key={b.id}>
-                  <TD className="font-medium">{isAr ? b.product.nameAr : b.product.nameEn}</TD>
-                  <TD className="tabular-nums">{b.outputQty.toString()}</TD>
-                  <TD className="tabular-nums">{b.components.length}</TD>
-                  <TD><Badge variant={b.isActive ? 'default' : 'secondary'}>{b.isActive ? (isAr ? 'نشط' : 'Active') : (isAr ? 'متوقف' : 'Inactive')}</Badge></TD>
-                </TR>
-              ))}
+              {rows.map((b) => {
+                const p = productMap.get(b.productId);
+                return (
+                  <TR key={b.id}>
+                    <TD className="font-medium">{p ? (isAr ? p.nameAr : p.nameEn) : b.productId} <span className="text-xs text-muted-foreground">{p?.sku}</span></TD>
+                    <TD className="font-mono text-xs">v{b.version}</TD>
+                    <TD className="tabular-nums">{b._count.components}</TD>
+                    <TD><Badge variant={b.isActive ? 'default' : 'secondary'}>{b.isActive ? (isAr ? 'نشط' : 'Active') : (isAr ? 'متوقف' : 'Inactive')}</Badge></TD>
+                  </TR>
+                );
+              })}
             </TBody>
           </Table>
         </Card>

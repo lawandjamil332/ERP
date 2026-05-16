@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Landmark, Plus } from 'lucide-react';
-import { formatMoney } from '@/lib/iraq/money';
 
 export default async function BankAccountsPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -17,7 +16,7 @@ export default async function BankAccountsPage({ params }: { params: Promise<{ l
 
   const rows = await db.bankAccount.findMany({
     where: { tenantId: session.tenantId },
-    orderBy: { createdAt: 'desc' },
+    orderBy: { bankName: 'asc' },
   });
 
   return (
@@ -50,16 +49,19 @@ export default async function BankAccountsPage({ params }: { params: Promise<{ l
                       <Landmark className="h-4 w-4" />
                     </div>
                     <div>
-                      <p className="font-semibold">{b.name}</p>
-                      <p className="font-mono text-[11px] text-muted-foreground">{b.accountNumber ?? '—'}</p>
+                      <p className="font-semibold">{b.bankName}</p>
+                      <p className="font-mono text-[11px] text-muted-foreground">{b.accountNumber}</p>
                     </div>
                   </div>
-                  <Badge variant={b.isActive ? 'default' : 'secondary'}>{b.isActive ? (isAr ? 'نشط' : 'Active') : (isAr ? 'متوقف' : 'Inactive')}</Badge>
+                  <Badge variant={b.isActive ? 'default' : 'secondary'}>
+                    {b.isActive ? (isAr ? 'نشط' : 'Active') : (isAr ? 'متوقف' : 'Inactive')}
+                  </Badge>
                 </div>
                 <div className="flex items-end justify-between">
                   <div>
-                    <p className="text-xs text-muted-foreground">{isAr ? 'الرصيد الحالي' : 'Current balance'}</p>
-                    <p className="text-xl font-bold tabular-nums">{formatMoney(Number(b.balance), b.currency as 'IQD', locale as 'ar')}</p>
+                    <p className="text-xs text-muted-foreground">{isAr ? 'الرمز' : 'Code'}</p>
+                    <p className="font-mono text-sm">{b.code}</p>
+                    {b.iban && <p className="mt-1 font-mono text-[10px] text-muted-foreground">IBAN: {b.iban}</p>}
                   </div>
                   <Badge variant="outline">{b.currency}</Badge>
                 </div>

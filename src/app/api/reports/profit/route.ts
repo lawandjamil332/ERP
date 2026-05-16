@@ -19,8 +19,7 @@ export async function GET() {
     where: {
       invoice: { tenantId: session.tenantId, status: { in: ['POSTED', 'PARTIALLY_PAID', 'PAID'] }, date: { gte: since365 } },
     },
-    select: {
-      qty: true, unitPrice: true,
+    include: {
       product: { select: { cost: true } },
       invoice: { select: { date: true, contactId: true, contact: { select: { nameAr: true, nameEn: true } } } },
     },
@@ -36,7 +35,7 @@ export async function GET() {
   const now = Date.now();
 
   for (const l of lines) {
-    const qty = new BigNumber(l.qty.toString());
+    const qty = new BigNumber(l.quantity.toString());
     const rev = qty.times(l.unitPrice.toString());
     const cogs = qty.times((l.product?.cost ?? 0).toString());
     const date = l.invoice.date;
