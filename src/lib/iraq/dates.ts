@@ -32,6 +32,25 @@ export function gregorianToHijri(g: Date): { year: number; month: number; day: n
   return { year, month, day };
 }
 
+/**
+ * Hijri → Gregorian (Kuwaiti algorithm inverse).
+ * Returns a Date at UTC midnight.
+ */
+export function hijriToGregorian(h: { year: number; month: number; day: number }): Date {
+  const jd = Math.floor((11 * h.year + 3) / 30)
+           + Math.floor(354 * h.year)
+           + Math.floor(30 * h.month)
+           - Math.floor((h.month - 1) / 2)
+           + h.day + 1948440 - 385;
+  const ms = (jd - 2440587.5) * 86400000;
+  const d = new Date(ms);
+  return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+}
+
+/** Backward-compatible aliases. */
+export const fromGregorian = gregorianToHijri;
+export const toGregorian = hijriToGregorian;
+
 export function formatHijri(g: Date, locale: 'ar' | 'en' = 'ar'): string {
   const { year, month, day } = gregorianToHijri(g);
   const monthName = locale === 'ar' ? HIJRI_MONTHS_AR[month - 1] : `M${month}`;
