@@ -186,7 +186,7 @@ export default function NewInstallmentPlanPage() {
           </CardHeader>
           <CardContent>
             <dl className="space-y-2 text-sm">
-              <Row label={isAr ? 'المبلغ المُموّل' : 'Financed amount'} value={`${preview.financed.toLocaleString(isAr ? 'ar-IQ' : 'en')} ${form.currency}`} />
+              <Row label={isAr ? 'المبلغ المُموَّل' : 'Financed amount'} value={`${preview.financed.toLocaleString(isAr ? 'ar-IQ' : 'en')} ${form.currency}`} />
               <Row label={isAr ? 'الفائدة الكلية' : 'Total interest'} value={`${preview.interest.toLocaleString(isAr ? 'ar-IQ' : 'en')} ${form.currency}`} />
               <Row label={isAr ? 'إجمالي السداد' : 'Total repayable'} value={`${preview.repayable.toLocaleString(isAr ? 'ar-IQ' : 'en')} ${form.currency}`} />
               <div className="rounded-md bg-primary/10 p-3">
