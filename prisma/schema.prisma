@@ -85,6 +85,10 @@ model Tenant {
   quoteRequests       QuoteRequest[]
   purchaseReturns     PurchaseReturn[]
   stockCounts         StockCount[]
+  brands              Brand[]
+  productCategories   ProductCategory[]
+  printableTemplates  PrintableTemplate[]
+  uiSettings          Json?
 }
 
 /// Recurring invoices — subscriptions, monthly rent, retainers.
@@ -816,19 +820,101 @@ enum BusinessSector {
 }
 
 model Branch {
-  id           String @id @default(cuid())
-  tenantId     String
-  tenant       Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  nameAr       String
-  nameEn       String
-  code         String
-  governorate  String?
-  address      String?
-  phone        String?
-  warehouses   Warehouse[]
-  posTerminals PosTerminal[]
+  id            String @id @default(cuid())
+  tenantId      String
+  tenant        Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  nameAr        String
+  nameEn        String
+  code          String
+  email         String?
+  phone         String?
+  altPhone      String?
+  taxNumber     String?
+  commercialReg String?
+  governorate   String?
+  address       String?
+  city          String?
+  state         String?
+  postalCode    String?
+  country       String?
+  status        BranchStatus @default(ACTIVE)
+  description   String?
+  notes         String?
+  /// Users assigned to this branch — JSON array of userIds.
+  userIds       Json?
+  createdAt     DateTime @default(now())
+  warehouses    Warehouse[]
+  posTerminals  PosTerminal[]
 
   @@unique([tenantId, code])
+}
+
+enum BranchStatus {
+  ACTIVE
+  INACTIVE
+  CLOSED
+}
+
+/// Product brands (separate from category) — manage Samsung, Apple, etc.
+model Brand {
+  id        String   @id @default(cuid())
+  tenantId  String
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  nameAr    String
+  nameEn    String
+  slug      String
+  logoUrl   String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@unique([tenantId, slug])
+  @@index([tenantId, isActive])
+}
+
+/// Product categories — hierarchical via parent.
+model ProductCategory {
+  id         String   @id @default(cuid())
+  tenantId   String
+  tenant     Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  parentId   String?
+  parent     ProductCategory? @relation("ProductCategoryTree", fields: [parentId], references: [id])
+  children   ProductCategory[] @relation("ProductCategoryTree")
+  nameAr     String
+  nameEn     String
+  slug       String
+  sortOrder  Int      @default(0)
+  isActive   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+
+  @@unique([tenantId, slug])
+  @@index([tenantId, parentId])
+}
+
+/// Customizable invoice / receipt print templates — DAN-style layout editor.
+model PrintableTemplate {
+  id           String   @id @default(cuid())
+  tenantId     String
+  tenant       Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  kind         PrintableTemplateKind
+  name         String
+  isDefault    Boolean  @default(false)
+  isActive     Boolean  @default(true)
+  paperSize    String   @default("A4")
+  /// JSON: { sections: {...toggles}, styles: {...colors+fonts}, text: {...labels} }
+  layout       Json
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([tenantId, kind])
+}
+
+enum PrintableTemplateKind {
+  SALES_INVOICE
+  PURCHASE_INVOICE
+  QUOTATION
+  PAYMENT_RECEIPT
+  EXPENSE_VOUCHER
+  DELIVERY_NOTE
 }
 
 model User {
@@ -979,17 +1065,27 @@ model Contact {
   tenant        Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   deletedAt     DateTime?
   kind          ContactKind @default(CUSTOMER)
+  customerType  CustomerType @default(INDIVIDUAL)
+  /// Display code: CUS-26056-85317 / SUP-26056-12345
+  reference     String?
   nameAr        String
   nameEn        String?
+  company       String?
   taxNumber     String?
   commercialReg String?
   phone         String?
+  altPhone      String?
   email         String?
   addressAr     String?
   addressEn     String?
+  city          String?
+  state         String?
+  postalCode    String?
+  country       String?
   governorate   String?
   currency      String      @default("IQD")
   creditLimit   Decimal     @default(0) @db.Decimal(20, 4)
+  openingBalance Decimal    @default(0) @db.Decimal(20, 4)
   notes         String?
   isActive      Boolean     @default(true)
   /// User-defined custom fields (JSON blob: { "field_name": "value", ... })
@@ -1012,6 +1108,11 @@ enum ContactKind {
   CUSTOMER
   SUPPLIER
   BOTH
+}
+
+enum CustomerType {
+  INDIVIDUAL
+  COMPANY
 }
 
 model Warehouse {
@@ -1046,6 +1147,8 @@ model Product {
   trademark    String?
   unitOfMeasure String  @default("PCS")
   category     String?
+  categoryId   String?
+  brandId      String?
   salePrice    Decimal  @default(0) @db.Decimal(20, 4)
   cost         Decimal  @default(0) @db.Decimal(20, 4)
   taxRateId    String?
