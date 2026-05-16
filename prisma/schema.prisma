@@ -24,6 +24,8 @@ model Tenant {
   baseCurrency    String   @default("IQD")
   fiscalYearStart Int      @default(1)
   defaultLocale   String   @default("ar")
+  ramadanMode     Boolean  @default(false)
+  useArabicNumerals Boolean @default(true)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
@@ -71,6 +73,11 @@ model Tenant {
   consolidatedGroups  ConsolidatedGroup[]
   lettersOfCredit     LetterOfCredit[]
   holidays            PublicHoliday[]
+  bankGuarantees      BankGuarantee[]
+  cbiAuctions         CbiAuction[]
+  amlReports          AmlReport[]
+  beneficialOwners    BeneficialOwner[]
+  pscContracts        PscContract[]
 }
 
 /// Recurring invoices — subscriptions, monthly rent, retainers.
@@ -199,6 +206,9 @@ model StockLot {
   unitCost    Decimal  @default(0) @db.Decimal(20, 4)
   manufactureDate DateTime?
   expiryDate  DateTime?
+  /// Kimadia (Iraqi state pharma importer) tracking.
+  kimadiaLicense  String?
+  kimadiaBatchNumber String?
   receivedAt  DateTime @default(now())
 
   @@index([tenantId, productId, expiryDate])
@@ -287,6 +297,9 @@ enum StockMovementKind {
   ADJUSTMENT_OUT
   WRITE_OFF
   OPENING_BALANCE
+  CONSIGNMENT_OUT
+  CONSIGNMENT_RETURN
+  CONSIGNMENT_SOLD
 }
 
 model DepreciationRun {
@@ -450,6 +463,146 @@ enum HolidayScope {
   FEDERAL
   KURDISTAN
   BOTH
+}
+
+/// Bank guarantee (خطاب الضمان) — required for government tenders and PO collateral.
+model BankGuarantee {
+  id            String   @id @default(cuid())
+  tenantId      String
+  tenant        Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  reference     String
+  kind          BgKind   @default(PERFORMANCE)
+  issuingBank   String
+  beneficiary   String
+  amount        Decimal  @db.Decimal(20, 4)
+  currency      String   @default("IQD")
+  issueDate     DateTime
+  expiryDate    DateTime
+  status        BgStatus @default(ACTIVE)
+  relatedProjectId String?
+  notes         String?
+  createdAt     DateTime @default(now())
+
+  @@unique([tenantId, reference])
+  @@index([tenantId, status])
+}
+
+enum BgKind {
+  BID
+  PERFORMANCE
+  ADVANCE_PAYMENT
+  RETENTION
+  CUSTOMS
+  OTHER
+}
+
+enum BgStatus {
+  ACTIVE
+  RELEASED
+  CALLED
+  EXPIRED
+}
+
+/// CBI USD foreign-currency auction tracker (Iraqi importers bid weekly through the Central Bank window).
+model CbiAuction {
+  id              String   @id @default(cuid())
+  tenantId        String
+  tenant          Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  auctionDate     DateTime
+  bidAmount       Decimal  @db.Decimal(20, 4)
+  allocatedAmount Decimal  @default(0) @db.Decimal(20, 4)
+  rate            Decimal  @db.Decimal(20, 8)
+  bidBank         String
+  purpose         String
+  status          CbiAuctionStatus @default(SUBMITTED)
+  notes           String?
+  createdAt       DateTime @default(now())
+
+  @@index([tenantId, auctionDate])
+}
+
+enum CbiAuctionStatus {
+  SUBMITTED
+  PARTIALLY_FILLED
+  FILLED
+  REJECTED
+}
+
+/// Anti-money-laundering threshold report (Iraqi FIU mandates report for cash transactions over IQD 15M).
+model AmlReport {
+  id            String   @id @default(cuid())
+  tenantId      String
+  tenant        Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  triggerEntity String   // "Payment", "Invoice", "Bill"
+  triggerId     String
+  contactName   String?
+  amount        Decimal  @db.Decimal(20, 4)
+  currency      String   @default("IQD")
+  reason        String
+  reportedAt    DateTime?
+  reportReference String?
+  createdAt     DateTime @default(now())
+
+  @@index([tenantId, reportedAt])
+}
+
+/// Beneficial owner registry — mandatory since 2024 for all Iraqi companies.
+model BeneficialOwner {
+  id              String   @id @default(cuid())
+  tenantId        String
+  tenant          Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  fullName        String
+  nationalId      String?
+  nationality     String   @default("IQ")
+  dateOfBirth     DateTime?
+  ownershipPct    Decimal  @db.Decimal(8, 4)
+  controlMechanism String?
+  isPep           Boolean  @default(false)
+  effectiveFrom   DateTime
+  effectiveTo     DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([tenantId])
+}
+
+/// Production-sharing contract (PSC) — oil & gas sector contracts.
+model PscContract {
+  id              String   @id @default(cuid())
+  tenantId        String
+  tenant          Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  contractNumber  String
+  fieldName       String
+  signedDate      DateTime
+  expiryDate      DateTime?
+  /// Cost-recovery cap as a fraction of revenue (e.g. 0.50 = 50%).
+  costRecoveryCap Decimal  @default(0.50) @db.Decimal(8, 4)
+  /// Profit-oil split for the contractor (the rest goes to the government).
+  contractorProfitShare Decimal @default(0.20) @db.Decimal(8, 4)
+  /// Royalty rate paid first.
+  royaltyRate     Decimal  @default(0.10) @db.Decimal(8, 4)
+  notes           String?
+  createdAt       DateTime @default(now())
+  periods         PscPeriod[]
+
+  @@unique([tenantId, contractNumber])
+}
+
+model PscPeriod {
+  id              String   @id @default(cuid())
+  contractId      String
+  contract        PscContract @relation(fields: [contractId], references: [id], onDelete: Cascade)
+  period          String   // YYYY-MM or YYYY-Qx
+  grossRevenue    Decimal  @db.Decimal(20, 4)
+  recoverableCosts Decimal @db.Decimal(20, 4)
+  royaltyPaid     Decimal  @db.Decimal(20, 4)
+  costRecovered   Decimal  @db.Decimal(20, 4)
+  profitOil       Decimal  @db.Decimal(20, 4)
+  contractorShare Decimal  @db.Decimal(20, 4)
+  governmentShare Decimal  @db.Decimal(20, 4)
+  createdAt       DateTime @default(now())
+
+  @@unique([contractId, period])
 }
 
 model HotelFolio {
@@ -832,6 +985,11 @@ model Contact {
   creditLimit   Decimal     @default(0) @db.Decimal(20, 4)
   notes         String?
   isActive      Boolean     @default(true)
+  /// Iraqi B2B trust networks — who referred this contact ("wasta").
+  referredByName String?
+  referredByContactId String?
+  referredBy    Contact?    @relation("ContactReferrals", fields: [referredByContactId], references: [id])
+  referrals     Contact[]   @relation("ContactReferrals")
   createdAt     DateTime    @default(now())
   invoices       Invoice[]
   purchaseOrders PurchaseOrder[]
@@ -883,6 +1041,8 @@ model Product {
   cost         Decimal  @default(0) @db.Decimal(20, 4)
   taxRateId    String?
   isService    Boolean  @default(false)
+  /// Pharma products that must be tracked via Kimadia (Iraqi state importer).
+  requiresKimadia Boolean @default(false)
   isActive     Boolean  @default(true)
   createdAt    DateTime @default(now())
   stock        Stock[]
@@ -935,6 +1095,9 @@ model Invoice {
   postedJournalId String?
   eInvoiceUuid    String?
   eInvoiceStatus  String?
+  /// Iraqi tax stamp (طوابع مالية) — required on invoices over a governorate-set threshold.
+  taxStampAmount  Decimal       @default(0) @db.Decimal(20, 4)
+  taxStampApplied Boolean       @default(false)
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   lines         InvoiceLine[]
