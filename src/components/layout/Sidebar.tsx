@@ -141,12 +141,12 @@ export function Sidebar({ locale }: { locale: string }) {
   return (
     <aside className="hidden w-64 shrink-0 flex-col border-e bg-card md:flex">
       <div className="flex h-16 items-center gap-3 border-b px-5">
-        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-600 to-emerald-800 text-lg font-bold text-white shadow-sm">
+        <div className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-emerald-500 to-teal-700 text-lg font-bold text-white shadow-elevated">
           ع
         </div>
         <div className="flex-1">
-          <p className="text-sm font-semibold leading-tight">{tApp('shortName')}</p>
-          <p className="text-[11px] uppercase tracking-wider text-muted-foreground">{tApp('version')} 0.5</p>
+          <p className="text-sm font-semibold leading-tight tracking-tight">{tApp('shortName')}</p>
+          <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground">{tApp('version')} 0.6</p>
         </div>
       </div>
 
