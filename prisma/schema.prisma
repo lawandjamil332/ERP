@@ -81,6 +81,10 @@ model Tenant {
   quotations          Quotation[]
   installmentPlans    InstallmentPlan[]
   documentTemplates   DocumentTemplate[]
+  priceLists          PriceList[]
+  quoteRequests       QuoteRequest[]
+  purchaseReturns     PurchaseReturn[]
+  stockCounts         StockCount[]
 }
 
 /// Recurring invoices — subscriptions, monthly rent, retainers.
@@ -988,6 +992,8 @@ model Contact {
   creditLimit   Decimal     @default(0) @db.Decimal(20, 4)
   notes         String?
   isActive      Boolean     @default(true)
+  /// User-defined custom fields (JSON blob: { "field_name": "value", ... })
+  customFields  Json?
   /// Iraqi B2B trust networks — who referred this contact ("wasta").
   referredByName String?
   referredByContactId String?
@@ -1047,10 +1053,13 @@ model Product {
   /// Pharma products that must be tracked via Kimadia (Iraqi state importer).
   requiresKimadia Boolean @default(false)
   isActive     Boolean  @default(true)
+  /// User-defined custom fields (JSON blob).
+  customFields Json?
   createdAt    DateTime @default(now())
   stock        Stock[]
   invoiceLines InvoiceLine[]
   billLines    BillLine[]
+  priceEntries PriceListEntry[]
 
   @@unique([tenantId, sku])
 }
@@ -1553,4 +1562,152 @@ enum TemplateKind {
   PAYSLIP
   PURCHASE_ORDER
   DELIVERY_NOTE
+}
+
+/// Multi-tier price list (retail / wholesale / VIP / promotional).
+model PriceList {
+  id          String   @id @default(cuid())
+  tenantId    String
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  name        String
+  currency    String   @default("IQD")
+  validFrom   DateTime?
+  validTo     DateTime?
+  isActive    Boolean  @default(true)
+  isDefault   Boolean  @default(false)
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  entries     PriceListEntry[]
+
+  @@unique([tenantId, name])
+}
+
+model PriceListEntry {
+  id            String   @id @default(cuid())
+  priceListId   String
+  priceList     PriceList @relation(fields: [priceListId], references: [id], onDelete: Cascade)
+  productId     String
+  product       Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  price         Decimal  @db.Decimal(20, 4)
+  minQuantity   Decimal  @default(1) @db.Decimal(20, 4)
+  discountPct   Decimal  @default(0) @db.Decimal(8, 4)
+
+  @@unique([priceListId, productId, minQuantity])
+}
+
+/// Quote request (RFQ — request for quotation FROM suppliers).
+model QuoteRequest {
+  id            String   @id @default(cuid())
+  tenantId      String
+  tenant        Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  number        String
+  date          DateTime
+  /// Comma-separated supplier IDs invited to bid (we'll keep this denormalised for speed).
+  supplierIds   String
+  deadline      DateTime?
+  notes         String?
+  status        QuoteRequestStatus @default(OPEN)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  lines         QuoteRequestLine[]
+
+  @@unique([tenantId, number])
+  @@index([tenantId, status])
+}
+
+enum QuoteRequestStatus {
+  OPEN
+  CLOSED
+  AWARDED
+  CANCELLED
+}
+
+model QuoteRequestLine {
+  id            String   @id @default(cuid())
+  quoteRequestId String
+  quoteRequest  QuoteRequest @relation(fields: [quoteRequestId], references: [id], onDelete: Cascade)
+  productId     String?
+  description   String
+  quantity      Decimal  @db.Decimal(20, 4)
+  unitOfMeasure String   @default("PCS")
+  targetPrice   Decimal? @db.Decimal(20, 4)
+}
+
+/// Purchase return — return of goods to a supplier.
+model PurchaseReturn {
+  id            String   @id @default(cuid())
+  tenantId      String
+  tenant        Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  number        String
+  date          DateTime
+  supplierId    String
+  billId        String?
+  reason        String?
+  total         Decimal  @db.Decimal(20, 4)
+  currency      String   @default("IQD")
+  status        PurchaseReturnStatus @default(DRAFT)
+  postedJournalId String?
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  lines         PurchaseReturnLine[]
+
+  @@unique([tenantId, number])
+  @@index([tenantId, status])
+}
+
+enum PurchaseReturnStatus {
+  DRAFT
+  POSTED
+  CANCELLED
+}
+
+model PurchaseReturnLine {
+  id              String   @id @default(cuid())
+  purchaseReturnId String
+  purchaseReturn  PurchaseReturn @relation(fields: [purchaseReturnId], references: [id], onDelete: Cascade)
+  productId       String?
+  description     String
+  quantity        Decimal  @db.Decimal(20, 4)
+  unitOfMeasure   String   @default("PCS")
+  unitPrice       Decimal  @db.Decimal(20, 4)
+  lineTotal       Decimal  @db.Decimal(20, 4)
+}
+
+/// Physical stock-count session ("الجرد") — periodic inventory reconciliation.
+model StockCount {
+  id            String   @id @default(cuid())
+  tenantId      String
+  tenant        Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  reference     String
+  warehouseId   String
+  countedAt     DateTime
+  status        StockCountStatus @default(DRAFT)
+  notes         String?
+  postedJournalId String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  lines         StockCountLine[]
+
+  @@unique([tenantId, reference])
+  @@index([tenantId, status])
+}
+
+enum StockCountStatus {
+  DRAFT
+  POSTED
+  CANCELLED
+}
+
+model StockCountLine {
+  id            String   @id @default(cuid())
+  stockCountId  String
+  stockCount    StockCount @relation(fields: [stockCountId], references: [id], onDelete: Cascade)
+  productId     String
+  systemQty     Decimal  @db.Decimal(20, 4)
+  countedQty    Decimal  @db.Decimal(20, 4)
+  variance      Decimal  @db.Decimal(20, 4)
+  unitCost      Decimal  @default(0) @db.Decimal(20, 4)
+  notes         String?
 }
