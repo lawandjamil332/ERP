@@ -8,6 +8,7 @@ import {
   ScrollText, BarChart3, Settings, Building2, Store, Briefcase,
   Receipt, CreditCard, Factory, Hotel, ShieldCheck, Repeat,
   CalendarCheck, BanknoteIcon, Boxes, TrendingDown, Upload, Lock,
+  Banknote, Calculator, FileBadge, ShieldQuestion,
   type LucideIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -35,7 +36,8 @@ export function Sidebar({ locale }: { locale: string }) {
     {
       id: 'purchases', label: t('purchases'),
       items: [
-        { href: `/${locale}/dashboard/bills`, label: t('bills'), icon: ShoppingCart },
+        { href: `/${locale}/dashboard/bills`,              label: t('bills'),              icon: ShoppingCart },
+        { href: `/${locale}/dashboard/letters-of-credit`,  label: t('lettersOfCredit'),    icon: Banknote },
       ],
     },
     {
@@ -60,6 +62,7 @@ export function Sidebar({ locale }: { locale: string }) {
         { href: `/${locale}/dashboard/payroll`,         label: t('payroll'),         icon: ScrollText },
         { href: `/${locale}/dashboard/salary-advances`, label: t('salaryAdvances'),  icon: BanknoteIcon },
         { href: `/${locale}/dashboard/leave`,           label: t('leave'),           icon: CalendarCheck },
+        { href: `/${locale}/dashboard/hr/eosi`,         label: t('eosi'),            icon: Calculator },
       ],
     },
     {
@@ -81,8 +84,9 @@ export function Sidebar({ locale }: { locale: string }) {
     {
       id: 'insights', label: t('reports'),
       items: [
-        { href: `/${locale}/dashboard/reports`,        label: t('reports'), icon: BarChart3 },
-        { href: `/${locale}/dashboard/reports/aging`,  label: t('aging'),   icon: TrendingDown },
+        { href: `/${locale}/dashboard/reports`,        label: t('reports'),    icon: BarChart3 },
+        { href: `/${locale}/dashboard/reports/aging`,  label: t('aging'),      icon: TrendingDown },
+        { href: `/${locale}/dashboard/reports/diwan`,  label: t('diwanAudit'), icon: ShieldQuestion },
       ],
     },
     {

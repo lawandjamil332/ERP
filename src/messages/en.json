@@ -34,7 +34,10 @@
     "yearEndClose": "Year-end close",
     "security": "Security",
     "settings": "Settings",
-    "logout": "Log out"
+    "logout": "Log out",
+    "lettersOfCredit": "Letters of credit",
+    "eosi": "End-of-service",
+    "diwanAudit": "Diwan audit pack"
   },
   "auth": {
     "login": "Sign in",
