@@ -35,10 +35,11 @@ export function Sidebar({ locale }: { locale: string }) {
     {
       id: 'sales', label: t('sales'), icon: ShoppingCart,
       items: [
-        { href: `/${locale}/dashboard/invoices`,    label: t('invoices'),    icon: FileText },
-        { href: `/${locale}/dashboard/quotations`,  label: t('quotations'),  icon: ScrollText },
-        { href: `/${locale}/dashboard/recurring`,   label: t('recurring'),   icon: Repeat },
-        { href: `/${locale}/dashboard/installments`,label: t('installments'),icon: CreditCard },
+        { href: `/${locale}/dashboard/invoices`,            label: t('invoices'),    icon: FileText },
+        { href: `/${locale}/dashboard/invoices/returned`,   label: t('returnedInvoices'), icon: Repeat },
+        { href: `/${locale}/dashboard/quotations`,          label: t('quotations'),  icon: ScrollText },
+        { href: `/${locale}/dashboard/recurring`,           label: t('recurring'),   icon: Repeat },
+        { href: `/${locale}/dashboard/installments`,        label: t('installments'),icon: CreditCard },
       ],
     },
     {
@@ -51,17 +52,24 @@ export function Sidebar({ locale }: { locale: string }) {
     {
       id: 'money', label: t('payments'), icon: CreditCard,
       items: [
-        { href: `/${locale}/dashboard/payments`, label: t('payments'), icon: CreditCard },
-        { href: `/${locale}/dashboard/cheques`,  label: t('cheques'),  icon: Receipt },
-        { href: `/${locale}/dashboard/pos`,      label: t('pos'),      icon: Store },
+        { href: `/${locale}/dashboard/payments`,                  label: t('payments'),         icon: CreditCard },
+        { href: `/${locale}/dashboard/cheques`,                   label: t('cheques'),          icon: Receipt },
+        { href: `/${locale}/dashboard/finance/bank-accounts`,     label: t('bankAccounts'),     icon: Banknote },
+        { href: `/${locale}/dashboard/finance/expense-categories`,label: t('expenseCategories'),icon: ScrollText },
+        { href: `/${locale}/dashboard/finance/income-categories`, label: t('incomeCategories'), icon: ScrollText },
+        { href: `/${locale}/dashboard/pos`,                       label: t('pos'),              icon: Store },
+        { href: `/${locale}/dashboard/pos/devices`,               label: t('posDevices'),       icon: Store },
+        { href: `/${locale}/dashboard/pos/shifts`,                label: t('posShifts'),        icon: CalendarCheck },
       ],
     },
     {
       id: 'inventory', label: t('inventory'), icon: Package,
       items: [
-        { href: `/${locale}/dashboard/products`,  label: t('products'),  icon: Package },
-        { href: `/${locale}/dashboard/inventory`, label: t('inventory'), icon: Package },
-        { href: `/${locale}/dashboard/lots`,      label: t('lots'),      icon: Boxes },
+        { href: `/${locale}/dashboard/products`,     label: t('products'),     icon: Package },
+        { href: `/${locale}/dashboard/inventory`,    label: t('inventory'),    icon: Package },
+        { href: `/${locale}/dashboard/lots`,         label: t('lots'),         icon: Boxes },
+        { href: `/${locale}/dashboard/stock-orders`, label: t('stockOrders'),  icon: Boxes },
+        { href: `/${locale}/dashboard/settings/inventory`, label: t('inventorySettings'), icon: Settings },
       ],
     },
     {
@@ -77,9 +85,15 @@ export function Sidebar({ locale }: { locale: string }) {
     {
       id: 'operations', label: t('manufacturing'), icon: Factory,
       items: [
-        { href: `/${locale}/dashboard/projects`,       label: t('projects'),      icon: Building2 },
-        { href: `/${locale}/dashboard/manufacturing`,  label: t('manufacturing'), icon: Factory },
-        { href: `/${locale}/dashboard/hospitality`,    label: t('hospitality'),   icon: Hotel },
+        { href: `/${locale}/dashboard/projects`,                          label: t('projects'),       icon: Building2 },
+        { href: `/${locale}/dashboard/manufacturing`,                     label: t('manufacturing'),  icon: Factory },
+        { href: `/${locale}/dashboard/manufacturing/bom`,                 label: t('bom'),            icon: Factory },
+        { href: `/${locale}/dashboard/manufacturing/production-plans`,    label: t('productionPlans'),icon: CalendarCheck },
+        { href: `/${locale}/dashboard/manufacturing/orders`,              label: t('mfgOrders'),      icon: Factory },
+        { href: `/${locale}/dashboard/manufacturing/workstations`,        label: t('workstations'),   icon: Factory },
+        { href: `/${locale}/dashboard/manufacturing/indirect-costs`,      label: t('indirectCosts'),  icon: Calculator },
+        { href: `/${locale}/dashboard/manufacturing/settings`,            label: t('mfgSettings'),    icon: Settings },
+        { href: `/${locale}/dashboard/hospitality`,                       label: t('hospitality'),    icon: Hotel },
       ],
     },
     {
@@ -101,11 +115,14 @@ export function Sidebar({ locale }: { locale: string }) {
     {
       id: 'system', label: t('settings'), icon: Settings,
       items: [
-        { href: `/${locale}/dashboard/contacts`, label: t('contacts'), icon: Users },
-        { href: `/${locale}/dashboard/branches`, label: t('branches'), icon: Building2 },
-        { href: `/${locale}/dashboard/brands`,   label: t('brands'),   icon: ShieldCheck },
-        { href: `/${locale}/dashboard/import`,   label: t('import'),   icon: Upload },
-        { href: `/${locale}/dashboard/settings`, label: t('settings'), icon: Settings },
+        { href: `/${locale}/dashboard/contacts`,     label: t('contacts'),  icon: Users },
+        { href: `/${locale}/dashboard/users`,        label: t('users'),     icon: Users },
+        { href: `/${locale}/dashboard/users/roles`,  label: t('roles'),     icon: ShieldCheck },
+        { href: `/${locale}/dashboard/branches`,     label: t('branches'),  icon: Building2 },
+        { href: `/${locale}/dashboard/brands`,       label: t('brands'),    icon: ShieldCheck },
+        { href: `/${locale}/dashboard/templates`,    label: t('templates'), icon: FileBadge },
+        { href: `/${locale}/dashboard/import`,       label: t('import'),    icon: Upload },
+        { href: `/${locale}/dashboard/settings`,     label: t('settings'),  icon: Settings },
       ],
     },
   ];
