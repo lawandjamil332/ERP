@@ -39,7 +39,9 @@
     "eosi": "End-of-service",
     "diwanAudit": "Diwan audit pack",
     "quotations": "Quotations",
-    "installments": "Installment plans"
+    "installments": "Installment plans",
+    "branches": "Branches",
+    "brands": "Brands"
   },
   "auth": {
     "login": "Sign in",
