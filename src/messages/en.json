@@ -37,7 +37,9 @@
     "logout": "Log out",
     "lettersOfCredit": "Letters of credit",
     "eosi": "End-of-service",
-    "diwanAudit": "Diwan audit pack"
+    "diwanAudit": "Diwan audit pack",
+    "quotations": "Quotations",
+    "installments": "Installment plans"
   },
   "auth": {
     "login": "Sign in",

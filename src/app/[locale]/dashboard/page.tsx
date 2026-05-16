@@ -1,13 +1,13 @@
+import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { db } from '@/lib/db';
 import { verifySession } from '@/lib/auth/session';
 import { redirect } from 'next/navigation';
 import { Dates } from '@/lib/iraq';
 import { getTranslations } from 'next-intl/server';
-import { Calendar, AlertCircle, Wallet, Users, FileText, Package, Building2 } from 'lucide-react';
+import { Calendar, AlertCircle, Wallet, Users, FileText, Package, Building2, ShoppingCart, BookOpen, UserPlus, Receipt } from 'lucide-react';
 import { formatMoney } from '@/lib/iraq/money';
 import { DashboardCharts } from '@/components/dashboard/Charts';
-import { PageHeader } from '@/components/ui/page-header';
 import { StatCard } from '@/components/ui/stat-card';
 
 export default async function DashboardHome({
@@ -17,6 +17,8 @@ export default async function DashboardHome({
   const session = await verifySession();
   if (!session) redirect(`/${locale}/auth/login`);
   const t = await getTranslations('dashboard');
+  const tApp = await getTranslations('app');
+  const tNav = await getTranslations('nav');
 
   const tenantId = session.tenantId;
   const tenant = await db.tenant.findUnique({ where: { id: tenantId } });
@@ -25,7 +27,7 @@ export default async function DashboardHome({
   const monthStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
   const todayStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
 
-  const [salesToday, salesMonth, openInvoices, lowStock, employeeCount] = await Promise.all([
+  const [salesToday, salesMonth, openInvoices, lowStock, employeeCount, productCount, activeContacts] = await Promise.all([
     db.invoice.aggregate({
       _sum: { total: true },
       where: { tenantId, date: { gte: todayStart }, status: { in: ['POSTED', 'PARTIALLY_PAID', 'PAID'] } },
@@ -37,6 +39,8 @@ export default async function DashboardHome({
     db.invoice.count({ where: { tenantId, status: { in: ['POSTED', 'PARTIALLY_PAID', 'OVERDUE'] } } }),
     db.stock.count({ where: { product: { tenantId }, quantity: { lt: 10 } } }),
     db.employee.count({ where: { tenantId, isActive: true } }),
+    db.product.count({ where: { tenantId, isActive: true, deletedAt: null } }),
+    db.contact.count({ where: { tenantId, isActive: true, deletedAt: null } }),
   ]);
 
   const region = (tenant?.region ?? 'FEDERAL') as 'FEDERAL' | 'KURDISTAN';
@@ -55,21 +59,103 @@ export default async function DashboardHome({
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
   }).format(now);
 
+  const isAr = locale === 'ar';
+
+  const actions = [
+    {
+      title: isAr ? 'إضافة منتج جديد' : tNav('products') + ' — Add',
+      subtitle: isAr ? 'بدء معاملة بيع جديدة' : 'Start a new sales transaction',
+      href: `/${locale}/dashboard/products`,
+      icon: ShoppingCart,
+      gradient: 'from-indigo-500 via-violet-600 to-purple-700',
+    },
+    {
+      title: isAr ? 'إضافة قيد جديد' : 'New journal entry',
+      subtitle: isAr ? 'تسجيل إدخال محاسبي جديد' : 'Record a new accounting entry',
+      href: `/${locale}/dashboard/accounting`,
+      icon: BookOpen,
+      gradient: 'from-fuchsia-500 via-purple-600 to-indigo-700',
+    },
+    {
+      title: isAr ? 'عميل جديد' : 'New customer',
+      subtitle: isAr ? 'إضافة عميل جديد إلى النظام' : 'Add a customer to your CRM',
+      href: `/${locale}/dashboard/contacts`,
+      icon: UserPlus,
+      gradient: 'from-cyan-500 via-teal-600 to-emerald-700',
+    },
+    {
+      title: isAr ? 'إنشاء فاتورة مبيعات' : 'Create sales invoice',
+      subtitle: isAr ? 'إنشاء فاتورة مبيعات جديدة' : 'Issue a new sales invoice',
+      href: `/${locale}/dashboard/invoices/new`,
+      icon: Receipt,
+      gradient: 'from-emerald-500 via-green-600 to-teal-700',
+    },
+  ];
+
   return (
     <div className="space-y-8">
-      <PageHeader
-        title={t('title')}
-        description={today}
-      />
-
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard tone="primary"     icon={Wallet}   label={t('salesToday')}    value={m(Number(salesToday._sum.total ?? 0))} />
-        <StatCard tone="success"     icon={Wallet}   label={t('salesMonth')}    value={m(Number(salesMonth._sum.total ?? 0))} />
-        <StatCard tone="warning"     icon={FileText} label={t('openInvoices')}  value={openInvoices.toString()} />
-        <StatCard tone="destructive" icon={Package}  label={t('stockAlerts')}   value={lowStock.toString()} />
+      {/* Hero */}
+      <div className="relative overflow-hidden rounded-2xl border bg-gradient-to-br from-emerald-50 via-white to-teal-50 p-6 sm:p-10">
+        <div className="absolute inset-y-0 end-0 w-1/2 bg-[radial-gradient(circle_at_top_right,_rgba(20,83,45,0.08),transparent_60%)]" />
+        <div className="relative text-center">
+          <div className="mx-auto mb-3 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-600 to-emerald-800 text-3xl font-bold text-white shadow-lg">
+            ع
+          </div>
+          <h1 className="text-2xl font-bold tracking-tight sm:text-4xl">{tApp('name')}</h1>
+          <p className="mx-auto mt-2 max-w-2xl text-sm text-muted-foreground sm:text-base">
+            {isAr
+              ? 'منصة شاملة لإدارة جميع جوانب أعمالك من المبيعات والمشتريات إلى الموارد البشرية والمحاسبة'
+              : 'Run every side of your business — sales, purchases, payroll, accounting — in one place.'}
+          </p>
+          <p className="mt-2 text-xs text-muted-foreground">{today}</p>
+        </div>
       </div>
 
-      <DashboardCharts />
+      {/* KPIs */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard tone="primary"     icon={Package}   label={tNav('products')}   value={productCount.toString()} />
+        <StatCard tone="warning"     icon={FileText}  label={t('openInvoices')}  value={openInvoices.toString()} />
+        <StatCard tone="success"     icon={Users}     label={tNav('contacts')}   value={activeContacts.toString()} />
+        <StatCard tone="primary"     icon={Wallet}    label={t('salesMonth')}    value={m(Number(salesMonth._sum.total ?? 0))} />
+      </div>
+
+      {/* Quick actions — colorful gradient cards */}
+      <div>
+        <h2 className="text-xl font-bold">{isAr ? 'الأقسام الأساسية' : 'Core sections'}</h2>
+        <p className="mb-4 text-sm text-muted-foreground">
+          {isAr ? 'الوصول السريع إلى الوحدات الرئيسية' : 'Quick access to your main modules'}
+        </p>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {actions.map((a) => (
+            <Link
+              key={a.href}
+              href={a.href}
+              className={`group relative overflow-hidden rounded-2xl bg-gradient-to-br ${a.gradient} p-5 text-white shadow-md transition-all hover:-translate-y-0.5 hover:shadow-xl`}
+            >
+              <div className="absolute -end-6 -top-6 h-24 w-24 rounded-full bg-white/10 transition-transform group-hover:scale-110" />
+              <div className="absolute -bottom-8 -start-8 h-32 w-32 rounded-full bg-white/5" />
+              <div className="relative">
+                <div className="mb-6 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/20 backdrop-blur">
+                  <a.icon className="h-5 w-5" />
+                </div>
+                <h3 className="text-base font-bold leading-tight">{a.title}</h3>
+                <p className="mt-1 text-xs text-white/85">{a.subtitle}</p>
+                <p className="mt-4 inline-flex items-center gap-1 text-xs font-medium text-white/90 transition-opacity group-hover:text-white">
+                  {isAr ? 'انقر للدخول →' : 'Open →'}
+                </p>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <h2 className="text-xl font-bold">{isAr ? 'الرسوم البيانية للمبيعات' : 'Sales charts'}</h2>
+        <p className="mb-4 text-sm text-muted-foreground">
+          {t('salesTrendCaption')}
+        </p>
+        <DashboardCharts />
+      </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
@@ -105,7 +191,7 @@ export default async function DashboardHome({
             </CardHeader>
             <CardContent>
               <div className="text-4xl font-bold tabular-nums">{employeeCount}</div>
-              <p className="mt-1 text-xs text-muted-foreground">Active employees</p>
+              <p className="mt-1 text-xs text-muted-foreground">{isAr ? 'موظف نشط' : 'Active employees'}</p>
             </CardContent>
           </Card>
 

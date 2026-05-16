@@ -29,8 +29,10 @@ export function Sidebar({ locale }: { locale: string }) {
     {
       id: 'sales', label: t('sales'),
       items: [
-        { href: `/${locale}/dashboard/invoices`,  label: t('invoices'),  icon: FileText },
-        { href: `/${locale}/dashboard/recurring`, label: t('recurring'), icon: Repeat },
+        { href: `/${locale}/dashboard/invoices`,    label: t('invoices'),    icon: FileText },
+        { href: `/${locale}/dashboard/quotations`,  label: t('quotations'),  icon: ScrollText },
+        { href: `/${locale}/dashboard/recurring`,   label: t('recurring'),   icon: Repeat },
+        { href: `/${locale}/dashboard/installments`,label: t('installments'),icon: CreditCard },
       ],
     },
     {
