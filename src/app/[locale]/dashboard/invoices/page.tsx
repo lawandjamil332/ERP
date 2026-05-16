@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Table, THead, TBody, TR, TH, TD } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Plus } from 'lucide-react';
+import { Plus, FileText, CheckCircle2, Clock, AlertCircle } from 'lucide-react';
 import { db } from '@/lib/db';
 import { verifySession } from '@/lib/auth/session';
 import { redirect } from 'next/navigation';
@@ -28,11 +28,12 @@ export default async function InvoicesPage({
   const session = await verifySession();
   if (!session) redirect(`/${locale}/auth/login`);
   const t = await getTranslations('invoice');
+  const isAr = locale === 'ar';
 
   const { cursor, q, take } = readPagination(sp);
+  const baseWhere = { tenantId: session.tenantId, deletedAt: null };
   const where = {
-    tenantId: session.tenantId,
-    deletedAt: null,
+    ...baseWhere,
     ...(q ? {
       OR: [
         { number: { contains: q, mode: 'insensitive' as const } },
@@ -42,13 +43,16 @@ export default async function InvoicesPage({
     } : {}),
   };
 
-  const rows = await db.invoice.findMany({
-    where,
-    include: { contact: true },
-    orderBy: { date: 'desc' },
-    take: take + 1,
-    ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
-  });
+  const [rows, totalCount, paidCount, pendingCount, unpaidCount] = await Promise.all([
+    db.invoice.findMany({
+      where, include: { contact: true }, orderBy: { date: 'desc' },
+      take: take + 1, ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
+    }),
+    db.invoice.count({ where: baseWhere }),
+    db.invoice.count({ where: { ...baseWhere, status: 'PAID' } }),
+    db.invoice.count({ where: { ...baseWhere, status: { in: ['DRAFT', 'POSTED', 'PARTIALLY_PAID'] } } }),
+    db.invoice.count({ where: { ...baseWhere, status: 'OVERDUE' } }),
+  ]);
   const page = paginate(rows, take);
 
   return (
@@ -61,6 +65,13 @@ export default async function InvoicesPage({
             {t('new')}
           </Link>
         </Button>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <Kpi label={isAr ? 'إجمالي الفواتير' : 'Total invoices'} value={totalCount} Icon={FileText} tone="sky" />
+        <Kpi label={isAr ? 'مدفوعة' : 'Paid invoices'} value={paidCount} Icon={CheckCircle2} tone="emerald" />
+        <Kpi label={isAr ? 'قيد التحصيل' : 'Pending invoices'} value={pendingCount} Icon={Clock} tone="amber" />
+        <Kpi label={isAr ? 'متأخرة / غير مدفوعة' : 'Unpaid invoices'} value={unpaidCount} Icon={AlertCircle} tone="rose" />
       </div>
 
       <ListToolbar
@@ -111,5 +122,27 @@ export default async function InvoicesPage({
         </Table>
       </Card>
     </div>
+  );
+}
+
+function Kpi({ label, value, Icon, tone }: { label: string; value: number; Icon: React.ComponentType<{ className?: string }>; tone: 'sky' | 'emerald' | 'amber' | 'rose' }) {
+  const cls = {
+    sky: 'bg-sky-50 text-sky-700 dark:bg-sky-950/30 dark:text-sky-400',
+    emerald: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400',
+    amber: 'bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400',
+    rose: 'bg-rose-50 text-rose-700 dark:bg-rose-950/30 dark:text-rose-400',
+  }[tone];
+  return (
+    <Card>
+      <div className="flex items-center justify-between p-4">
+        <div>
+          <p className="text-xs font-medium text-muted-foreground">{label}</p>
+          <p className="mt-1 text-2xl font-bold tabular-nums">{value.toLocaleString()}</p>
+        </div>
+        <div className={`grid h-10 w-10 place-items-center rounded-lg ${cls}`}>
+          <Icon className="h-5 w-5" />
+        </div>
+      </div>
+    </Card>
   );
 }
