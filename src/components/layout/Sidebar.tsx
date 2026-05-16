@@ -102,6 +102,8 @@ export function Sidebar({ locale }: { locale: string }) {
       id: 'system', label: t('settings'), icon: Settings,
       items: [
         { href: `/${locale}/dashboard/contacts`, label: t('contacts'), icon: Users },
+        { href: `/${locale}/dashboard/branches`, label: t('branches'), icon: Building2 },
+        { href: `/${locale}/dashboard/brands`,   label: t('brands'),   icon: ShieldCheck },
         { href: `/${locale}/dashboard/import`,   label: t('import'),   icon: Upload },
         { href: `/${locale}/dashboard/settings`, label: t('settings'), icon: Settings },
       ],
