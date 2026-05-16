@@ -1,15 +1,20 @@
 import Link from 'next/link';
 import { db } from '@/lib/db';
 import { requireSession } from '@/lib/auth/session';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, THead, TBody, TR, TH, TD } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Play } from 'lucide-react';
+import { Plus } from 'lucide-react';
+import { getTranslations } from 'next-intl/server';
+import { RunNowButton } from './RunNowButton';
 
 export default async function RecurringInvoicesPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const session = await requireSession();
+  const t = await getTranslations('recurring');
+  const tc = await getTranslations('common');
+
   const templates = await db.recurringInvoiceTemplate.findMany({
     where: { tenantId: session.tenantId, isActive: true },
     include: { lines: true },
@@ -23,17 +28,16 @@ export default async function RecurringInvoicesPage({ params }: { params: Promis
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold">Recurring invoices / فواتير متكررة</h1>
-          <p className="text-sm text-muted-foreground">Subscriptions, monthly rent, retainers — auto-generated on schedule.</p>
+          <h1 className="text-2xl font-bold">{t('title')}</h1>
         </div>
         <div className="flex gap-2">
-          <form action="/api/recurring-invoices/run" method="POST">
-            <Button type="submit" variant="outline"><Play className="h-4 w-4" /> Run now</Button>
-          </form>
+          <RunNowButton />
           <Button asChild>
-            <Link href={`/${locale}/dashboard/recurring/new`}><Plus className="h-4 w-4" /> New template</Link>
+            <Link href={`/${locale}/dashboard/recurring/new`}>
+              <Plus className="h-4 w-4" /> {t('new')}
+            </Link>
           </Button>
         </div>
       </div>
@@ -42,24 +46,30 @@ export default async function RecurringInvoicesPage({ params }: { params: Promis
         <Table>
           <THead>
             <TR>
-              <TH>Name</TH><TH>Customer</TH><TH>Cadence</TH>
-              <TH>Next issue</TH><TH>Last issued</TH><TH>Auto-post</TH>
+              <TH>{tc('name')}</TH>
+              <TH>{t('cadence')}</TH>
+              <TH>{t('nextIssue')}</TH>
+              <TH>{t('startDate')}</TH>
+              <TH>{t('autoPost')}</TH>
             </TR>
           </THead>
           <TBody>
             {templates.length === 0 && (
-              <TR><TD colSpan={6} className="py-12 text-center text-muted-foreground">No recurring templates yet</TD></TR>
+              <TR><TD colSpan={5} className="py-12 text-center text-muted-foreground">{tc('noData')}</TD></TR>
             )}
-            {templates.map((t) => {
-              const c = cmap.get(t.contactId);
+            {templates.map((tpl) => {
+              const c = cmap.get(tpl.contactId);
+              const cadenceLabel = t(`frequencies.${tpl.cadence}` as any);
               return (
-                <TR key={t.id}>
-                  <TD className="font-medium">{t.name}</TD>
-                  <TD>{locale === 'ar' ? c?.nameAr : (c?.nameEn ?? c?.nameAr)}</TD>
-                  <TD><Badge variant="outline">{t.cadence}{t.cadenceDay ? ` · day ${t.cadenceDay}` : ''}</Badge></TD>
-                  <TD className="tabular-nums">{new Intl.DateTimeFormat(locale).format(t.nextIssueAt)}</TD>
-                  <TD className="tabular-nums">{t.lastIssuedAt ? new Intl.DateTimeFormat(locale).format(t.lastIssuedAt) : '—'}</TD>
-                  <TD>{t.autoPost ? <Badge variant="success">Yes</Badge> : <Badge variant="outline">No</Badge>}</TD>
+                <TR key={tpl.id}>
+                  <TD className="font-medium">
+                    {tpl.name}
+                    {c && <div className="text-xs text-muted-foreground">{locale === 'ar' ? c.nameAr : (c.nameEn ?? c.nameAr)}</div>}
+                  </TD>
+                  <TD><Badge variant="outline">{cadenceLabel}{tpl.cadenceDay ? ` · ${tpl.cadenceDay}` : ''}</Badge></TD>
+                  <TD className="tabular-nums">{new Intl.DateTimeFormat(locale).format(tpl.nextIssueAt)}</TD>
+                  <TD className="tabular-nums">{new Intl.DateTimeFormat(locale).format(tpl.startDate)}</TD>
+                  <TD>{tpl.autoPost ? <Badge variant="success">{tc('yes')}</Badge> : <Badge variant="outline">{tc('no')}</Badge>}</TD>
                 </TR>
               );
             })}
