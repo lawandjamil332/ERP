@@ -21,13 +21,13 @@ export function StatCard({
   const tones: Record<typeof tone, string> = {
     default: 'bg-muted text-muted-foreground',
     primary: 'bg-primary/10 text-primary',
-    success: 'bg-emerald-100 text-emerald-700',
-    warning: 'bg-amber-100 text-amber-700',
+    success: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400',
+    warning: 'bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400',
     destructive: 'bg-destructive/10 text-destructive',
   };
 
   return (
-    <div className={cn('group relative overflow-hidden rounded-xl border bg-card p-5 shadow-sm transition-all hover:shadow-md', className)}>
+    <div className={cn('group relative overflow-hidden rounded-xl border bg-card p-5 shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-elevated', className)}>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</p>

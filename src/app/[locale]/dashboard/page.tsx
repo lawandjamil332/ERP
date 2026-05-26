@@ -1,11 +1,12 @@
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { db } from '@/lib/db';
 import { verifySession } from '@/lib/auth/session';
 import { redirect } from 'next/navigation';
 import { Dates } from '@/lib/iraq';
 import { getTranslations } from 'next-intl/server';
-import { Calendar, AlertCircle, Wallet, Users, FileText, Package, Building2, ShoppingCart, BookOpen, UserPlus, Receipt } from 'lucide-react';
+import { Calendar, AlertCircle, Wallet, Users, FileText, Package, Building2, ShoppingCart, BookOpen, UserPlus, Receipt, Plus, ArrowUpRight } from 'lucide-react';
 import { formatMoney } from '@/lib/iraq/money';
 import { DashboardCharts } from '@/components/dashboard/Charts';
 import { StatCard } from '@/components/ui/stat-card';
@@ -60,6 +61,11 @@ export default async function DashboardHome({
   }).format(now);
 
   const isAr = locale === 'ar';
+  const hour = now.getUTCHours() + 3; // Iraq UTC+3
+  const greeting = isAr
+    ? (hour < 12 ? 'صباح الخير' : hour < 18 ? 'مساء الخير' : 'مساء الخير')
+    : (hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening');
+  const companyName = isAr ? tenant?.nameAr : (tenant?.nameEn ?? tenant?.nameAr);
 
   const actions = [
     {
@@ -94,29 +100,33 @@ export default async function DashboardHome({
 
   return (
     <div className="space-y-8">
-      {/* Hero */}
-      <div className="relative overflow-hidden rounded-2xl border bg-gradient-to-br from-emerald-50 via-white to-teal-50 p-6 sm:p-10">
-        <div className="absolute inset-y-0 end-0 w-1/2 bg-[radial-gradient(circle_at_top_right,_rgba(20,83,45,0.08),transparent_60%)]" />
-        <div className="relative text-center">
-          <div className="mx-auto mb-3 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-600 to-emerald-800 text-3xl font-bold text-white shadow-lg">
-            ع
-          </div>
-          <h1 className="text-2xl font-bold tracking-tight sm:text-4xl">{tApp('name')}</h1>
-          <p className="mx-auto mt-2 max-w-2xl text-sm text-muted-foreground sm:text-base">
-            {isAr
-              ? 'منصة شاملة لإدارة جميع جوانب أعمالك من المبيعات والمشتريات إلى الموارد البشرية والمحاسبة'
-              : 'Run every side of your business — sales, purchases, payroll, accounting — in one place.'}
+      {/* Command-center header */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="text-sm font-medium text-muted-foreground">{today}</p>
+          <h1 className="mt-1 text-2xl font-bold tracking-tight sm:text-3xl">
+            {greeting}{companyName ? <span className="text-muted-foreground font-normal">{isAr ? ' — ' : ', '}{companyName}</span> : ''}
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {isAr ? `مبيعات اليوم: ${m(Number(salesToday._sum.total ?? 0))}` : `Today's sales: ${m(Number(salesToday._sum.total ?? 0))}`}
           </p>
-          <p className="mt-2 text-xs text-muted-foreground">{today}</p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Button asChild variant="outline">
+            <Link href={`/${locale}/dashboard/contacts`}><UserPlus className="h-4 w-4" /> {isAr ? 'عميل جديد' : 'New customer'}</Link>
+          </Button>
+          <Button asChild>
+            <Link href={`/${locale}/dashboard/invoices/new`}><Plus className="h-4 w-4" /> {isAr ? 'فاتورة جديدة' : 'New invoice'}</Link>
+          </Button>
         </div>
       </div>
 
       {/* KPIs */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard tone="primary"     icon={Package}   label={tNav('products')}   value={productCount.toString()} />
+        <StatCard tone="primary"     icon={Wallet}    label={t('salesMonth')}    value={m(Number(salesMonth._sum.total ?? 0))} />
         <StatCard tone="warning"     icon={FileText}  label={t('openInvoices')}  value={openInvoices.toString()} />
         <StatCard tone="success"     icon={Users}     label={tNav('contacts')}   value={activeContacts.toString()} />
-        <StatCard tone="primary"     icon={Wallet}    label={t('salesMonth')}    value={m(Number(salesMonth._sum.total ?? 0))} />
+        <StatCard tone="primary"     icon={Package}   label={tNav('products')}   value={productCount.toString()} />
       </div>
 
       {/* Quick actions — colorful gradient cards */}
@@ -217,7 +227,7 @@ export default async function DashboardHome({
 function Deadline({ label, date }: { label: string; date: string }) {
   return (
     <div className="flex items-start gap-3 rounded-lg border bg-background p-3 transition-colors hover:bg-accent/50">
-      <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-amber-100 text-amber-700">
+      <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-amber-100 text-amber-700 dark:bg-amber-950/40 dark:text-amber-400">
         <AlertCircle className="h-4 w-4" />
       </div>
       <div className="flex-1 min-w-0">
