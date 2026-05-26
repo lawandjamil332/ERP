@@ -10,6 +10,7 @@ import { verifySession } from '@/lib/auth/session';
 import { db } from '@/lib/db';
 import { redirect } from 'next/navigation';
 import { setRequestLocale } from 'next-intl/server';
+import { tri } from '@/lib/i18n/tri';
 
 export default async function DashboardLayout({
   children,
@@ -26,7 +27,6 @@ export default async function DashboardLayout({
   const tenant = await db.tenant.findUnique({ where: { id: session.tenantId } });
   const tenantName =
     locale === 'ar' ? tenant?.nameAr : locale === 'ku' ? (tenant?.nameKu ?? tenant?.nameAr) : tenant?.nameEn;
-  const isAr = locale === 'ar';
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-background">
@@ -54,9 +54,9 @@ export default async function DashboardLayout({
             <div className="flex flex-wrap items-center justify-between gap-2">
               <p>© {new Date().getFullYear()} {tenantName ?? 'Iraq ERP'}</p>
               <nav className="flex items-center gap-3">
-                <Link href={`/${locale}/legal/privacy`} className="hover:text-foreground">{isAr ? 'سياسة الخصوصية' : 'Privacy Policy'}</Link>
+                <Link href={`/${locale}/legal/privacy`} className="hover:text-foreground">{tri(locale, { ar: 'سياسة الخصوصية', ku: 'سیاسەتی پاراستنی نهێنی', en: 'Privacy Policy' })}</Link>
                 <span>|</span>
-                <Link href={`/${locale}/legal/terms`} className="hover:text-foreground">{isAr ? 'الشروط والأحكام' : 'Terms & Conditions'}</Link>
+                <Link href={`/${locale}/legal/terms`} className="hover:text-foreground">{tri(locale, { ar: 'الشروط والأحكام', ku: 'مەرج و ڕێساکان', en: 'Terms & Conditions' })}</Link>
               </nav>
             </div>
           </footer>

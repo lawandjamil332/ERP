@@ -10,6 +10,7 @@ import { Calendar, AlertCircle, Wallet, Users, FileText, Package, Building2, Sho
 import { formatMoney } from '@/lib/iraq/money';
 import { DashboardCharts } from '@/components/dashboard/Charts';
 import { StatCard } from '@/components/ui/stat-card';
+import { tri } from '@/lib/i18n/tri';
 
 export default async function DashboardHome({
   params,
@@ -69,29 +70,29 @@ export default async function DashboardHome({
 
   const actions = [
     {
-      title: isAr ? 'إضافة منتج جديد' : tNav('products') + ' — Add',
-      subtitle: isAr ? 'بدء معاملة بيع جديدة' : 'Start a new sales transaction',
+      title: tri(locale, { ar: 'إضافة منتج جديد', ku: 'زیادکردنی کاڵای نوێ', en: tNav('products') + ' — Add' }),
+      subtitle: tri(locale, { ar: 'بدء معاملة بيع جديدة', ku: 'دەستپێکردنی مامەڵەیەکی فرۆشتنی نوێ', en: 'Start a new sales transaction' }),
       href: `/${locale}/dashboard/products`,
       icon: ShoppingCart,
       gradient: 'from-indigo-500 via-violet-600 to-purple-700',
     },
     {
-      title: isAr ? 'إضافة قيد جديد' : 'New journal entry',
-      subtitle: isAr ? 'تسجيل إدخال محاسبي جديد' : 'Record a new accounting entry',
+      title: tri(locale, { ar: 'إضافة قيد جديد', ku: 'تۆمارکردنی تۆمارێکی نوێ', en: 'New journal entry' }),
+      subtitle: tri(locale, { ar: 'تسجيل إدخال محاسبي جديد', ku: 'تۆمارکردنی تۆمارێکی ژمێریاری نوێ', en: 'Record a new accounting entry' }),
       href: `/${locale}/dashboard/accounting`,
       icon: BookOpen,
       gradient: 'from-fuchsia-500 via-purple-600 to-indigo-700',
     },
     {
-      title: isAr ? 'عميل جديد' : 'New customer',
-      subtitle: isAr ? 'إضافة عميل جديد إلى النظام' : 'Add a customer to your CRM',
+      title: tri(locale, { ar: 'عميل جديد', ku: 'کڕیاری نوێ', en: 'New customer' }),
+      subtitle: tri(locale, { ar: 'إضافة عميل جديد إلى النظام', ku: 'زیادکردنی کڕیارێک بۆ سیستەم', en: 'Add a customer to your CRM' }),
       href: `/${locale}/dashboard/contacts`,
       icon: UserPlus,
       gradient: 'from-cyan-500 via-teal-600 to-emerald-700',
     },
     {
-      title: isAr ? 'إنشاء فاتورة مبيعات' : 'Create sales invoice',
-      subtitle: isAr ? 'إنشاء فاتورة مبيعات جديدة' : 'Issue a new sales invoice',
+      title: tri(locale, { ar: 'إنشاء فاتورة مبيعات', ku: 'دروستکردنی پسوڵەی فرۆشتن', en: 'Create sales invoice' }),
+      subtitle: tri(locale, { ar: 'إنشاء فاتورة مبيعات جديدة', ku: 'دەرکردنی پسوڵەی فرۆشتنی نوێ', en: 'Issue a new sales invoice' }),
       href: `/${locale}/dashboard/invoices/new`,
       icon: Receipt,
       gradient: 'from-emerald-500 via-green-600 to-teal-700',
@@ -105,18 +106,18 @@ export default async function DashboardHome({
         <div>
           <p className="text-sm font-medium text-muted-foreground">{today}</p>
           <h1 className="mt-1 text-2xl font-bold tracking-tight sm:text-3xl">
-            {greeting}{companyName ? <span className="font-normal text-muted-foreground">{isAr ? ' — ' : ', '}{companyName}</span> : ''}
+            {greeting}{companyName ? <span className="font-normal text-muted-foreground">{tri(locale, { ar: ' — ', ku: ' — ', en: ', ' })}{companyName}</span> : ''}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            {isAr ? `مبيعات اليوم: ${m(Number(salesToday._sum.total ?? 0))}` : `Today's sales: ${m(Number(salesToday._sum.total ?? 0))}`}
+            {tri(locale, { ar: `مبيعات اليوم: ${m(Number(salesToday._sum.total ?? 0))}`, ku: `فرۆشتنی ئەمڕۆ: ${m(Number(salesToday._sum.total ?? 0))}`, en: `Today's sales: ${m(Number(salesToday._sum.total ?? 0))}` })}
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Button asChild variant="outline">
-            <Link href={`/${locale}/dashboard/contacts`}><UserPlus className="h-4 w-4" /> {isAr ? 'عميل جديد' : 'New customer'}</Link>
+            <Link href={`/${locale}/dashboard/contacts`}><UserPlus className="h-4 w-4" /> {tri(locale, { ar: 'عميل جديد', ku: 'کڕیاری نوێ', en: 'New customer' })}</Link>
           </Button>
           <Button asChild>
-            <Link href={`/${locale}/dashboard/invoices/new`}><Plus className="h-4 w-4" /> {isAr ? 'فاتورة جديدة' : 'New invoice'}</Link>
+            <Link href={`/${locale}/dashboard/invoices/new`}><Plus className="h-4 w-4" /> {tri(locale, { ar: 'فاتورة جديدة', ku: 'پسوڵەی نوێ', en: 'New invoice' })}</Link>
           </Button>
         </div>
       </div>
@@ -131,9 +132,9 @@ export default async function DashboardHome({
 
       {/* Quick actions — colorful gradient cards */}
       <div>
-        <h2 className="text-xl font-bold">{isAr ? 'الأقسام الأساسية' : 'Core sections'}</h2>
+        <h2 className="text-xl font-bold">{tri(locale, { ar: 'الأقسام الأساسية', ku: 'بەشە سەرەکییەکان', en: 'Core sections' })}</h2>
         <p className="mb-4 text-sm text-muted-foreground">
-          {isAr ? 'الوصول السريع إلى الوحدات الرئيسية' : 'Quick access to your main modules'}
+          {tri(locale, { ar: 'الوصول السريع إلى الوحدات الرئيسية', ku: 'دەستگەیشتنی خێرا بۆ مۆدیولە سەرەکییەکان', en: 'Quick access to your main modules' })}
         </p>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {actions.map((a) => (
@@ -151,7 +152,7 @@ export default async function DashboardHome({
                 <h3 className="text-base font-bold leading-tight">{a.title}</h3>
                 <p className="mt-1 text-xs text-white/85">{a.subtitle}</p>
                 <p className="mt-4 inline-flex items-center gap-1 text-xs font-medium text-white/90 transition-opacity group-hover:text-white">
-                  {isAr ? 'انقر للدخول →' : 'Open →'}
+                  {tri(locale, { ar: 'انقر للدخول →', ku: 'کرتە بکە بۆ کردنەوە →', en: 'Open →' })}
                 </p>
               </div>
             </Link>
@@ -160,7 +161,7 @@ export default async function DashboardHome({
       </div>
 
       <div>
-        <h2 className="text-xl font-bold">{isAr ? 'الرسوم البيانية للمبيعات' : 'Sales charts'}</h2>
+        <h2 className="text-xl font-bold">{tri(locale, { ar: 'الرسوم البيانية للمبيعات', ku: 'هێڵکارییەکانی فرۆشتن', en: 'Sales charts' })}</h2>
         <p className="mb-4 text-sm text-muted-foreground">
           {t('salesTrendCaption')}
         </p>
@@ -201,7 +202,7 @@ export default async function DashboardHome({
             </CardHeader>
             <CardContent>
               <div className="text-4xl font-bold tabular-nums">{employeeCount}</div>
-              <p className="mt-1 text-xs text-muted-foreground">{isAr ? 'موظف نشط' : 'Active employees'}</p>
+              <p className="mt-1 text-xs text-muted-foreground">{tri(locale, { ar: 'موظف نشط', ku: 'کارمەندی چالاک', en: 'Active employees' })}</p>
             </CardContent>
           </Card>
 

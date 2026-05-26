@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, THead, TBody, TR, TH, TD } from '@/components/ui/table';
 import { PageHeader } from '@/components/ui/page-header';
 import { toast } from '@/lib/toast';
+import { tri } from '@/lib/i18n/tri';
 
 interface Contact { id: string; nameAr: string; nameEn: string | null }
 
@@ -60,8 +61,8 @@ export default function NewInstallmentPlanPage() {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    if (!form.contactId) { setError(isAr ? 'العميل مطلوب' : 'Customer required'); return; }
-    if (preview.financed <= 0) { setError(isAr ? 'الدفعة المقدمة أكبر من السعر' : 'Down payment exceeds total'); return; }
+    if (!form.contactId) { setError(tri(locale, { ar: 'العميل مطلوب', ku: 'کڕیار پێویستە', en: 'Customer required' })); return; }
+    if (preview.financed <= 0) { setError(tri(locale, { ar: 'الدفعة المقدمة أكبر من السعر', ku: 'پێشەکی لە نرخی گشتی زیاترە', en: 'Down payment exceeds total' })); return; }
     setBusy(true);
     try {
       const res = await fetch('/api/installments', {
@@ -98,14 +99,14 @@ export default function NewInstallmentPlanPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title={isAr ? 'خطة تقسيط جديدة' : 'New installment plan'} />
+      <PageHeader title={tri(locale, { ar: 'خطة تقسيط جديدة', ku: 'پلانی قیستی نوێ', en: 'New installment plan' })} />
 
       <form onSubmit={submit} className="grid gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
           <Card>
-            <CardHeader><CardTitle>{isAr ? 'البيانات الأساسية' : 'Plan details'}</CardTitle></CardHeader>
+            <CardHeader><CardTitle>{tri(locale, { ar: 'البيانات الأساسية', ku: 'زانیارییە سەرەکییەکان', en: 'Plan details' })}</CardTitle></CardHeader>
             <CardContent className="grid gap-4 sm:grid-cols-2">
-              <Fld label={isAr ? 'العميل' : 'Customer'} req>
+              <Fld label={tri(locale, { ar: 'العميل', ku: 'کڕیار', en: 'Customer' })} req>
                 <Select value={form.contactId} onValueChange={(v) => setForm({ ...form, contactId: v })}>
                   <SelectTrigger><SelectValue placeholder="—" /></SelectTrigger>
                   <SelectContent>
@@ -117,32 +118,32 @@ export default function NewInstallmentPlanPage() {
                   </SelectContent>
                 </Select>
               </Fld>
-              <Fld label={isAr ? 'وصف المنتج' : 'Product summary'} req>
+              <Fld label={tri(locale, { ar: 'وصف المنتج', ku: 'پوختەی کاڵا', en: 'Product summary' })} req>
                 <Input value={form.productSummary} onChange={(e) => setForm({ ...form, productSummary: e.target.value })}
-                  placeholder={isAr ? 'مثال: iPhone 17 Pro Max 256GB' : 'e.g. iPhone 17 Pro Max 256GB'} required />
+                  placeholder={tri(locale, { ar: 'مثال: iPhone 17 Pro Max 256GB', ku: 'نموونە: iPhone 17 Pro Max 256GB', en: 'e.g. iPhone 17 Pro Max 256GB' })} required />
               </Fld>
-              <Fld label={isAr ? 'السعر الإجمالي' : 'Total price'} req>
+              <Fld label={tri(locale, { ar: 'السعر الإجمالي', ku: 'نرخی گشتی', en: 'Total price' })} req>
                 <Input type="number" step="1000" dir="ltr" value={form.totalAmount}
                   onChange={(e) => setForm({ ...form, totalAmount: e.target.value })} required />
               </Fld>
-              <Fld label={isAr ? 'الدفعة المقدمة' : 'Down payment'}>
+              <Fld label={tri(locale, { ar: 'الدفعة المقدمة', ku: 'پێشەکی', en: 'Down payment' })}>
                 <Input type="number" step="1000" dir="ltr" value={form.downPayment}
                   onChange={(e) => setForm({ ...form, downPayment: e.target.value })} />
               </Fld>
-              <Fld label={isAr ? 'عدد الأقساط' : 'Number of installments'} req>
+              <Fld label={tri(locale, { ar: 'عدد الأقساط', ku: 'ژمارەی قیستەکان', en: 'Number of installments' })} req>
                 <Input type="number" min={1} max={60} dir="ltr" value={form.numberOfInstallments}
                   onChange={(e) => setForm({ ...form, numberOfInstallments: e.target.value })} required />
               </Fld>
-              <Fld label={isAr ? 'نسبة الفائدة الكلية' : 'Total interest rate'}>
+              <Fld label={tri(locale, { ar: 'نسبة الفائدة الكلية', ku: 'ڕێژەی سوودی گشتی', en: 'Total interest rate' })}>
                 <Input type="number" step="0.01" min={0} max={1} dir="ltr" value={form.interestRatePct}
                   onChange={(e) => setForm({ ...form, interestRatePct: e.target.value })}
                   placeholder="0.10 = 10%" />
               </Fld>
-              <Fld label={isAr ? 'تاريخ البدء' : 'Start date'} req>
+              <Fld label={tri(locale, { ar: 'تاريخ البدء', ku: 'بەرواری دەستپێک', en: 'Start date' })} req>
                 <Input type="date" dir="ltr" value={form.startDate}
                   onChange={(e) => setForm({ ...form, startDate: e.target.value })} required />
               </Fld>
-              <Fld label={isAr ? 'العملة' : 'Currency'}>
+              <Fld label={tri(locale, { ar: 'العملة', ku: 'دراو', en: 'Currency' })}>
                 <Input dir="ltr" maxLength={3} value={form.currency}
                   onChange={(e) => setForm({ ...form, currency: e.target.value.toUpperCase() })} />
               </Fld>
@@ -151,19 +152,19 @@ export default function NewInstallmentPlanPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>{isAr ? 'الضامن (اختياري)' : 'Guarantor (optional)'}</CardTitle>
+              <CardTitle>{tri(locale, { ar: 'الضامن (اختياري)', ku: 'کەفیل (ئارەزوومەندانە)', en: 'Guarantor (optional)' })}</CardTitle>
               <CardDescription>
-                {isAr ? 'مطلوب لأغلب عمليات التقسيط في السوق العراقي' : 'Required by most Iraqi installment vendors'}
+                {tri(locale, { ar: 'مطلوب لأغلب عمليات التقسيط في السوق العراقي', ku: 'بۆ زۆربەی مامەڵەکانی قیست لە بازاڕی عێراقی پێویستە', en: 'Required by most Iraqi installment vendors' })}
               </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4 sm:grid-cols-3">
-              <Fld label={isAr ? 'الاسم' : 'Name'}>
+              <Fld label={tri(locale, { ar: 'الاسم', ku: 'ناو', en: 'Name' })}>
                 <Input value={form.guarantorName} onChange={(e) => setForm({ ...form, guarantorName: e.target.value })} />
               </Fld>
-              <Fld label={isAr ? 'الهاتف' : 'Phone'}>
+              <Fld label={tri(locale, { ar: 'الهاتف', ku: 'تەلەفۆن', en: 'Phone' })}>
                 <Input dir="ltr" value={form.guarantorPhone} onChange={(e) => setForm({ ...form, guarantorPhone: e.target.value })} />
               </Fld>
-              <Fld label={isAr ? 'رقم البطاقة الموحدة' : 'National ID'}>
+              <Fld label={tri(locale, { ar: 'رقم البطاقة الموحدة', ku: 'ژمارەی کارتی نیشتمانی', en: 'National ID' })}>
                 <Input dir="ltr" value={form.guarantorId} onChange={(e) => setForm({ ...form, guarantorId: e.target.value })} />
               </Fld>
             </CardContent>
@@ -181,21 +182,21 @@ export default function NewInstallmentPlanPage() {
 
         <Card className="h-fit">
           <CardHeader>
-            <CardTitle>{isAr ? 'معاينة الخطة' : 'Plan preview'}</CardTitle>
-            <CardDescription>{isAr ? 'الأرقام تتحدّث تلقائياً' : 'Live calculation'}</CardDescription>
+            <CardTitle>{tri(locale, { ar: 'معاينة الخطة', ku: 'پێشبینینی پلان', en: 'Plan preview' })}</CardTitle>
+            <CardDescription>{tri(locale, { ar: 'الأرقام تتحدّث تلقائياً', ku: 'ژمارەکان بە شێوەی ئۆتۆماتیکی نوێ دەبنەوە', en: 'Live calculation' })}</CardDescription>
           </CardHeader>
           <CardContent>
             <dl className="space-y-2 text-sm">
-              <Row label={isAr ? 'المبلغ المُموَّل' : 'Financed amount'} value={`${preview.financed.toLocaleString(isAr ? 'ar-IQ' : 'en')} ${form.currency}`} />
-              <Row label={isAr ? 'الفائدة الكلية' : 'Total interest'} value={`${preview.interest.toLocaleString(isAr ? 'ar-IQ' : 'en')} ${form.currency}`} />
-              <Row label={isAr ? 'إجمالي السداد' : 'Total repayable'} value={`${preview.repayable.toLocaleString(isAr ? 'ar-IQ' : 'en')} ${form.currency}`} />
+              <Row label={tri(locale, { ar: 'المبلغ المُموّل', ku: 'بڕی دارایی کراو', en: 'Financed amount' })} value={`${preview.financed.toLocaleString(isAr ? 'ar-IQ' : 'en')} ${form.currency}`} />
+              <Row label={tri(locale, { ar: 'الفائدة الكلية', ku: 'سوودی گشتی', en: 'Total interest' })} value={`${preview.interest.toLocaleString(isAr ? 'ar-IQ' : 'en')} ${form.currency}`} />
+              <Row label={tri(locale, { ar: 'إجمالي السداد', ku: 'کۆی گشتی گەڕانەوە', en: 'Total repayable' })} value={`${preview.repayable.toLocaleString(isAr ? 'ar-IQ' : 'en')} ${form.currency}`} />
               <div className="rounded-md bg-primary/10 p-3">
-                <p className="text-xs uppercase tracking-wide text-primary">{isAr ? 'قسط شهري' : 'Monthly installment'}</p>
+                <p className="text-xs uppercase tracking-wide text-primary">{tri(locale, { ar: 'قسط شهري', ku: 'قیستی مانگانە', en: 'Monthly installment' })}</p>
                 <p className="mt-1 text-2xl font-bold tabular-nums text-primary">
                   {preview.perInstallment.toLocaleString(isAr ? 'ar-IQ' : 'en')} {form.currency}
                 </p>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  {isAr ? `لـ ${preview.n} شهر` : `for ${preview.n} months`}
+                  {tri(locale, { ar: `لـ ${preview.n} شهر`, ku: `بۆ ${preview.n} مانگ`, en: `for ${preview.n} months` })}
                 </p>
               </div>
             </dl>

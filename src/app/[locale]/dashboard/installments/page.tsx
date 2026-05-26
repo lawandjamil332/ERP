@@ -11,6 +11,7 @@ import { PageHeader } from '@/components/ui/page-header';
 import { EmptyState } from '@/components/ui/empty-state';
 import { StatCard } from '@/components/ui/stat-card';
 import { Banknote, Plus, CreditCard, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { tri } from '@/lib/i18n/tri';
 
 interface Schedule {
   id: string; sequence: number; dueDate: string;
@@ -28,6 +29,10 @@ interface Plan {
 
 const STATUS_AR: Record<string, string> = {
   ACTIVE: 'نشط', COMPLETED: 'مكتمل', DEFAULTED: 'متعثر', CANCELLED: 'ملغى',
+};
+
+const STATUS_KU: Record<string, string> = {
+  ACTIVE: 'چالاک', COMPLETED: 'تەواوبوو', DEFAULTED: 'دەرنەچوو', CANCELLED: 'هەڵوەشاوەتەوە',
 };
 
 export default function InstallmentsPage() {
@@ -59,14 +64,15 @@ export default function InstallmentsPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title={isAr ? 'إدارة التقسيط' : 'Installment plans'}
-        description={isAr
-          ? 'بيع بالتقسيط للأجهزة والأثاث — جداول دفعات، ضامنون، تنبيهات استحقاق'
-          : 'Sell on installments — payment schedules, guarantors, due-date alerts'}
+        title={tri(locale, { ar: 'إدارة التقسيط', ku: 'پلانەکانی قیست', en: 'Installment plans' })}
+        description={tri(locale, {
+          ar: 'بيع بالتقسيط للأجهزة والأثاث — جداول دفعات، ضامنون، تنبيهات استحقاق',
+          ku: 'فرۆشتن بە قیست بۆ ئامێر و کەلوپەل — خشتەی پارەدان، کەفیل، ئاگاداری کاتی پێویست',
+          en: 'Sell on installments — payment schedules, guarantors, due-date alerts' })}
         actions={
           <Button asChild>
             <Link href={`/${locale}/dashboard/installments/new`}>
-              <Plus className="h-4 w-4" /> {isAr ? 'خطة تقسيط جديدة' : 'New plan'}
+              <Plus className="h-4 w-4" /> {tri(locale, { ar: 'خطة تقسيط جديدة', ku: 'پلانی قیستی نوێ', en: 'New plan' })}
             </Link>
           </Button>
         }
@@ -75,14 +81,14 @@ export default function InstallmentsPage() {
       {totals && (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <StatCard tone="primary" icon={CreditCard}
-            label={isAr ? 'خطط نشطة' : 'Active plans'} value={totals.activeCount.toString()} />
+            label={tri(locale, { ar: 'خطط نشطة', ku: 'پلانە چالاکەکان', en: 'Active plans' })} value={totals.activeCount.toString()} />
           <StatCard tone="warning" icon={Banknote}
-            label={isAr ? 'المتبقّي المستحَق' : 'Outstanding'}
+            label={tri(locale, { ar: 'المتبقّي المستحَق', ku: 'ماوەی پێویست', en: 'Outstanding' })}
             value={`${totals.outstanding.toLocaleString(isAr ? 'ar-IQ' : 'en')} IQD`} />
           <StatCard tone={totals.overdue > 0 ? 'destructive' : 'default'} icon={AlertTriangle}
-            label={isAr ? 'دفعات متأخرة' : 'Overdue payments'} value={totals.overdue.toString()} />
+            label={tri(locale, { ar: 'دفعات متأخرة', ku: 'پارەدانی دواکەوتوو', en: 'Overdue payments' })} value={totals.overdue.toString()} />
           <StatCard tone="success" icon={CheckCircle2}
-            label={isAr ? 'خطط مكتملة' : 'Completed'} value={totals.completed.toString()} />
+            label={tri(locale, { ar: 'خطط مكتملة', ku: 'پلانە تەواوبووەکان', en: 'Completed' })} value={totals.completed.toString()} />
         </div>
       )}
 
@@ -92,11 +98,11 @@ export default function InstallmentsPage() {
         <EmptyState
           icon={CreditCard}
           title={t('common.noData')}
-          description={isAr ? 'لا توجد خطط تقسيط حتى الآن.' : 'No installment plans yet.'}
+          description={tri(locale, { ar: 'لا توجد خطط تقسيط حتى الآن.', ku: 'تا ئێستا هیچ پلانێکی قیست نییە.', en: 'No installment plans yet.' })}
           action={
             <Button asChild>
               <Link href={`/${locale}/dashboard/installments/new`}>
-                <Plus className="h-4 w-4" /> {isAr ? 'خطة تقسيط جديدة' : 'New plan'}
+                <Plus className="h-4 w-4" /> {tri(locale, { ar: 'خطة تقسيط جديدة', ku: 'پلانی قیستی نوێ', en: 'New plan' })}
               </Link>
             </Button>
           }
@@ -106,13 +112,13 @@ export default function InstallmentsPage() {
           <Table>
             <THead>
               <TR>
-                <TH>{isAr ? 'الرقم' : 'Reference'}</TH>
-                <TH>{isAr ? 'المنتج' : 'Product'}</TH>
-                <TH className="text-end">{isAr ? 'الإجمالي' : 'Total'}</TH>
-                <TH>{isAr ? 'الأقساط' : 'Plan'}</TH>
-                <TH className="text-end">{isAr ? 'القسط الشهري' : 'Monthly'}</TH>
-                <TH>{isAr ? 'الضامن' : 'Guarantor'}</TH>
-                <TH>{isAr ? 'الحالة' : 'Status'}</TH>
+                <TH>{tri(locale, { ar: 'الرقم', ku: 'ژمارەی ئاماژە', en: 'Reference' })}</TH>
+                <TH>{tri(locale, { ar: 'المنتج', ku: 'کاڵا', en: 'Product' })}</TH>
+                <TH className="text-end">{tri(locale, { ar: 'الإجمالي', ku: 'کۆی گشتی', en: 'Total' })}</TH>
+                <TH>{tri(locale, { ar: 'الأقساط', ku: 'قیستەکان', en: 'Plan' })}</TH>
+                <TH className="text-end">{tri(locale, { ar: 'القسط الشهري', ku: 'قیستی مانگانە', en: 'Monthly' })}</TH>
+                <TH>{tri(locale, { ar: 'الضامن', ku: 'کەفیل', en: 'Guarantor' })}</TH>
+                <TH>{tri(locale, { ar: 'الحالة', ku: 'دۆخ', en: 'Status' })}</TH>
               </TR>
             </THead>
             <TBody>
@@ -126,7 +132,7 @@ export default function InstallmentsPage() {
                   <TD className="max-w-xs truncate">{p.productSummary}</TD>
                   <TD className="text-end tabular-nums">{parseFloat(p.totalAmount).toLocaleString(isAr ? 'ar-IQ' : 'en')} {p.currency}</TD>
                   <TD className="tabular-nums">
-                    {p.numberOfInstallments} {isAr ? 'شهر' : 'mo'}
+                    {p.numberOfInstallments} {tri(locale, { ar: 'شهر', ku: 'مانگ', en: 'mo' })}
                     {parseFloat(p.interestRatePct) > 0 && (
                       <span className="text-xs text-muted-foreground"> @ {(parseFloat(p.interestRatePct) * 100).toFixed(1)}%</span>
                     )}
@@ -139,7 +145,7 @@ export default function InstallmentsPage() {
                       p.status === 'COMPLETED' ? 'success' :
                       p.status === 'DEFAULTED' ? 'destructive' : 'outline'
                     }>
-                      {isAr ? STATUS_AR[p.status] ?? p.status : p.status}
+                      {tri(locale, { ar: STATUS_AR[p.status] ?? p.status, ku: STATUS_KU[p.status] ?? p.status, en: p.status })}
                     </Badge>
                   </TD>
                 </TR>
