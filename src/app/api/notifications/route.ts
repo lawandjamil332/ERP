@@ -6,7 +6,10 @@ import { requireSession } from '@/lib/auth/session';
 export async function GET() {
   const session = await requireSession();
   const items = await db.notification.findMany({
-    where: { tenantId: session.tenantId, userId: { in: [session.userId, null] as any } },
+    where: {
+      tenantId: session.tenantId,
+      OR: [{ userId: session.userId }, { userId: null }],
+    },
     orderBy: { createdAt: 'desc' },
     take: 50,
   });
@@ -19,9 +22,10 @@ export async function PATCH(req: Request) {
   const session = await requireSession();
   const parsed = Patch.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: 'invalid_input' }, { status: 400 });
-  const n = await db.notification.update({
-    where: { id: parsed.data.id },
+  const result = await db.notification.updateMany({
+    where: { id: parsed.data.id, tenantId: session.tenantId },
     data: { readAt: parsed.data.read ? new Date() : null },
   });
-  return NextResponse.json({ data: n });
+  if (result.count === 0) return NextResponse.json({ error: 'not_found' }, { status: 404 });
+  return NextResponse.json({ ok: true });
 }
