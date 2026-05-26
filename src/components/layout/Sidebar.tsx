@@ -185,7 +185,12 @@ export function Sidebar({ locale }: { locale: string }) {
 
   function toggle(id: string) {
     setOpenGroups((curr) => {
-      const next = { ...curr, [id]: !(curr[id] ?? false) };
+      const grp = sections.flatMap((s) => s.groups).find((g) => g.id === id);
+      const currentlyOpen = curr[id] === undefined ? (grp ? isGroupActive(grp) : false) : curr[id];
+      // Accordion: opening one section collapses every other section.
+      const next: Record<string, boolean> = {};
+      for (const sec of sections) for (const g of sec.groups) next[g.id] = false;
+      next[id] = !currentlyOpen;
       try { localStorage.setItem(STORAGE_KEY, JSON.stringify(next)); } catch {}
       return next;
     });
