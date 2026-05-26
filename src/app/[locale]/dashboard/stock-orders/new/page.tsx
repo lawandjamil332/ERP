@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { PageHeader } from '@/components/ui/page-header';
 import { Save, Plus, Trash2 } from 'lucide-react';
 import { toast } from '@/lib/toast';
+import { tri } from '@/lib/i18n/tri';
 
 interface Product { id: string; sku: string; nameAr: string; nameEn: string }
 interface Warehouse { id: string; nameAr: string; nameEn: string }
@@ -51,39 +52,39 @@ export default function NewStockOrderPage() {
       }),
     });
     setBusy(false);
-    if (res.ok) { toast.success(isAr ? 'تم الحفظ' : 'Saved'); router.push(`/${locale}/dashboard/stock-orders`); }
+    if (res.ok) { toast.success(tri(locale, { ar: 'تم الحفظ', ku: 'پاشەکەوت کرا', en: 'Saved' })); router.push(`/${locale}/dashboard/stock-orders`); }
     else toast.error('failed');
   }
 
   return (
     <div className="space-y-6">
-      <PageHeader title={isAr ? 'أمر مخزون جديد' : 'New stock order'} />
+      <PageHeader title={tri(locale, { ar: 'أمر مخزون جديد', ku: 'داواکاری کۆگای نوێ', en: 'New stock order' })} />
 
       <form onSubmit={submit} className="space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle>{isAr ? 'تفاصيل الأمر' : 'Order details'}</CardTitle>
-            <CardDescription>{isAr ? 'يُولَّد المرجع تلقائياً بصيغة TRF-2026-00001 / ADJ-2026-00001' : 'Reference auto-generated as TRF-2026-00001 / ADJ-2026-00001'}</CardDescription>
+            <CardTitle>{tri(locale, { ar: 'تفاصيل الأمر', ku: 'وردەکاری داواکاری', en: 'Order details' })}</CardTitle>
+            <CardDescription>{tri(locale, { ar: 'يُولَّد المرجع تلقائياً بصيغة TRF-2026-00001 / ADJ-2026-00001', ku: 'ژمارەی ئاماژە بە شێوەی خۆکار دروست دەبێت بە فۆرماتی TRF-2026-00001 / ADJ-2026-00001', en: 'Reference auto-generated as TRF-2026-00001 / ADJ-2026-00001' })}</CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
-              <Label>{isAr ? 'النوع' : 'Kind'}</Label>
+              <Label>{tri(locale, { ar: 'النوع', ku: 'جۆر', en: 'Kind' })}</Label>
               <select className="h-9 w-full rounded-md border bg-background px-3 text-sm"
                 value={form.kind} onChange={(e) => setForm({ ...form, kind: e.target.value as never })}>
-                <option value="TRANSFER">{isAr ? 'نقل بين المخازن' : 'Transfer'}</option>
-                <option value="ADJUSTMENT_IN">{isAr ? 'تسوية إضافة' : 'Adjustment in'}</option>
-                <option value="ADJUSTMENT_OUT">{isAr ? 'تسوية خصم' : 'Adjustment out'}</option>
-                <option value="WRITE_OFF">{isAr ? 'إتلاف' : 'Write-off'}</option>
-                <option value="OPENING_BALANCE">{isAr ? 'رصيد افتتاحي' : 'Opening balance'}</option>
+                <option value="TRANSFER">{tri(locale, { ar: 'نقل بين المخازن', ku: 'گواستنەوە لەنێوان کۆگاکان', en: 'Transfer' })}</option>
+                <option value="ADJUSTMENT_IN">{tri(locale, { ar: 'تسوية إضافة', ku: 'ڕێکخستنی زیادکردن', en: 'Adjustment in' })}</option>
+                <option value="ADJUSTMENT_OUT">{tri(locale, { ar: 'تسوية خصم', ku: 'ڕێکخستنی کەمکردن', en: 'Adjustment out' })}</option>
+                <option value="WRITE_OFF">{tri(locale, { ar: 'إتلاف', ku: 'تەفروتوناکردن', en: 'Write-off' })}</option>
+                <option value="OPENING_BALANCE">{tri(locale, { ar: 'رصيد افتتاحي', ku: 'باڵانسی دەستپێک', en: 'Opening balance' })}</option>
               </select>
             </div>
             <div className="space-y-1.5">
-              <Label>{isAr ? 'التاريخ' : 'Date'}</Label>
+              <Label>{tri(locale, { ar: 'التاريخ', ku: 'بەروار', en: 'Date' })}</Label>
               <Input type="date" dir="ltr" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} />
             </div>
             {(form.kind === 'TRANSFER' || form.kind === 'ADJUSTMENT_OUT' || form.kind === 'WRITE_OFF') && (
               <div className="space-y-1.5">
-                <Label>{isAr ? 'من مخزن' : 'From warehouse'}</Label>
+                <Label>{tri(locale, { ar: 'من مخزن', ku: 'لە کۆگاوە', en: 'From warehouse' })}</Label>
                 <select className="h-9 w-full rounded-md border bg-background px-3 text-sm"
                   value={form.fromWarehouseId} onChange={(e) => setForm({ ...form, fromWarehouseId: e.target.value })}>
                   <option value="">—</option>
@@ -93,7 +94,7 @@ export default function NewStockOrderPage() {
             )}
             {(form.kind === 'TRANSFER' || form.kind === 'ADJUSTMENT_IN' || form.kind === 'OPENING_BALANCE') && (
               <div className="space-y-1.5">
-                <Label>{isAr ? 'إلى مخزن' : 'To warehouse'}</Label>
+                <Label>{tri(locale, { ar: 'إلى مخزن', ku: 'بۆ کۆگا', en: 'To warehouse' })}</Label>
                 <select className="h-9 w-full rounded-md border bg-background px-3 text-sm"
                   value={form.toWarehouseId} onChange={(e) => setForm({ ...form, toWarehouseId: e.target.value })}>
                   <option value="">—</option>
@@ -106,9 +107,9 @@ export default function NewStockOrderPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>{isAr ? 'البنود' : 'Items'}</CardTitle>
+            <CardTitle>{tri(locale, { ar: 'البنود', ku: 'بڕگەکان', en: 'Items' })}</CardTitle>
             <Button type="button" variant="outline" size="sm" onClick={() => setLines([...lines, { productId: '', qty: '0', unitCost: '', notes: '' }])}>
-              <Plus className="h-3.5 w-3.5" /> {isAr ? 'بند' : 'Line'}
+              <Plus className="h-3.5 w-3.5" /> {tri(locale, { ar: 'بند', ku: 'بڕگە', en: 'Line' })}
             </Button>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -116,7 +117,7 @@ export default function NewStockOrderPage() {
               <div key={i} className="grid gap-2 sm:grid-cols-[1fr_120px_120px_40px]">
                 <select className="h-9 rounded-md border bg-background px-3 text-sm"
                   value={l.productId} onChange={(e) => setLines(lines.map((x, j) => i === j ? { ...x, productId: e.target.value } : x))}>
-                  <option value="">{isAr ? 'اختر المنتج…' : 'Select product…'}</option>
+                  <option value="">{tri(locale, { ar: 'اختر المنتج…', ku: 'بەرهەم هەڵبژێرە…', en: 'Select product…' })}</option>
                   {products.map((p) => <option key={p.id} value={p.id}>{p.sku} — {isAr ? p.nameAr : p.nameEn}</option>)}
                 </select>
                 <Input type="number" min={0} step="0.01" dir="ltr" placeholder="qty"
@@ -132,7 +133,7 @@ export default function NewStockOrderPage() {
         </Card>
 
         <Card>
-          <CardHeader><CardTitle>{isAr ? 'ملاحظات' : 'Notes'}</CardTitle></CardHeader>
+          <CardHeader><CardTitle>{tri(locale, { ar: 'ملاحظات', ku: 'تێبینییەکان', en: 'Notes' })}</CardTitle></CardHeader>
           <CardContent>
             <textarea className="min-h-[80px] w-full rounded-md border bg-background p-3 text-sm"
               value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
@@ -140,8 +141,8 @@ export default function NewStockOrderPage() {
         </Card>
 
         <div className="flex justify-end gap-2">
-          <Button type="button" variant="ghost" onClick={() => router.back()}>{isAr ? 'إلغاء' : 'Cancel'}</Button>
-          <Button type="submit" disabled={busy}><Save className="h-4 w-4" /> {busy ? '…' : (isAr ? 'حفظ' : 'Save')}</Button>
+          <Button type="button" variant="ghost" onClick={() => router.back()}>{tri(locale, { ar: 'إلغاء', ku: 'هەڵوەشاندنەوە', en: 'Cancel' })}</Button>
+          <Button type="submit" disabled={busy}><Save className="h-4 w-4" /> {busy ? '…' : tri(locale, { ar: 'حفظ', ku: 'پاشەکەوتکردن', en: 'Save' })}</Button>
         </div>
       </form>
     </div>

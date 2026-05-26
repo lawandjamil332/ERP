@@ -11,6 +11,7 @@ import { PageHeader } from '@/components/ui/page-header';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Building2, Plus, RefreshCw, Search, Mail, Phone, MapPin } from 'lucide-react';
 import { CardGridSkeleton } from '@/components/ui/skeleton';
+import { tri } from '@/lib/i18n/tri';
 
 interface Branch {
   id: string; code: string; nameAr: string; nameEn: string;
@@ -46,14 +47,14 @@ export default function BranchesPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title={isAr ? 'الفروع' : 'Branches'}
-        description={isAr ? 'إدارة الفروع والمنافذ' : 'Manage company branches'}
+        title={tri(locale, { ar: 'الفروع', ku: 'لقەکان', en: 'Branches' })}
+        description={tri(locale, { ar: 'إدارة الفروع والمنافذ', ku: 'بەڕێوەبردنی لقەکان و فرۆشگاکان', en: 'Manage company branches' })}
         actions={
           <div className="flex items-center gap-2">
-            <Button variant="outline" onClick={load}><RefreshCw className="h-4 w-4" /> {isAr ? 'تحديث' : 'Refresh'}</Button>
+            <Button variant="outline" onClick={load}><RefreshCw className="h-4 w-4" /> {tri(locale, { ar: 'تحديث', ku: 'نوێکردنەوە', en: 'Refresh' })}</Button>
             <Button asChild>
               <Link href={`/${locale}/dashboard/branches/new`}>
-                <Plus className="h-4 w-4" /> {isAr ? 'فرع جديد' : 'New branch'}
+                <Plus className="h-4 w-4" /> {tri(locale, { ar: 'فرع جديد', ku: 'لقەی نوێ', en: 'New branch' })}
               </Link>
             </Button>
           </div>
@@ -64,13 +65,13 @@ export default function BranchesPage() {
         <CardContent className="grid gap-3 p-4 sm:grid-cols-[1fr_200px]">
           <div className="relative">
             <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input className="ps-9" placeholder={isAr ? 'بحث بالاسم أو الرمز…' : 'Search by name or code…'} value={q} onChange={(e) => setQ(e.target.value)} />
+            <Input className="ps-9" placeholder={tri(locale, { ar: 'بحث بالاسم أو الرمز…', ku: 'گەڕان بە ناو یان کۆد…', en: 'Search by name or code…' })} value={q} onChange={(e) => setQ(e.target.value)} />
           </div>
           <select className="h-9 rounded-md border bg-background px-3 text-sm" value={status} onChange={(e) => setStatus(e.target.value as never)}>
-            <option value="ALL">{isAr ? 'الكل' : 'All status'}</option>
-            <option value="ACTIVE">{isAr ? 'نشط' : 'Active'}</option>
-            <option value="INACTIVE">{isAr ? 'غير نشط' : 'Inactive'}</option>
-            <option value="CLOSED">{isAr ? 'مغلق' : 'Closed'}</option>
+            <option value="ALL">{tri(locale, { ar: 'الكل', ku: 'هەموو', en: 'All status' })}</option>
+            <option value="ACTIVE">{tri(locale, { ar: 'نشط', ku: 'چالاک', en: 'Active' })}</option>
+            <option value="INACTIVE">{tri(locale, { ar: 'غير نشط', ku: 'ناچالاک', en: 'Inactive' })}</option>
+            <option value="CLOSED">{tri(locale, { ar: 'مغلق', ku: 'داخراو', en: 'Closed' })}</option>
           </select>
         </CardContent>
       </Card>
@@ -80,12 +81,12 @@ export default function BranchesPage() {
       ) : filtered.length === 0 ? (
         <EmptyState
           icon={Building2}
-          title={isAr ? 'لا توجد فروع' : 'No branches found'}
-          description={isAr ? 'ابدأ بإضافة فرع جديد' : 'Get started by creating a new branch'}
+          title={tri(locale, { ar: 'لا توجد فروع', ku: 'هیچ لقەیەک نییە', en: 'No branches found' })}
+          description={tri(locale, { ar: 'ابدأ بإضافة فرع جديد', ku: 'بە زیادکردنی لقەیەکی نوێ دەست پێ بکە', en: 'Get started by creating a new branch' })}
           action={
             <Button asChild>
               <Link href={`/${locale}/dashboard/branches/new`}>
-                <Plus className="h-4 w-4" /> {isAr ? 'فرع جديد' : 'New branch'}
+                <Plus className="h-4 w-4" /> {tri(locale, { ar: 'فرع جديد', ku: 'لقەی نوێ', en: 'New branch' })}
               </Link>
             </Button>
           }
@@ -106,7 +107,7 @@ export default function BranchesPage() {
                     </div>
                   </div>
                   <Badge variant={b.status === 'ACTIVE' ? 'default' : 'secondary'}>
-                    {b.status === 'ACTIVE' ? (isAr ? 'نشط' : 'Active') : b.status === 'INACTIVE' ? (isAr ? 'غير نشط' : 'Inactive') : (isAr ? 'مغلق' : 'Closed')}
+                    {b.status === 'ACTIVE' ? tri(locale, { ar: 'نشط', ku: 'چالاک', en: 'Active' }) : b.status === 'INACTIVE' ? tri(locale, { ar: 'غير نشط', ku: 'ناچالاک', en: 'Inactive' }) : tri(locale, { ar: 'مغلق', ku: 'داخراو', en: 'Closed' })}
                   </Badge>
                 </div>
                 <dl className="space-y-1.5 text-xs text-muted-foreground">

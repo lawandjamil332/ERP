@@ -11,6 +11,7 @@ import { PageHeader } from '@/components/ui/page-header';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Plus, Package, Search, Filter, RefreshCw, Upload, Eye, Copy, Edit } from 'lucide-react';
 import { toast } from '@/lib/toast';
+import { tri } from '@/lib/i18n/tri';
 
 interface Product {
   id: string; sku: string; barcode: string | null;
@@ -76,28 +77,28 @@ export default function ProductsPage() {
         isService: orig.isService,
       }),
     });
-    if (res.ok) { toast.success(isAr ? 'تم النسخ' : 'Copied'); load(); }
-    else toast.error(isAr ? 'فشل النسخ' : 'Copy failed');
+    if (res.ok) { toast.success(tri(locale, { ar: 'تم النسخ', ku: 'کۆپی کرا', en: 'Copied' })); load(); }
+    else toast.error(tri(locale, { ar: 'فشل النسخ', ku: 'کۆپیکردن سەرکەوتوو نەبوو', en: 'Copy failed' }));
   }
 
   return (
     <div className="space-y-6">
       <PageHeader
-        title={isAr ? 'إدارة المنتجات' : 'Product management'}
-        description={isAr ? 'إدارة ومتابعة المنتجات' : 'Manage and track your product catalog'}
+        title={tri(locale, { ar: 'إدارة المنتجات', ku: 'بەڕێوەبردنی بەرهەمەکان', en: 'Product management' })}
+        description={tri(locale, { ar: 'إدارة ومتابعة المنتجات', ku: 'بەڕێوەبردن و بەدواداچوونی بەرهەمەکان', en: 'Manage and track your product catalog' })}
         actions={
           <>
             <Button variant="outline" onClick={load}>
-              <RefreshCw className="h-4 w-4" /> {isAr ? 'تحديث' : 'Refresh'}
+              <RefreshCw className="h-4 w-4" /> {tri(locale, { ar: 'تحديث', ku: 'نوێکردنەوە', en: 'Refresh' })}
             </Button>
             <Button variant="outline" asChild>
               <Link href={`/${locale}/dashboard/import`}>
-                <Upload className="h-4 w-4" /> {isAr ? 'استيراد ملف اكسل' : 'Import Excel'}
+                <Upload className="h-4 w-4" /> {tri(locale, { ar: 'استيراد ملف اكسل', ku: 'هاوردەکردنی فایلی ئێکسڵ', en: 'Import Excel' })}
               </Link>
             </Button>
             <Button asChild>
               <Link href={`/${locale}/dashboard/products/new`}>
-                <Plus className="h-4 w-4" /> {isAr ? 'منتج جديد' : 'New product'}
+                <Plus className="h-4 w-4" /> {tri(locale, { ar: 'منتج جديد', ku: 'بەرهەمی نوێ', en: 'New product' })}
               </Link>
             </Button>
           </>
@@ -108,24 +109,24 @@ export default function ProductsPage() {
         <div className="flex flex-wrap items-center gap-3 p-4">
           <div className="relative min-w-[260px] flex-1">
             <Search className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input className="ps-9" placeholder={isAr ? 'البحث...' : 'Search…'}
+            <Input className="ps-9" placeholder={tri(locale, { ar: 'البحث...', ku: 'گەڕان...', en: 'Search…' })}
               value={query} onChange={(e) => setQuery(e.target.value)} />
           </div>
           <select className="h-10 rounded-md border bg-background px-3 text-sm" value={status}
             onChange={(e) => setStatus(e.target.value as any)} dir="ltr">
-            <option value="ALL">{isAr ? 'جميع الحالات' : 'All statuses'}</option>
-            <option value="ACTIVE">{isAr ? 'نشط' : 'Active'}</option>
-            <option value="INACTIVE">{isAr ? 'غير نشط' : 'Inactive'}</option>
+            <option value="ALL">{tri(locale, { ar: 'جميع الحالات', ku: 'هەموو دۆخەکان', en: 'All statuses' })}</option>
+            <option value="ACTIVE">{tri(locale, { ar: 'نشط', ku: 'چالاک', en: 'Active' })}</option>
+            <option value="INACTIVE">{tri(locale, { ar: 'غير نشط', ku: 'ناچالاک', en: 'Inactive' })}</option>
           </select>
           <Button variant="outline" onClick={() => setShowFilters((s) => !s)}>
-            <Filter className="h-4 w-4" /> {isAr ? 'فلاتر متقدمة' : 'Advanced filters'}
+            <Filter className="h-4 w-4" /> {tri(locale, { ar: 'فلاتر متقدمة', ku: 'فلتەری پێشکەوتوو', en: 'Advanced filters' })}
           </Button>
         </div>
       </Card>
 
       <div>
         <h2 className="mb-3 text-base font-semibold">
-          {isAr ? `المنتجات (${filtered?.length ?? 0})` : `Products (${filtered?.length ?? 0})`}
+          {tri(locale, { ar: `المنتجات (${filtered?.length ?? 0})`, ku: `بەرهەمەکان (${filtered?.length ?? 0})`, en: `Products (${filtered?.length ?? 0})` })}
         </h2>
 
         {filtered === null ? (
@@ -137,7 +138,7 @@ export default function ProductsPage() {
             action={
               <Button asChild>
                 <Link href={`/${locale}/dashboard/products/new`}>
-                  <Plus className="h-4 w-4" /> {isAr ? 'منتج جديد' : 'New product'}
+                  <Plus className="h-4 w-4" /> {tri(locale, { ar: 'منتج جديد', ku: 'بەرهەمی نوێ', en: 'New product' })}
                 </Link>
               </Button>
             }
@@ -158,29 +159,29 @@ export default function ProductsPage() {
                     </p>
                   </div>
                   <Badge variant={p.isActive ? 'success' : 'outline'} className="shrink-0">
-                    {p.isActive ? (isAr ? 'نشط' : 'Active') : (isAr ? 'غير نشط' : 'Inactive')}
+                    {p.isActive ? tri(locale, { ar: 'نشط', ku: 'چالاک', en: 'Active' }) : tri(locale, { ar: 'غير نشط', ku: 'ناچالاک', en: 'Inactive' })}
                   </Badge>
                 </div>
 
                 <div className="mt-3 flex items-center justify-between border-t pt-3 text-xs text-muted-foreground">
                   <span>
                     {p.isService
-                      ? (isAr ? 'خدمة' : 'Service')
-                      : `${isAr ? 'المخزون:' : 'Stock:'} ${(p.stockQty ?? 0).toLocaleString(isAr ? 'ar-IQ' : 'en')}`}
+                      ? tri(locale, { ar: 'خدمة', ku: 'خزمەتگوزاری', en: 'Service' })
+                      : `${tri(locale, { ar: 'المخزون:', ku: 'کۆگا:', en: 'Stock:' })} ${(p.stockQty ?? 0).toLocaleString(isAr ? 'ar-IQ' : 'en')}`}
                   </span>
                   <div className="flex items-center gap-2">
-                    <button onClick={() => copy(p.id)} title={isAr ? 'نسخ' : 'Copy'}
+                    <button onClick={() => copy(p.id)} title={tri(locale, { ar: 'نسخ', ku: 'کۆپیکردن', en: 'Copy' })}
                       className="rounded p-1 hover:bg-accent">
                       <Copy className="h-3.5 w-3.5" />
                     </button>
-                    <Link href={`/${locale}/dashboard/products/${p.id}/edit`} title={isAr ? 'تعديل' : 'Edit'}
+                    <Link href={`/${locale}/dashboard/products/${p.id}/edit`} title={tri(locale, { ar: 'تعديل', ku: 'دەستکاری', en: 'Edit' })}
                       className="rounded p-1 hover:bg-accent">
                       <Edit className="h-3.5 w-3.5" />
                     </Link>
-                    <Link href={`/${locale}/dashboard/products/${p.id}`} title={isAr ? 'عرض' : 'View'}
+                    <Link href={`/${locale}/dashboard/products/${p.id}`} title={tri(locale, { ar: 'عرض', ku: 'بینین', en: 'View' })}
                       className="inline-flex items-center gap-1 rounded-md bg-primary/10 px-2 py-0.5 font-medium text-primary hover:bg-primary/20">
                       <Eye className="h-3 w-3" />
-                      {isAr ? 'عرض' : 'View'}
+                      {tri(locale, { ar: 'عرض', ku: 'بینین', en: 'View' })}
                     </Link>
                   </div>
                 </div>

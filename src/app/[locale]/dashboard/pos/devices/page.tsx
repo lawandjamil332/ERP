@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { PageHeader } from '@/components/ui/page-header';
 import { Monitor, Plus } from 'lucide-react';
+import { tri } from '@/lib/i18n/tri';
 
 interface Device { id: string; code: string; nameAr: string; nameEn: string; isActive: boolean }
 
@@ -36,39 +37,39 @@ export default function PosDevicesPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title={isAr ? 'أجهزة نقطة البيع' : 'POS devices'}
-        description={isAr ? 'الطرفيات والطابعات والماسحات' : 'Terminals, printers, and scanners'}
+        title={tri(locale, { ar: 'أجهزة نقطة البيع', ku: 'ئامێرەکانی خاڵی فرۆشتن', en: 'POS devices' })}
+        description={tri(locale, { ar: 'الطرفيات والطابعات والماسحات', ku: 'تێرمیناڵ و چاپکەر و سکانەرەکان', en: 'Terminals, printers, and scanners' })}
       />
 
       <div className="grid gap-6 lg:grid-cols-[320px_1fr]">
         <Card>
-          <CardHeader><CardTitle>{isAr ? 'إضافة جهاز' : 'Add device'}</CardTitle></CardHeader>
+          <CardHeader><CardTitle>{tri(locale, { ar: 'إضافة جهاز', ku: 'زیادکردنی ئامێر', en: 'Add device' })}</CardTitle></CardHeader>
           <CardContent>
             <form onSubmit={add} className="space-y-3">
               <div className="space-y-1.5">
-                <Label>{isAr ? 'الرمز' : 'Code'}</Label>
+                <Label>{tri(locale, { ar: 'الرمز', ku: 'کۆد', en: 'Code' })}</Label>
                 <Input dir="ltr" value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value })} placeholder="POS-01" required />
               </div>
               <div className="space-y-1.5">
-                <Label>{isAr ? 'الاسم (عربي)' : 'Name (Arabic)'}</Label>
+                <Label>{tri(locale, { ar: 'الاسم (عربي)', ku: 'ناو (عەرەبی)', en: 'Name (Arabic)' })}</Label>
                 <Input value={form.nameAr} onChange={(e) => setForm({ ...form, nameAr: e.target.value })} required />
               </div>
               <div className="space-y-1.5">
-                <Label>{isAr ? 'الاسم (إنجليزي)' : 'Name (English)'}</Label>
+                <Label>{tri(locale, { ar: 'الاسم (إنجليزي)', ku: 'ناو (ئینگلیزی)', en: 'Name (English)' })}</Label>
                 <Input dir="ltr" value={form.nameEn} onChange={(e) => setForm({ ...form, nameEn: e.target.value })} required />
               </div>
-              <Button type="submit" className="w-full"><Plus className="h-4 w-4" /> {isAr ? 'إضافة' : 'Add'}</Button>
+              <Button type="submit" className="w-full"><Plus className="h-4 w-4" /> {tri(locale, { ar: 'إضافة', ku: 'زیادکردن', en: 'Add' })}</Button>
             </form>
           </CardContent>
         </Card>
 
         <Card>
-          <CardHeader><CardTitle>{isAr ? `الأجهزة المسجّلة (${rows.length})` : `Registered devices (${rows.length})`}</CardTitle></CardHeader>
+          <CardHeader><CardTitle>{tri(locale, { ar: `الأجهزة المسجّلة (${rows.length})`, ku: `ئامێرە تۆمارکراوەکان (${rows.length})`, en: `Registered devices (${rows.length})` })}</CardTitle></CardHeader>
           <CardContent>
             {rows.length === 0 ? (
               <div className="py-12 text-center">
                 <Monitor className="mx-auto h-10 w-10 text-muted-foreground/50" />
-                <p className="mt-2 text-sm text-muted-foreground">{isAr ? 'لم يتم تسجيل أجهزة' : 'No devices registered yet'}</p>
+                <p className="mt-2 text-sm text-muted-foreground">{tri(locale, { ar: 'لم يتم تسجيل أجهزة', ku: 'هێشتا هیچ ئامێرێک تۆمار نەکراوە', en: 'No devices registered yet' })}</p>
               </div>
             ) : (
               <div className="grid gap-3 sm:grid-cols-2">
@@ -81,7 +82,7 @@ export default function PosDevicesPage() {
                       <p className="font-semibold">{isAr ? d.nameAr : d.nameEn}</p>
                       <p className="font-mono text-xs text-muted-foreground">{d.code}</p>
                     </div>
-                    <Badge variant={d.isActive ? 'default' : 'secondary'}>{d.isActive ? (isAr ? 'نشط' : 'Active') : (isAr ? 'متوقف' : 'Inactive')}</Badge>
+                    <Badge variant={d.isActive ? 'default' : 'secondary'}>{d.isActive ? tri(locale, { ar: 'نشط', ku: 'چالاک', en: 'Active' }) : tri(locale, { ar: 'متوقف', ku: 'ڕاگیراو', en: 'Inactive' })}</Badge>
                   </div>
                 ))}
               </div>
