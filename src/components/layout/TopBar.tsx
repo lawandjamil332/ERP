@@ -14,8 +14,8 @@ export function TopBar({ locale, userEmail, tenantName }: {
   const t = useTranslations('nav');
   const tc = useTranslations('common');
   const router = useRouter();
-  const { open: menuOpen, toggle: toggleMenu, close: closeMenu } = useExclusiveDisclosure('topbar-user');
-  const { open: langOpen, toggle: toggleLang, close: closeLang } = useExclusiveDisclosure('topbar-lang');
+  const { open: menuOpen, toggle: toggleMenu, close: closeMenu, ref: menuRef } = useExclusiveDisclosure<HTMLDivElement>('topbar-user');
+  const { open: langOpen, toggle: toggleLang, close: closeLang, ref: langRef } = useExclusiveDisclosure<HTMLDivElement>('topbar-lang');
 
   async function logout() {
     await fetch('/api/auth/logout', { method: 'POST' });
@@ -48,7 +48,7 @@ export function TopBar({ locale, userEmail, tenantName }: {
       <div className="ms-auto flex items-center gap-2">
         <NotificationBell />
 
-        <div className="relative">
+        <div className="relative" ref={langRef}>
           <button
             type="button"
             onClick={toggleLang}
@@ -59,8 +59,6 @@ export function TopBar({ locale, userEmail, tenantName }: {
             <ChevronDown className="h-3 w-3 text-muted-foreground" />
           </button>
           {langOpen && (
-            <>
-              <div className="fixed inset-0 z-30" onClick={closeLang} />
               <div className="absolute end-0 top-full z-40 mt-1 w-36 overflow-hidden rounded-lg border bg-popover py-1 shadow-lg">
                 {LOCALES.map((l: Locale) => (
                   <button
@@ -75,11 +73,10 @@ export function TopBar({ locale, userEmail, tenantName }: {
                   </button>
                 ))}
               </div>
-            </>
           )}
         </div>
 
-        <div className="relative">
+        <div className="relative" ref={menuRef}>
           <button
             type="button"
             onClick={toggleMenu}
@@ -95,8 +92,6 @@ export function TopBar({ locale, userEmail, tenantName }: {
             <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
           </button>
           {menuOpen && (
-            <>
-              <div className="fixed inset-0 z-30" onClick={closeMenu} />
               <div className="absolute end-0 top-full z-40 mt-1 w-56 overflow-hidden rounded-lg border bg-popover py-1 shadow-lg">
                 <div className="border-b px-3 py-2">
                   <p className="truncate text-sm font-semibold">{tenantName || '—'}</p>
@@ -128,7 +123,6 @@ export function TopBar({ locale, userEmail, tenantName }: {
                   {t('logout')}
                 </button>
               </div>
-            </>
           )}
         </div>
       </div>

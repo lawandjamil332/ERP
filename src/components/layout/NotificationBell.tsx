@@ -19,7 +19,7 @@ interface Notif {
 export function NotificationBell() {
   const locale = useLocale();
   const isAr = locale === 'ar';
-  const { open, setOpen, toggle, close } = useExclusiveDisclosure('notifications');
+  const { open, setOpen, toggle, ref } = useExclusiveDisclosure<HTMLDivElement>('notifications');
   const [items, setItems] = useState<Notif[] | null>(null);
   const [marking, setMarking] = useState(false);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -62,7 +62,7 @@ export function NotificationBell() {
   }
 
   return (
-    <div className="relative">
+    <div className="relative" ref={ref}>
       <button
         type="button"
         onClick={toggle}
@@ -78,8 +78,6 @@ export function NotificationBell() {
       </button>
 
       {open && (
-        <>
-          <div className="fixed inset-0 z-30" onClick={close} />
           <div className="absolute end-0 top-full z-40 mt-1 w-[22rem] overflow-hidden rounded-xl border bg-popover shadow-floating">
             <div className="flex items-center justify-between border-b px-3 py-2">
               <p className="text-sm font-semibold">{isAr ? 'الإشعارات' : 'Notifications'}</p>
@@ -141,7 +139,6 @@ export function NotificationBell() {
               )}
             </div>
           </div>
-        </>
       )}
     </div>
   );
