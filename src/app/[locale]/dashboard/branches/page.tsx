@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { PageHeader } from '@/components/ui/page-header';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Building2, Plus, RefreshCw, Search, Mail, Phone, MapPin } from 'lucide-react';
+import { CardGridSkeleton } from '@/components/ui/skeleton';
 
 interface Branch {
   id: string; code: string; nameAr: string; nameEn: string;
@@ -75,7 +76,7 @@ export default function BranchesPage() {
       </Card>
 
       {filtered === null ? (
-        <div className="py-12 text-center text-muted-foreground">{isAr ? 'جارٍ التحميل…' : 'Loading…'}</div>
+        <CardGridSkeleton count={6} />
       ) : filtered.length === 0 ? (
         <EmptyState
           icon={Building2}

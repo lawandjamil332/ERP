@@ -19,6 +19,19 @@ export default async function InvoiceDetailPage({
   if (!invoice) notFound();
   const tenant = await db.tenant.findUnique({ where: { id: session.tenantId } });
 
+  // Apply the active SALES_INVOICE print template's hide-toggles, if one exists.
+  const tpl = await db.printableTemplate.findFirst({
+    where: { tenantId: session.tenantId, kind: 'SALES_INVOICE', isActive: true },
+    orderBy: { isDefault: 'desc' },
+  });
+  const sec = ((tpl?.layout as { sections?: Record<string, boolean> } | null)?.sections) ?? {};
+  const hide = {
+    discount: sec.hideDiscount === true,
+    tax: sec.hideTax === true,
+    dueDate: sec.hideDueDate === true,
+    total: sec.hideTotalAmount === true,
+  };
+
   const fmt = (n: number) => formatMoney(n, invoice.currency as 'IQD', locale as 'ar');
   const localeStr = locale === 'ar' ? 'ar-IQ' : locale === 'ku' ? 'ckb-IQ' : 'en-IQ';
 
@@ -48,7 +61,7 @@ export default async function InvoiceDetailPage({
               التاريخ: {new Intl.DateTimeFormat(localeStr).format(invoice.date)}
             </p>
             <p className="text-xs text-muted-foreground">{formatHijri(invoice.date)}</p>
-            {invoice.dueDate && (
+            {invoice.dueDate && !hide.dueDate && (
               <p className="text-xs">
                 الاستحقاق: {new Intl.DateTimeFormat(localeStr).format(invoice.dueDate)}
               </p>
@@ -88,7 +101,7 @@ export default async function InvoiceDetailPage({
               <th className="px-2 py-2 text-start">HS</th>
               <th className="px-2 py-2 text-end">الكمية</th>
               <th className="px-2 py-2 text-end">السعر</th>
-              <th className="px-2 py-2 text-end">الضريبة</th>
+              {!hide.tax && <th className="px-2 py-2 text-end">الضريبة</th>}
               <th className="px-2 py-2 text-end">الإجمالي</th>
             </tr>
           </thead>
@@ -111,7 +124,7 @@ export default async function InvoiceDetailPage({
                   {Number(l.quantity).toLocaleString()} {l.unitOfMeasure}
                 </td>
                 <td className="px-2 py-2 text-end align-top tabular-nums">{fmt(Number(l.unitPrice))}</td>
-                <td className="px-2 py-2 text-end align-top tabular-nums">{fmt(Number(l.taxAmount))}</td>
+                {!hide.tax && <td className="px-2 py-2 text-end align-top tabular-nums">{fmt(Number(l.taxAmount))}</td>}
                 <td className="px-2 py-2 text-end align-top tabular-nums">{fmt(Number(l.lineTotal))}</td>
               </tr>
             ))}
@@ -125,18 +138,24 @@ export default async function InvoiceDetailPage({
                 <td className="px-4 py-1 text-end text-muted-foreground">المجموع الفرعي / Subtotal</td>
                 <td className="px-4 py-1 text-end tabular-nums">{fmt(Number(invoice.subtotal))}</td>
               </tr>
-              <tr>
-                <td className="px-4 py-1 text-end text-muted-foreground">الخصم / Discount</td>
-                <td className="px-4 py-1 text-end tabular-nums">{fmt(Number(invoice.discountTotal))}</td>
-              </tr>
-              <tr>
-                <td className="px-4 py-1 text-end text-muted-foreground">الضريبة / Tax</td>
-                <td className="px-4 py-1 text-end tabular-nums">{fmt(Number(invoice.taxTotal))}</td>
-              </tr>
-              <tr className="border-t font-bold">
-                <td className="px-4 py-2 text-end">الإجمالي / Total</td>
-                <td className="px-4 py-2 text-end tabular-nums">{fmt(Number(invoice.total))}</td>
-              </tr>
+              {!hide.discount && (
+                <tr>
+                  <td className="px-4 py-1 text-end text-muted-foreground">الخصم / Discount</td>
+                  <td className="px-4 py-1 text-end tabular-nums">{fmt(Number(invoice.discountTotal))}</td>
+                </tr>
+              )}
+              {!hide.tax && (
+                <tr>
+                  <td className="px-4 py-1 text-end text-muted-foreground">الضريبة / Tax</td>
+                  <td className="px-4 py-1 text-end tabular-nums">{fmt(Number(invoice.taxTotal))}</td>
+                </tr>
+              )}
+              {!hide.total && (
+                <tr className="border-t font-bold">
+                  <td className="px-4 py-2 text-end">الإجمالي / Total</td>
+                  <td className="px-4 py-2 text-end tabular-nums">{fmt(Number(invoice.total))}</td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

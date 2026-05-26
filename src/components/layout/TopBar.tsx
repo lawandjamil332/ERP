@@ -34,14 +34,15 @@ export function TopBar({ locale, userEmail, tenantName }: {
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b bg-card/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-card/80 sm:px-6">
       <div className="hidden min-w-0 flex-1 items-center md:flex">
-        <div className="relative max-w-md flex-1">
-          <Search className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <input
-            type="search"
-            placeholder={tc('search')}
-            className="h-9 w-full rounded-lg border bg-background ps-9 pe-3 text-sm outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20"
-          />
-        </div>
+        <button
+          type="button"
+          onClick={() => window.dispatchEvent(new CustomEvent('open-command-palette'))}
+          className="group relative flex h-9 w-full max-w-md items-center gap-2 rounded-lg border bg-background ps-9 pe-2 text-start text-sm text-muted-foreground transition-colors hover:border-foreground/20 hover:bg-accent"
+        >
+          <Search className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2" />
+          <span className="flex-1 truncate">{tc('search')}</span>
+          <kbd className="hidden items-center gap-0.5 rounded border bg-muted px-1.5 py-0.5 text-[10px] font-medium sm:inline-flex">⌘K</kbd>
+        </button>
       </div>
 
       <div className="ms-auto flex items-center gap-2">

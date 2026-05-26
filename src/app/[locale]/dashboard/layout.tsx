@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { TopBar } from '@/components/layout/TopBar';
 import { MobileNav } from '@/components/layout/MobileNav';
+import { CommandPalette } from '@/components/layout/CommandPalette';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { verifySession } from '@/lib/auth/session';
 import { db } from '@/lib/db';
@@ -27,6 +28,7 @@ export default async function DashboardLayout({
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-background">
+      <CommandPalette locale={locale} />
       <Sidebar locale={locale} />
       <div className="flex flex-1 flex-col overflow-hidden">
         <div className="flex items-center border-b bg-card px-3 py-2 md:hidden">
