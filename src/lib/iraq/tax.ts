@@ -101,6 +101,10 @@ export interface TenantPayrollContext {
   sector: Sector;
   /// KRG tenant choosing official 15% over practical 5%
   krgUseOfficialRate?: boolean;
+  /// Deduct income tax (PIT)? Default true. Set false to skip (e.g. exempt staff).
+  applyIncomeTax?: boolean;
+  /// Deduct social security (employee + employer)? Default true.
+  applySocialSecurity?: boolean;
 }
 
 export interface PayrollComputation {
@@ -146,13 +150,17 @@ export function computePayroll(
   const monthlyAllow = bn(annualAllow).div(12);
   const taxableMonthly = BigNumber.maximum(gross.minus(monthlyAllow), 0);
 
-  const ssEmployee = gross.times(SS_RATES.employee);
+  const applySs = ctx.applySocialSecurity !== false;
+  const applyPit = ctx.applyIncomeTax !== false;
+
+  const ssEmployee = applySs ? gross.times(SS_RATES.employee) : new BigNumber(0);
   const ssEmployerRate =
     ctx.sector === 'OIL_GAS' ? SS_RATES.employer.oilGas : SS_RATES.employer.default;
-  const ssEmployer = gross.times(ssEmployerRate);
+  const ssEmployer = applySs ? gross.times(ssEmployerRate) : new BigNumber(0);
 
-  const incomeTax =
-    ctx.region === 'KURDISTAN'
+  const incomeTax = !applyPit
+    ? new BigNumber(0)
+    : ctx.region === 'KURDISTAN'
       ? taxableMonthly.times(ctx.krgUseOfficialRate ? PIT_FLAT_KURDISTAN_OFFICIAL : PIT_FLAT_KURDISTAN)
       : pitProgressiveMonthly(taxableMonthly);
 

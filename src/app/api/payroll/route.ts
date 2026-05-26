@@ -16,6 +16,9 @@ const Body = z.object({
     otherDeductions: z.number().nonnegative().optional(),
   })).optional(),
   postImmediately: z.boolean().default(false),
+  /// Optional deductions — default on (Iraqi-compliant) but the user can switch off.
+  applyIncomeTax: z.boolean().default(true),
+  applySocialSecurity: z.boolean().default(true),
 });
 
 export async function POST(req: Request) {
@@ -46,7 +49,12 @@ export async function POST(req: Request) {
         dependents: emp.dependents,
         isMarried: emp.dependents > 0,
       },
-      { region: tenant.region as 'FEDERAL' | 'KURDISTAN', sector: tenant.sector as any }
+      {
+        region: tenant.region as 'FEDERAL' | 'KURDISTAN',
+        sector: tenant.sector as any,
+        applyIncomeTax: parsed.data.applyIncomeTax,
+        applySocialSecurity: parsed.data.applySocialSecurity,
+      }
     );
     return { emp, calc };
   });

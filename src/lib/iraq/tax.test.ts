@@ -65,6 +65,29 @@ describe('computePayroll — federal Iraq', () => {
     const r = computePayroll({ baseSalary: 1_000_000 }, { region: 'FEDERAL', sector: 'GENERAL' });
     expect(r.employerCost.toFixed(0)).toBe(r.gross.plus(r.ssEmployer).toFixed(0));
   });
+
+  it('applyIncomeTax=false zeroes PIT but keeps SS', () => {
+    const r = computePayroll({ baseSalary: 5_000_000 }, { region: 'FEDERAL', sector: 'GENERAL', applyIncomeTax: false });
+    expect(r.incomeTax.toNumber()).toBe(0);
+    expect(r.ssEmployee.toNumber()).toBeGreaterThan(0);
+    expect(r.net.toFixed(0)).toBe(r.gross.minus(r.ssEmployee).toFixed(0));
+  });
+
+  it('applySocialSecurity=false zeroes both SS shares but keeps PIT', () => {
+    const r = computePayroll({ baseSalary: 5_000_000 }, { region: 'FEDERAL', sector: 'GENERAL', applySocialSecurity: false });
+    expect(r.ssEmployee.toNumber()).toBe(0);
+    expect(r.ssEmployer.toNumber()).toBe(0);
+    expect(r.incomeTax.toNumber()).toBeGreaterThan(0);
+    expect(r.employerCost.toFixed(0)).toBe(r.gross.toFixed(0));
+  });
+
+  it('both off → net equals gross minus other deductions only', () => {
+    const r = computePayroll(
+      { baseSalary: 5_000_000, otherDeductions: 100_000 },
+      { region: 'FEDERAL', sector: 'GENERAL', applyIncomeTax: false, applySocialSecurity: false },
+    );
+    expect(r.net.toFixed(0)).toBe(r.gross.minus(100_000).toFixed(0));
+  });
 });
 
 describe('computeCIT', () => {
