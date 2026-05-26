@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { db } from '@/lib/db';
-import { requireSession } from '@/lib/auth/session';
+import { requirePermission } from '@/lib/auth/permissions';
 
 const Body = z.object({
   nameAr: z.string().min(1),
@@ -25,7 +25,9 @@ const Body = z.object({
 });
 
 export async function GET() {
-  const session = await requireSession();
+  const guard = await requirePermission('settings', 'view');
+  if (guard instanceof NextResponse) return guard;
+  const session = guard;
   const rows = await db.branch.findMany({
     where: { tenantId: session.tenantId },
     orderBy: { createdAt: 'desc' },
@@ -34,7 +36,9 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const session = await requireSession();
+  const guard = await requirePermission('settings', 'create');
+  if (guard instanceof NextResponse) return guard;
+  const session = guard;
   const parsed = Body.safeParse(await req.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: 'invalid_input', issues: parsed.error.issues }, { status: 400 });
   const b = parsed.data;
