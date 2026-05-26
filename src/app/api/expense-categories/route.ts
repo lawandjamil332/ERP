@@ -1,0 +1,42 @@
+import { NextResponse } from 'next/server';
+import { z } from 'zod';
+import { db } from '@/lib/db';
+import { requirePermission } from '@/lib/auth/permissions';
+
+const Body = z.object({
+  nameAr: z.string().min(1),
+  nameEn: z.string().min(1),
+  parentId: z.string().optional().nullable(),
+  accountCode: z.string().optional().nullable(),
+  isActive: z.boolean().optional(),
+});
+
+export async function GET() {
+  const guard = await requirePermission('accounting', 'view');
+  if (guard instanceof NextResponse) return guard;
+  const session = guard;
+  const rows = await db.expenseCategory.findMany({
+    where: { tenantId: session.tenantId },
+    orderBy: [{ parentId: 'asc' }, { nameEn: 'asc' }],
+  });
+  return NextResponse.json({ data: rows });
+}
+
+export async function POST(req: Request) {
+  const guard = await requirePermission('accounting', 'create');
+  if (guard instanceof NextResponse) return guard;
+  const session = guard;
+  const parsed = Body.safeParse(await req.json().catch(() => null));
+  if (!parsed.success) return NextResponse.json({ error: 'invalid_input', issues: parsed.error.issues }, { status: 400 });
+  const b = parsed.data;
+  const created = await db.expenseCategory.create({
+    data: {
+      tenantId: session.tenantId,
+      nameAr: b.nameAr, nameEn: b.nameEn,
+      parentId: b.parentId ?? undefined,
+      accountCode: b.accountCode ?? undefined,
+      isActive: b.isActive ?? true,
+    },
+  });
+  return NextResponse.json({ data: created }, { status: 201 });
+}
