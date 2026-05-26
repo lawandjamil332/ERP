@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,24 +14,25 @@ type Employee = {
   baseSalary: string | number; dependents: number;
 };
 
-export default function NewPayrollPage({ params }: { params: Promise<{ locale: string }> }) {
+export default function NewPayrollPage() {
   const router = useRouter();
   const t = useTranslations('payroll');
   const tCommon = useTranslations('common');
-  const [locale, setLocale] = useState('ar');
+  const locale = useLocale();
   const now = new Date();
   const defaultPeriod = `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, '0')}`;
   const [period, setPeriod] = useState(defaultPeriod);
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [overrides, setOverrides] = useState<Record<string, { allowances?: number; overtime?: number; bonuses?: number; otherDeductions?: number }>>({});
   const [postImmediately, setPostImmediately] = useState(false);
+  const [applyIncomeTax, setApplyIncomeTax] = useState(true);
+  const [applySocialSecurity, setApplySocialSecurity] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    params.then(({ locale }) => setLocale(locale));
     fetch('/api/employees').then((r) => r.ok ? r.json() : { data: [] }).then((j) => setEmployees(j.data ?? []));
-  }, [params]);
+  }, []);
 
   function update(empId: string, field: 'allowances' | 'overtime' | 'bonuses' | 'otherDeductions', value: number) {
     setOverrides((cur) => ({ ...cur, [empId]: { ...(cur[empId] ?? {}), [field]: value } }));
@@ -44,7 +45,7 @@ export default function NewPayrollPage({ params }: { params: Promise<{ locale: s
     const res = await fetch('/api/payroll', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ period, overrides, postImmediately }),
+      body: JSON.stringify({ period, overrides, postImmediately, applyIncomeTax, applySocialSecurity }),
     });
     setSubmitting(false);
     if (res.ok) {
@@ -52,7 +53,7 @@ export default function NewPayrollPage({ params }: { params: Promise<{ locale: s
       router.refresh();
     } else {
       const body = await res.json().catch(() => ({}));
-      setError(body.error ?? 'Failed to run payroll');
+      setError(body.error ?? tCommon('errors.generic'));
     }
   }
 
@@ -76,46 +77,59 @@ export default function NewPayrollPage({ params }: { params: Promise<{ locale: s
 
       <Card>
         <CardHeader>
-          <CardTitle>{t('period')}</CardTitle>
-          <CardDescription>
-            One run per month. Iraq: PIT 3-15% progressive (KRG 5%), SS employee 5% + employer 12% (25% oil & gas).
-          </CardDescription>
+          <CardTitle>{t('runDetails')}</CardTitle>
+          <CardDescription>{t('runIntro')}</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-1.5">
             <Label>{t('period')}</Label>
             <Input type="month" value={period} onChange={(e) => setPeriod(e.target.value)} required dir="ltr" />
           </div>
-          <label className="flex items-end gap-2 text-sm">
-            <input type="checkbox" checked={postImmediately} onChange={(e) => setPostImmediately(e.target.checked)} />
-            Post journal entries immediately
+          <label className="flex cursor-pointer items-end gap-2 text-sm">
+            <input type="checkbox" className="h-4 w-4" checked={postImmediately} onChange={(e) => setPostImmediately(e.target.checked)} />
+            {t('postNow')}
           </label>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>Overrides (optional)</CardTitle>
-          <CardDescription>
-            Add allowances, overtime, bonuses, or other deductions per employee for this period.
-          </CardDescription>
+          <CardTitle>{t('deductions')}</CardTitle>
+          <CardDescription>{t('deductionsIntro')}</CardDescription>
+        </CardHeader>
+        <CardContent className="grid gap-3 sm:grid-cols-2">
+          <DeductionToggle
+            label={t('applyIncomeTax')} hint={t('applyIncomeTaxHint')}
+            checked={applyIncomeTax} onChange={setApplyIncomeTax}
+          />
+          <DeductionToggle
+            label={t('applySocialSecurity')} hint={t('applySocialSecurityHint')}
+            checked={applySocialSecurity} onChange={setApplySocialSecurity}
+          />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>{t('overridesTitle')}</CardTitle>
+          <CardDescription>{t('overridesIntro')}</CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <THead>
               <TR>
-                <TH>Emp #</TH>
-                <TH>{locale === 'en' ? 'Name' : 'الاسم'}</TH>
+                <TH>{t('empNo')}</TH>
+                <TH>{t('name')}</TH>
                 <TH className="text-end">{t('baseSalary')}</TH>
-                <TH className="text-end">Allowances</TH>
-                <TH className="text-end">Overtime</TH>
-                <TH className="text-end">Bonuses</TH>
-                <TH className="text-end">Other ded.</TH>
+                <TH className="text-end">{t('allowances')}</TH>
+                <TH className="text-end">{t('overtime')}</TH>
+                <TH className="text-end">{t('bonuses')}</TH>
+                <TH className="text-end">{t('otherDeductions')}</TH>
               </TR>
             </THead>
             <TBody>
               {employees.length === 0 && (
-                <TR><TD colSpan={7} className="py-8 text-center text-muted-foreground">No employees</TD></TR>
+                <TR><TD colSpan={7} className="py-8 text-center text-muted-foreground">{t('noEmployees')}</TD></TR>
               )}
               {employees.map((e) => (
                 <TR key={e.id}>
@@ -137,5 +151,22 @@ export default function NewPayrollPage({ params }: { params: Promise<{ locale: s
         </CardContent>
       </Card>
     </form>
+  );
+}
+
+function DeductionToggle({ label, hint, checked, onChange }: {
+  label: string; hint: string; checked: boolean; onChange: (v: boolean) => void;
+}) {
+  return (
+    <div className="flex items-start justify-between gap-3 rounded-lg border bg-background p-4">
+      <div className="flex-1">
+        <p className="font-medium leading-tight">{label}</p>
+        <p className="mt-0.5 text-xs text-muted-foreground">{hint}</p>
+      </div>
+      <button type="button" role="switch" aria-checked={checked} onClick={() => onChange(!checked)}
+        className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${checked ? 'bg-primary' : 'bg-muted'}`}>
+        <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all ${checked ? 'start-[22px]' : 'start-0.5'}`} />
+      </button>
+    </div>
   );
 }
