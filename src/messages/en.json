@@ -58,7 +58,19 @@
     "mfgSettings": "Manufacturing settings",
     "users": "Users",
     "roles": "Roles & permissions",
-    "templates": "Printable templates"
+    "templates": "Printable templates",
+    "receipts": "Receipt vouchers",
+    "secCommerce": "Commerce",
+    "secOperations": "Operations",
+    "secFinance": "Finance",
+    "secPeople": "People",
+    "secInsights": "Insights",
+    "secAdmin": "Administration",
+    "treasury": "Treasury & cash",
+    "projectsHospitality": "Projects & hospitality",
+    "directory": "Directory",
+    "access": "Access control",
+    "configuration": "Configuration"
   },
   "auth": {
     "login": "Sign in",

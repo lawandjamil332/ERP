@@ -6,7 +6,7 @@ import { verifySession } from '@/lib/auth/session';
 import { redirect } from 'next/navigation';
 import { Dates } from '@/lib/iraq';
 import { getTranslations } from 'next-intl/server';
-import { Calendar, AlertCircle, Wallet, Users, FileText, Package, Building2, ShoppingCart, BookOpen, UserPlus, Receipt, Plus, ArrowUpRight } from 'lucide-react';
+import { Calendar, AlertCircle, Wallet, Users, FileText, Package, Building2, ShoppingCart, BookOpen, UserPlus, Receipt, Plus } from 'lucide-react';
 import { formatMoney } from '@/lib/iraq/money';
 import { DashboardCharts } from '@/components/dashboard/Charts';
 import { StatCard } from '@/components/ui/stat-card';
@@ -63,7 +63,7 @@ export default async function DashboardHome({
   const isAr = locale === 'ar';
   const hour = now.getUTCHours() + 3; // Iraq UTC+3
   const greeting = isAr
-    ? (hour < 12 ? 'صباح الخير' : hour < 18 ? 'مساء الخير' : 'مساء الخير')
+    ? (hour < 12 ? 'صباح الخير' : 'مساء الخير')
     : (hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening');
   const companyName = isAr ? tenant?.nameAr : (tenant?.nameEn ?? tenant?.nameAr);
 
@@ -105,7 +105,7 @@ export default async function DashboardHome({
         <div>
           <p className="text-sm font-medium text-muted-foreground">{today}</p>
           <h1 className="mt-1 text-2xl font-bold tracking-tight sm:text-3xl">
-            {greeting}{companyName ? <span className="text-muted-foreground font-normal">{isAr ? ' — ' : ', '}{companyName}</span> : ''}
+            {greeting}{companyName ? <span className="font-normal text-muted-foreground">{isAr ? ' — ' : ', '}{companyName}</span> : ''}
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
             {isAr ? `مبيعات اليوم: ${m(Number(salesToday._sum.total ?? 0))}` : `Today's sales: ${m(Number(salesToday._sum.total ?? 0))}`}

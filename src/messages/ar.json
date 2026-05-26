@@ -58,7 +58,19 @@
     "mfgSettings": "إعدادات التصنيع",
     "users": "المستخدمون",
     "roles": "الأدوار والصلاحيات",
-    "templates": "قوالب الطباعة"
+    "templates": "قوالب الطباعة",
+    "receipts": "سندات القبض",
+    "secCommerce": "التجارة",
+    "secOperations": "العمليات",
+    "secFinance": "المالية",
+    "secPeople": "الموارد البشرية",
+    "secInsights": "التحليلات",
+    "secAdmin": "الإدارة",
+    "treasury": "الخزينة والنقد",
+    "projectsHospitality": "المشاريع والضيافة",
+    "directory": "الدليل",
+    "access": "التحكم بالوصول",
+    "configuration": "الإعدادات العامة"
   },
   "auth": {
     "login": "تسجيل الدخول",

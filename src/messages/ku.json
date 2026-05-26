@@ -58,7 +58,19 @@
     "mfgSettings": "ڕێکخستنی بەرهەمهێنان",
     "users": "بەکارهێنەران",
     "roles": "ڕۆڵ و دەسەڵاتەکان",
-    "templates": "قاڵبی چاپ"
+    "templates": "قاڵبی چاپ",
+    "receipts": "وەسڵی وەرگرتن",
+    "secCommerce": "بازرگانی",
+    "secOperations": "کارەکان",
+    "secFinance": "دارایی",
+    "secPeople": "سەرچاوە مرۆییەکان",
+    "secInsights": "شیکارییەکان",
+    "secAdmin": "بەڕێوەبردن",
+    "treasury": "قاسە و پارە",
+    "projectsHospitality": "پڕۆژە و میوانداری",
+    "directory": "ڕێنما",
+    "access": "کۆنترۆڵی دەستگەیشتن",
+    "configuration": "ڕێکخستنی گشتی"
   },
   "auth": {
     "login": "چوونەژوورەوە",
