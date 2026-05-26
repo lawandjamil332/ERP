@@ -9,6 +9,7 @@ import { db } from '@/lib/db';
 import { verifySession } from '@/lib/auth/session';
 import { redirect } from 'next/navigation';
 import { formatMoney } from '@/lib/iraq/money';
+import { tri } from '@/lib/i18n/tri';
 
 export default async function ReturnedInvoicesPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -29,9 +30,9 @@ export default async function ReturnedInvoicesPage({ params }: { params: Promise
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <h1 className="text-2xl font-bold">{isAr ? 'الفواتير المرتجعة' : 'Returned invoices'}</h1>
+          <h1 className="text-2xl font-bold">{tri(locale, { ar: 'الفواتير المرتجعة', ku: 'پسوڵە گەڕاوەکان', en: 'Returned invoices' })}</h1>
           <p className="text-sm text-muted-foreground">
-            {isAr ? 'إشعارات دائنة ومرتجعات المبيعات' : 'Credit notes and sales returns'}
+            {tri(locale, { ar: 'إشعارات دائنة ومرتجعات المبيعات', ku: 'ئاگانامەی قەرزدار و گەڕاندنەوەی فرۆشتن', en: 'Credit notes and sales returns' })}
           </p>
         </div>
       </div>
@@ -39,19 +40,19 @@ export default async function ReturnedInvoicesPage({ params }: { params: Promise
       <div className="grid gap-3 sm:grid-cols-3">
         <Card>
           <div className="p-4">
-            <p className="text-xs font-medium text-muted-foreground">{isAr ? 'عدد الإشعارات' : 'Credit notes count'}</p>
+            <p className="text-xs font-medium text-muted-foreground">{tri(locale, { ar: 'عدد الإشعارات', ku: 'ژمارەی ئاگانامەکان', en: 'Credit notes count' })}</p>
             <p className="mt-1 text-2xl font-bold tabular-nums">{rows.length.toLocaleString()}</p>
           </div>
         </Card>
         <Card>
           <div className="p-4">
-            <p className="text-xs font-medium text-muted-foreground">{isAr ? 'إجمالي المرتجعات' : 'Total refunded'}</p>
+            <p className="text-xs font-medium text-muted-foreground">{tri(locale, { ar: 'إجمالي المرتجعات', ku: 'کۆی گەڕێنراوەکان', en: 'Total refunded' })}</p>
             <p className="mt-1 text-2xl font-bold tabular-nums text-rose-600">{formatMoney(totalRefunded, 'IQD', locale as 'ar')}</p>
           </div>
         </Card>
         <Card>
           <div className="p-4">
-            <p className="text-xs font-medium text-muted-foreground">{isAr ? 'آخر 30 يوماً' : 'Last 30 days'}</p>
+            <p className="text-xs font-medium text-muted-foreground">{tri(locale, { ar: 'آخر 30 يوماً', ku: 'دوایین ٣٠ ڕۆژ', en: 'Last 30 days' })}</p>
             <p className="mt-1 text-2xl font-bold tabular-nums">
               {rows.filter((r) => Date.now() - r.date.getTime() <= 30 * 86400000).length.toLocaleString()}
             </p>
@@ -62,12 +63,12 @@ export default async function ReturnedInvoicesPage({ params }: { params: Promise
       {rows.length === 0 ? (
         <EmptyState
           icon={Undo2}
-          title={isAr ? 'لا توجد فواتير مرتجعة' : 'No returned invoices'}
-          description={isAr ? 'يمكنك إصدار إشعار دائن من شاشة الفاتورة' : 'Issue a credit note from any invoice screen'}
+          title={tri(locale, { ar: 'لا توجد فواتير مرتجعة', ku: 'هیچ پسوڵەیەکی گەڕاوە نییە', en: 'No returned invoices' })}
+          description={tri(locale, { ar: 'يمكنك إصدار إشعار دائن من شاشة الفاتورة', ku: 'دەتوانیت ئاگانامەی قەرزدار لە هەر شاشەیەکی پسوڵەوە دەربکەیت', en: 'Issue a credit note from any invoice screen' })}
           action={
             <Button asChild variant="outline">
               <Link href={`/${locale}/dashboard/invoices`}>
-                <RefreshCw className="h-4 w-4" /> {isAr ? 'الفواتير' : 'Invoices'}
+                <RefreshCw className="h-4 w-4" /> {tri(locale, { ar: 'الفواتير', ku: 'پسوڵەکان', en: 'Invoices' })}
               </Link>
             </Button>
           }
@@ -77,12 +78,12 @@ export default async function ReturnedInvoicesPage({ params }: { params: Promise
           <Table>
             <THead>
               <TR>
-                <TH>{isAr ? 'الرقم' : 'Number'}</TH>
-                <TH>{isAr ? 'التاريخ' : 'Date'}</TH>
-                <TH>{isAr ? 'العميل' : 'Customer'}</TH>
-                <TH>{isAr ? 'الفاتورة الأصلية' : 'Original ref'}</TH>
-                <TH className="text-end">{isAr ? 'مبلغ المرتجع' : 'Refund amount'}</TH>
-                <TH>{isAr ? 'الحالة' : 'Status'}</TH>
+                <TH>{tri(locale, { ar: 'الرقم', ku: 'ژمارە', en: 'Number' })}</TH>
+                <TH>{tri(locale, { ar: 'التاريخ', ku: 'بەروار', en: 'Date' })}</TH>
+                <TH>{tri(locale, { ar: 'العميل', ku: 'کڕیار', en: 'Customer' })}</TH>
+                <TH>{tri(locale, { ar: 'الفاتورة الأصلية', ku: 'پسوڵەی ڕەسەن', en: 'Original ref' })}</TH>
+                <TH className="text-end">{tri(locale, { ar: 'مبلغ المرتجع', ku: 'بڕی گەڕێنراوە', en: 'Refund amount' })}</TH>
+                <TH>{tri(locale, { ar: 'الحالة', ku: 'دۆخ', en: 'Status' })}</TH>
               </TR>
             </THead>
             <TBody>

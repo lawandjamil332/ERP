@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { PageHeader } from '@/components/ui/page-header';
 import { ShieldCheck, Plus, Save } from 'lucide-react';
 import { toast } from '@/lib/toast';
+import { tri } from '@/lib/i18n/tri';
 
 type Perm = 'view' | 'create' | 'edit' | 'delete' | 'approve' | 'post';
 type Permissions = Record<string, Perm[]>;
@@ -64,31 +65,31 @@ export default function RolesPage() {
   }
 
   async function save() {
-    if (!name) { toast.error(isAr ? 'الاسم مطلوب' : 'Name required'); return; }
+    if (!name) { toast.error(tri(locale, { ar: 'الاسم مطلوب', ku: 'ناو پێویستە', en: 'Name required' })); return; }
     const res = await fetch('/api/roles', {
       method: 'POST', headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ name, description, permissions: perms }),
     });
-    if (res.ok) { toast.success(isAr ? 'تم الحفظ' : 'Saved'); startNew(); load(); }
+    if (res.ok) { toast.success(tri(locale, { ar: 'تم الحفظ', ku: 'پاشەکەوت کرا', en: 'Saved' })); startNew(); load(); }
     else toast.error('failed');
   }
 
   return (
     <div className="space-y-6">
       <PageHeader
-        title={isAr ? 'الأدوار والصلاحيات' : 'Roles & Permissions'}
-        description={isAr ? 'حدّد ما يستطيع كل دور فعله في النظام' : 'Define what each role can do in the system'}
-        actions={<Button onClick={startNew}><Plus className="h-4 w-4" /> {isAr ? 'دور جديد' : 'New role'}</Button>}
+        title={tri(locale, { ar: 'الأدوار والصلاحيات', ku: 'ڕۆڵ و دەسەڵاتەکان', en: 'Roles & Permissions' })}
+        description={tri(locale, { ar: 'حدّد ما يستطيع كل دور فعله في النظام', ku: 'دیاری بکە هەر ڕۆڵێک چی دەتوانێت لە سیستەمدا بیکات', en: 'Define what each role can do in the system' })}
+        actions={<Button onClick={startNew}><Plus className="h-4 w-4" /> {tri(locale, { ar: 'دور جديد', ku: 'ڕۆڵی نوێ', en: 'New role' })}</Button>}
       />
 
       <div className="grid gap-6 lg:grid-cols-[300px_1fr]">
         <Card>
-          <CardHeader><CardTitle>{isAr ? `الأدوار (${roles.length})` : `Roles (${roles.length})`}</CardTitle></CardHeader>
+          <CardHeader><CardTitle>{tri(locale, { ar: `الأدوار (${roles.length})`, ku: `ڕۆڵەکان (${roles.length})`, en: `Roles (${roles.length})` })}</CardTitle></CardHeader>
           <CardContent>
             {roles.length === 0 ? (
               <div className="py-8 text-center">
                 <ShieldCheck className="mx-auto h-8 w-8 text-muted-foreground/50" />
-                <p className="mt-2 text-sm text-muted-foreground">{isAr ? 'لا توجد أدوار' : 'No roles yet'}</p>
+                <p className="mt-2 text-sm text-muted-foreground">{tri(locale, { ar: 'لا توجد أدوار', ku: 'هیچ ڕۆڵێک نییە', en: 'No roles yet' })}</p>
               </div>
             ) : (
               <ul className="divide-y">
@@ -100,7 +101,7 @@ export default function RolesPage() {
                         <p className="font-medium">{r.name}</p>
                         {r.description && <p className="text-xs text-muted-foreground">{r.description}</p>}
                       </div>
-                      {r.isSystem && <span className="text-[10px] text-muted-foreground">{isAr ? 'نظام' : 'system'}</span>}
+                      {r.isSystem && <span className="text-[10px] text-muted-foreground">{tri(locale, { ar: 'نظام', ku: 'سیستەم', en: 'system' })}</span>}
                     </button>
                   </li>
                 ))}
@@ -111,17 +112,17 @@ export default function RolesPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>{editing ? (isAr ? 'تعديل الدور' : 'Edit role') : (isAr ? 'دور جديد' : 'New role')}</CardTitle>
-            <CardDescription>{isAr ? 'علّم الصلاحيات لكل قسم' : 'Check permissions per section'}</CardDescription>
+            <CardTitle>{editing ? tri(locale, { ar: 'تعديل الدور', ku: 'دەستکاری ڕۆڵ', en: 'Edit role' }) : tri(locale, { ar: 'دور جديد', ku: 'ڕۆڵی نوێ', en: 'New role' })}</CardTitle>
+            <CardDescription>{tri(locale, { ar: 'علّم الصلاحيات لكل قسم', ku: 'دەسەڵاتەکان بۆ هەر بەشێک دیاری بکە', en: 'Check permissions per section' })}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="space-y-1.5">
-                <Label>{isAr ? 'اسم الدور' : 'Role name'}</Label>
-                <Input value={name} onChange={(e) => setName(e.target.value)} placeholder={isAr ? 'مثال: مدير المبيعات' : 'e.g. Sales Manager'} />
+                <Label>{tri(locale, { ar: 'اسم الدور', ku: 'ناوی ڕۆڵ', en: 'Role name' })}</Label>
+                <Input value={name} onChange={(e) => setName(e.target.value)} placeholder={tri(locale, { ar: 'مثال: مدير المبيعات', ku: 'نموونە: بەڕێوەبەری فرۆشتن', en: 'e.g. Sales Manager' })} />
               </div>
               <div className="space-y-1.5">
-                <Label>{isAr ? 'الوصف' : 'Description'}</Label>
+                <Label>{tri(locale, { ar: 'الوصف', ku: 'وەسف', en: 'Description' })}</Label>
                 <Input value={description} onChange={(e) => setDescription(e.target.value)} />
               </div>
             </div>
@@ -130,7 +131,7 @@ export default function RolesPage() {
               <table className="w-full text-sm">
                 <thead className="border-b">
                   <tr>
-                    <th className="py-2 text-start font-semibold">{isAr ? 'القسم' : 'Section'}</th>
+                    <th className="py-2 text-start font-semibold">{tri(locale, { ar: 'القسم', ku: 'بەش', en: 'Section' })}</th>
                     {ALL_PERMS.map((p) => (
                       <th key={p} className="px-1 text-center font-semibold text-xs">{PERM_LABEL[p][isAr ? 'ar' : 'en']}</th>
                     ))}
@@ -154,7 +155,7 @@ export default function RolesPage() {
             </div>
 
             <div className="flex justify-end">
-              <Button onClick={save}><Save className="h-4 w-4" /> {isAr ? 'حفظ الدور' : 'Save role'}</Button>
+              <Button onClick={save}><Save className="h-4 w-4" /> {tri(locale, { ar: 'حفظ الدور', ku: 'پاشەکەوتی ڕۆڵ', en: 'Save role' })}</Button>
             </div>
           </CardContent>
         </Card>

@@ -11,6 +11,7 @@ import { redirect } from 'next/navigation';
 import { formatMoney } from '@/lib/iraq/money';
 import { ListToolbar } from '@/components/ListToolbar';
 import { paginate, readPagination } from '@/lib/paginate';
+import { tri } from '@/lib/i18n/tri';
 
 const STATUS_VARIANT: Record<string, 'default' | 'secondary' | 'destructive' | 'success' | 'warning' | 'outline'> = {
   DRAFT: 'outline', POSTED: 'default', PARTIALLY_PAID: 'warning',
@@ -28,7 +29,6 @@ export default async function InvoicesPage({
   const session = await verifySession();
   if (!session) redirect(`/${locale}/auth/login`);
   const t = await getTranslations('invoice');
-  const isAr = locale === 'ar';
 
   const { cursor, q, take } = readPagination(sp);
   const baseWhere = { tenantId: session.tenantId, deletedAt: null };
@@ -68,10 +68,10 @@ export default async function InvoicesPage({
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        <Kpi label={isAr ? 'إجمالي الفواتير' : 'Total invoices'} value={totalCount} Icon={FileText} tone="sky" />
-        <Kpi label={isAr ? 'مدفوعة' : 'Paid invoices'} value={paidCount} Icon={CheckCircle2} tone="emerald" />
-        <Kpi label={isAr ? 'قيد التحصيل' : 'Pending invoices'} value={pendingCount} Icon={Clock} tone="amber" />
-        <Kpi label={isAr ? 'متأخرة / غير مدفوعة' : 'Unpaid invoices'} value={unpaidCount} Icon={AlertCircle} tone="rose" />
+        <Kpi label={tri(locale, { ar: 'إجمالي الفواتير', ku: 'کۆی پسوڵەکان', en: 'Total invoices' })} value={totalCount} Icon={FileText} tone="sky" />
+        <Kpi label={tri(locale, { ar: 'مدفوعة', ku: 'پارەدراو', en: 'Paid invoices' })} value={paidCount} Icon={CheckCircle2} tone="emerald" />
+        <Kpi label={tri(locale, { ar: 'قيد التحصيل', ku: 'لە چاوەڕوانی وەرگرتن', en: 'Pending invoices' })} value={pendingCount} Icon={Clock} tone="amber" />
+        <Kpi label={tri(locale, { ar: 'متأخرة / غير مدفوعة', ku: 'دواکەوتوو / پارەنەدراو', en: 'Unpaid invoices' })} value={unpaidCount} Icon={AlertCircle} tone="rose" />
       </div>
 
       <ListToolbar

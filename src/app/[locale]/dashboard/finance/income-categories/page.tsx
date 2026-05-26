@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { PageHeader } from '@/components/ui/page-header';
 import { Tags, Plus } from 'lucide-react';
 import { toast } from '@/lib/toast';
+import { tri } from '@/lib/i18n/tri';
 
 interface Cat { id: string; nameAr: string; nameEn: string; accountCode: string | null; parentId: string | null; isActive: boolean }
 
@@ -31,37 +32,37 @@ export default function IncomeCategoriesPage() {
       method: 'POST', headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ ...form, parentId: form.parentId || undefined, accountCode: form.accountCode || undefined }),
     });
-    if (res.ok) { toast.success(isAr ? 'تمت الإضافة' : 'Added'); setForm({ nameAr: '', nameEn: '', accountCode: '', parentId: '' }); load(); }
+    if (res.ok) { toast.success(tri(locale, { ar: 'تمت الإضافة', ku: 'زیادکرا', en: 'Added' })); setForm({ nameAr: '', nameEn: '', accountCode: '', parentId: '' }); load(); }
   }
 
   return (
     <div className="space-y-6">
       <PageHeader
-        title={isAr ? 'تصنيف الإيرادات والمقبوضات' : 'Income / receipt classification'}
-        description={isAr ? 'مثال: مبيعات، خدمات، إيجار، فوائد' : 'e.g. sales, services, rent, interest'}
+        title={tri(locale, { ar: 'تصنيف الإيرادات والمقبوضات', ku: 'پۆلێنکردنی داهات و وەرگیراوەکان', en: 'Income / receipt classification' })}
+        description={tri(locale, { ar: 'مثال: مبيعات، خدمات، إيجار، فوائد', ku: 'نموونە: فرۆشتن، خزمەتگوزاری، کرێ، سوو', en: 'e.g. sales, services, rent, interest' })}
       />
 
       <div className="grid gap-6 lg:grid-cols-3">
         <Card>
-          <CardHeader><CardTitle>{isAr ? 'إضافة تصنيف' : 'Add category'}</CardTitle>
-            <CardDescription>{isAr ? 'يُربط بحساب من شجرة الحسابات' : 'Linked to a chart-of-accounts code'}</CardDescription>
+          <CardHeader><CardTitle>{tri(locale, { ar: 'إضافة تصنيف', ku: 'زیادکردنی پۆلێن', en: 'Add category' })}</CardTitle>
+            <CardDescription>{tri(locale, { ar: 'يُربط بحساب من شجرة الحسابات', ku: 'بە هەژمارێک لە دارەختی هەژمارەکان دەبەسترێتەوە', en: 'Linked to a chart-of-accounts code' })}</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={add} className="space-y-3">
               <div className="space-y-1.5">
-                <Label>{isAr ? 'الاسم (عربي)' : 'Name (Arabic)'}</Label>
+                <Label>{tri(locale, { ar: 'الاسم (عربي)', ku: 'ناو (عەرەبی)', en: 'Name (Arabic)' })}</Label>
                 <Input value={form.nameAr} onChange={(e) => setForm({ ...form, nameAr: e.target.value })} required />
               </div>
               <div className="space-y-1.5">
-                <Label>{isAr ? 'الاسم (إنجليزي)' : 'Name (English)'}</Label>
+                <Label>{tri(locale, { ar: 'الاسم (إنجليزي)', ku: 'ناو (ئینگلیزی)', en: 'Name (English)' })}</Label>
                 <Input dir="ltr" value={form.nameEn} onChange={(e) => setForm({ ...form, nameEn: e.target.value })} required />
               </div>
               <div className="space-y-1.5">
-                <Label>{isAr ? 'رمز الحساب (اختياري)' : 'Account code (optional)'}</Label>
+                <Label>{tri(locale, { ar: 'رمز الحساب (اختياري)', ku: 'کۆدی هەژمار (ئیختیاری)', en: 'Account code (optional)' })}</Label>
                 <Input dir="ltr" value={form.accountCode} onChange={(e) => setForm({ ...form, accountCode: e.target.value })} placeholder="4101" />
               </div>
               <div className="space-y-1.5">
-                <Label>{isAr ? 'التصنيف الأب (اختياري)' : 'Parent category (optional)'}</Label>
+                <Label>{tri(locale, { ar: 'التصنيف الأب (اختياري)', ku: 'پۆلێنی باوک (ئیختیاری)', en: 'Parent category (optional)' })}</Label>
                 <select className="h-9 w-full rounded-md border bg-background px-3 text-sm"
                   value={form.parentId} onChange={(e) => setForm({ ...form, parentId: e.target.value })}>
                   <option value="">—</option>
@@ -70,18 +71,18 @@ export default function IncomeCategoriesPage() {
                   ))}
                 </select>
               </div>
-              <Button type="submit" className="w-full"><Plus className="h-4 w-4" /> {isAr ? 'إضافة' : 'Add'}</Button>
+              <Button type="submit" className="w-full"><Plus className="h-4 w-4" /> {tri(locale, { ar: 'إضافة', ku: 'زیادکردن', en: 'Add' })}</Button>
             </form>
           </CardContent>
         </Card>
 
         <Card className="lg:col-span-2">
-          <CardHeader><CardTitle>{isAr ? `التصنيفات (${rows.length})` : `Categories (${rows.length})`}</CardTitle></CardHeader>
+          <CardHeader><CardTitle>{tri(locale, { ar: `التصنيفات (${rows.length})`, ku: `پۆلێنەکان (${rows.length})`, en: `Categories (${rows.length})` })}</CardTitle></CardHeader>
           <CardContent>
             {rows.length === 0 ? (
               <div className="py-12 text-center">
                 <Tags className="mx-auto h-8 w-8 text-muted-foreground/50" />
-                <p className="mt-2 text-sm text-muted-foreground">{isAr ? 'لا توجد تصنيفات' : 'No categories yet'}</p>
+                <p className="mt-2 text-sm text-muted-foreground">{tri(locale, { ar: 'لا توجد تصنيفات', ku: 'هیچ پۆلێنێک نییە', en: 'No categories yet' })}</p>
               </div>
             ) : (
               <ul className="divide-y">
@@ -91,7 +92,7 @@ export default function IncomeCategoriesPage() {
                       <p className="font-medium">{c.parentId && <span className="text-muted-foreground">↳ </span>}{isAr ? c.nameAr : c.nameEn}</p>
                       {c.accountCode && <p className="font-mono text-xs text-muted-foreground">acct: {c.accountCode}</p>}
                     </div>
-                    <Badge variant={c.isActive ? 'default' : 'secondary'}>{c.isActive ? (isAr ? 'نشط' : 'Active') : (isAr ? 'متوقف' : 'Inactive')}</Badge>
+                    <Badge variant={c.isActive ? 'default' : 'secondary'}>{c.isActive ? tri(locale, { ar: 'نشط', ku: 'چالاک', en: 'Active' }) : tri(locale, { ar: 'متوقف', ku: 'ناچالاک', en: 'Inactive' })}</Badge>
                   </li>
                 ))}
               </ul>
