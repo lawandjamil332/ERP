@@ -6,26 +6,26 @@ import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/ui/page-header';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Wrench, Plus } from 'lucide-react';
+import { tri } from '@/lib/i18n/tri';
 
 export default function WorkstationsPage() {
   const locale = useLocale();
-  const isAr = locale === 'ar';
   return (
     <div className="space-y-6">
       <PageHeader
-        title={isAr ? 'محطات العمل' : 'Workstations'}
-        description={isAr ? 'محطات الإنتاج والآلات' : 'Production stations and machines'}
-        actions={<Button><Plus className="h-4 w-4" /> {isAr ? 'محطة جديدة' : 'New workstation'}</Button>}
+        title={tri(locale, { ar: 'محطات العمل', ku: 'وێستگەکانی کار', en: 'Workstations' })}
+        description={tri(locale, { ar: 'محطات الإنتاج والآلات', ku: 'وێستگەکانی بەرهەمهێنان و ئامێرەکان', en: 'Production stations and machines' })}
+        actions={<Button><Plus className="h-4 w-4" /> {tri(locale, { ar: 'محطة جديدة', ku: 'وێستگەی نوێ', en: 'New workstation' })}</Button>}
       />
       <Card>
         <CardHeader>
-          <CardTitle>{isAr ? 'إدارة محطات العمل' : 'Manage workstations'}</CardTitle>
-          <CardDescription>{isAr ? 'أضف محطات الإنتاج لتخصيصها لأوامر التصنيع' : 'Add stations to assign to manufacturing orders'}</CardDescription>
+          <CardTitle>{tri(locale, { ar: 'إدارة محطات العمل', ku: 'بەڕێوەبردنی وێستگەکانی کار', en: 'Manage workstations' })}</CardTitle>
+          <CardDescription>{tri(locale, { ar: 'أضف محطات الإنتاج لتخصيصها لأوامر التصنيع', ku: 'وێستگەکانی بەرهەمهێنان زیاد بکە بۆ تەرخانکردنیان بۆ فەرمانەکانی بەرهەمهێنان', en: 'Add stations to assign to manufacturing orders' })}</CardDescription>
         </CardHeader>
         <CardContent>
           <EmptyState icon={Wrench}
-            title={isAr ? 'لا توجد محطات' : 'No workstations'}
-            description={isAr ? 'ابدأ بإضافة محطة عمل' : 'Get started by creating a workstation'}
+            title={tri(locale, { ar: 'لا توجد محطات', ku: 'هیچ وێستگەیەک نییە', en: 'No workstations' })}
+            description={tri(locale, { ar: 'ابدأ بإضافة محطة عمل', ku: 'دەست پێبکە بە زیادکردنی وێستگەیەکی کار', en: 'Get started by creating a workstation' })}
           />
         </CardContent>
       </Card>

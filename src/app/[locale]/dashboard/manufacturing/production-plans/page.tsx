@@ -6,26 +6,26 @@ import { Button } from '@/components/ui/button';
 import { PageHeader } from '@/components/ui/page-header';
 import { EmptyState } from '@/components/ui/empty-state';
 import { CalendarCheck, Plus } from 'lucide-react';
+import { tri } from '@/lib/i18n/tri';
 
 export default function ProductionPlansPage() {
   const locale = useLocale();
-  const isAr = locale === 'ar';
   return (
     <div className="space-y-6">
       <PageHeader
-        title={isAr ? 'خطط الإنتاج' : 'Production plans'}
-        description={isAr ? 'جدولة دفعات الإنتاج المستقبلية' : 'Schedule upcoming production batches'}
-        actions={<Button><Plus className="h-4 w-4" /> {isAr ? 'خطة جديدة' : 'New plan'}</Button>}
+        title={tri(locale, { ar: 'خطط الإنتاج', ku: 'پلانەکانی بەرهەمهێنان', en: 'Production plans' })}
+        description={tri(locale, { ar: 'جدولة دفعات الإنتاج المستقبلية', ku: 'خشتەکردنی بەشە بەرهەمهێنانە داهاتووەکان', en: 'Schedule upcoming production batches' })}
+        actions={<Button><Plus className="h-4 w-4" /> {tri(locale, { ar: 'خطة جديدة', ku: 'پلانی نوێ', en: 'New plan' })}</Button>}
       />
       <Card>
         <CardHeader>
-          <CardTitle>{isAr ? 'إدارة خطط الإنتاج' : 'Manage plans'}</CardTitle>
-          <CardDescription>{isAr ? 'مدخل لـ MRP — تخطيط الاحتياجات من المواد' : 'Feeds MRP — material requirements planning'}</CardDescription>
+          <CardTitle>{tri(locale, { ar: 'إدارة خطط الإنتاج', ku: 'بەڕێوەبردنی پلانەکان', en: 'Manage plans' })}</CardTitle>
+          <CardDescription>{tri(locale, { ar: 'مدخل لـ MRP — تخطيط الاحتياجات من المواد', ku: 'دەرامەت بۆ MRP — پلانی پێداویستی کەرەستەکان', en: 'Feeds MRP — material requirements planning' })}</CardDescription>
         </CardHeader>
         <CardContent>
           <EmptyState icon={CalendarCheck}
-            title={isAr ? 'لا توجد خطط' : 'No production plans'}
-            description={isAr ? 'ابدأ بإنشاء خطة إنتاج' : 'Get started by creating a plan'}
+            title={tri(locale, { ar: 'لا توجد خطط', ku: 'هیچ پلانێک نییە', en: 'No production plans' })}
+            description={tri(locale, { ar: 'ابدأ بإنشاء خطة إنتاج', ku: 'دەست پێبکە بە دروستکردنی پلانێک', en: 'Get started by creating a plan' })}
           />
         </CardContent>
       </Card>
