@@ -13,6 +13,7 @@ import { PageHeader } from '@/components/ui/page-header';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Shield, Plus } from 'lucide-react';
 import { toast } from '@/lib/toast';
+import { tri } from '@/lib/i18n/tri';
 
 interface BG {
   id: string; reference: string; kind: string; issuingBank: string;
@@ -23,6 +24,11 @@ interface BG {
 const KINDS_AR: Record<string, string> = {
   BID: 'كفالة عطاء', PERFORMANCE: 'كفالة حسن أداء', ADVANCE_PAYMENT: 'كفالة دفعة مقدمة',
   RETENTION: 'كفالة محتجزات', CUSTOMS: 'كفالة جمركية', OTHER: 'أخرى',
+};
+
+const KINDS_KU: Record<string, string> = {
+  BID: 'زامنی پێشکەش', PERFORMANCE: 'زامنی باشی جێبەجێکردن', ADVANCE_PAYMENT: 'زامنی پێشەکی',
+  RETENTION: 'زامنی ڕاگیراوە', CUSTOMS: 'زامنی گومرگی', OTHER: 'هیتر',
 };
 
 export default function BankGuaranteesPage() {
@@ -65,49 +71,49 @@ export default function BankGuaranteesPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title={isAr ? 'خطابات الضمان' : 'Bank guarantees'}
-        description={isAr ? 'خطابات الضمان البنكية للعطاءات الحكومية والعقود' : 'Bank guarantees for tenders and contracts'}
+        title={tri(locale, { ar: 'خطابات الضمان', ku: 'نامەکانی زامن', en: 'Bank guarantees' })}
+        description={tri(locale, { ar: 'خطابات الضمان البنكية للعطاءات الحكومية والعقود', ku: 'نامەکانی زامنی بانکی بۆ مەزایدە حکومییەکان و گرێبەستەکان', en: 'Bank guarantees for tenders and contracts' })}
         actions={
           <Button onClick={() => setShowForm((s) => !s)}>
-            <Plus className="h-4 w-4" /> {isAr ? 'إضافة كفالة' : 'New guarantee'}
+            <Plus className="h-4 w-4" /> {tri(locale, { ar: 'إضافة كفالة', ku: 'زیادکردنی زامن', en: 'New guarantee' })}
           </Button>
         }
       />
 
       {showForm && (
         <Card>
-          <CardHeader><CardTitle>{isAr ? 'كفالة جديدة' : 'New guarantee'}</CardTitle></CardHeader>
+          <CardHeader><CardTitle>{tri(locale, { ar: 'كفالة جديدة', ku: 'زامنی نوێ', en: 'New guarantee' })}</CardTitle></CardHeader>
           <CardContent>
             <form onSubmit={submit} className="grid gap-4 sm:grid-cols-2">
-              <Fld label={isAr ? 'الرقم المرجعي' : 'Reference'} req>
+              <Fld label={tri(locale, { ar: 'الرقم المرجعي', ku: 'ژمارەی ئاماژە', en: 'Reference' })} req>
                 <Input dir="ltr" value={form.reference} onChange={(e) => setForm({ ...form, reference: e.target.value })} required />
               </Fld>
-              <Fld label={isAr ? 'النوع' : 'Kind'}>
+              <Fld label={tri(locale, { ar: 'النوع', ku: 'جۆر', en: 'Kind' })}>
                 <Select value={form.kind} onValueChange={(v) => setForm({ ...form, kind: v })}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
                     {Object.keys(KINDS_AR).map((k) => (
-                      <SelectItem key={k} value={k}>{isAr ? KINDS_AR[k] : k}</SelectItem>
+                      <SelectItem key={k} value={k}>{tri(locale, { ar: KINDS_AR[k], ku: KINDS_KU[k] ?? k, en: k })}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </Fld>
-              <Fld label={isAr ? 'البنك المُصدِر' : 'Issuing bank'} req>
+              <Fld label={tri(locale, { ar: 'البنك المُصدِر', ku: 'بانکی دەرکەر', en: 'Issuing bank' })} req>
                 <Input value={form.issuingBank} onChange={(e) => setForm({ ...form, issuingBank: e.target.value })} required />
               </Fld>
-              <Fld label={isAr ? 'المستفيد' : 'Beneficiary'} req>
+              <Fld label={tri(locale, { ar: 'المستفيد', ku: 'سوودمەند', en: 'Beneficiary' })} req>
                 <Input value={form.beneficiary} onChange={(e) => setForm({ ...form, beneficiary: e.target.value })} required />
               </Fld>
-              <Fld label={isAr ? 'القيمة' : 'Amount'} req>
+              <Fld label={tri(locale, { ar: 'القيمة', ku: 'بڕ', en: 'Amount' })} req>
                 <Input type="number" step="0.01" dir="ltr" value={form.amount} onChange={(e) => setForm({ ...form, amount: e.target.value })} required />
               </Fld>
-              <Fld label={isAr ? 'العملة' : 'Currency'}>
+              <Fld label={tri(locale, { ar: 'العملة', ku: 'دراو', en: 'Currency' })}>
                 <Input dir="ltr" maxLength={3} value={form.currency} onChange={(e) => setForm({ ...form, currency: e.target.value.toUpperCase() })} />
               </Fld>
-              <Fld label={isAr ? 'تاريخ الإصدار' : 'Issue date'} req>
+              <Fld label={tri(locale, { ar: 'تاريخ الإصدار', ku: 'بەرواری دەرکردن', en: 'Issue date' })} req>
                 <Input type="date" dir="ltr" value={form.issueDate} onChange={(e) => setForm({ ...form, issueDate: e.target.value })} required />
               </Fld>
-              <Fld label={isAr ? 'تاريخ الانتهاء' : 'Expiry date'} req>
+              <Fld label={tri(locale, { ar: 'تاريخ الانتهاء', ku: 'بەرواری بەسەرچوون', en: 'Expiry date' })} req>
                 <Input type="date" dir="ltr" value={form.expiryDate} onChange={(e) => setForm({ ...form, expiryDate: e.target.value })} required />
               </Fld>
               <div className="sm:col-span-2 flex justify-end gap-2">
@@ -128,20 +134,20 @@ export default function BankGuaranteesPage() {
           <Table>
             <THead>
               <TR>
-                <TH>{isAr ? 'الرقم' : 'Reference'}</TH>
-                <TH>{isAr ? 'النوع' : 'Kind'}</TH>
-                <TH>{isAr ? 'البنك' : 'Bank'}</TH>
-                <TH>{isAr ? 'المستفيد' : 'Beneficiary'}</TH>
-                <TH className="text-end">{isAr ? 'القيمة' : 'Amount'}</TH>
-                <TH>{isAr ? 'الانتهاء' : 'Expiry'}</TH>
-                <TH>{isAr ? 'الحالة' : 'Status'}</TH>
+                <TH>{tri(locale, { ar: 'الرقم', ku: 'ژمارەی ئاماژە', en: 'Reference' })}</TH>
+                <TH>{tri(locale, { ar: 'النوع', ku: 'جۆر', en: 'Kind' })}</TH>
+                <TH>{tri(locale, { ar: 'البنك', ku: 'بانک', en: 'Bank' })}</TH>
+                <TH>{tri(locale, { ar: 'المستفيد', ku: 'سوودمەند', en: 'Beneficiary' })}</TH>
+                <TH className="text-end">{tri(locale, { ar: 'القيمة', ku: 'بڕ', en: 'Amount' })}</TH>
+                <TH>{tri(locale, { ar: 'الانتهاء', ku: 'بەسەرچوون', en: 'Expiry' })}</TH>
+                <TH>{tri(locale, { ar: 'الحالة', ku: 'دۆخ', en: 'Status' })}</TH>
               </TR>
             </THead>
             <TBody>
               {rows.map((r) => (
                 <TR key={r.id}>
                   <TD className="font-mono text-xs">{r.reference}</TD>
-                  <TD>{isAr ? KINDS_AR[r.kind] ?? r.kind : r.kind}</TD>
+                  <TD>{tri(locale, { ar: KINDS_AR[r.kind] ?? r.kind, ku: KINDS_KU[r.kind] ?? r.kind, en: r.kind })}</TD>
                   <TD>{r.issuingBank}</TD>
                   <TD>{r.beneficiary}</TD>
                   <TD className="text-end tabular-nums">{parseFloat(r.amount).toLocaleString(isAr ? 'ar-IQ' : 'en')} {r.currency}</TD>

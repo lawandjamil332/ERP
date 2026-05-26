@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { PageHeader } from '@/components/ui/page-header';
 import { toast } from '@/lib/toast';
+import { tri } from '@/lib/i18n/tri';
 
 const today = () => new Date().toISOString().slice(0, 10);
 
@@ -68,51 +69,49 @@ export default function NewLcPage() {
     }
   }
 
-  const isAr = locale === 'ar';
-
   return (
     <div className="space-y-6">
-      <PageHeader title={isAr ? 'فتح اعتماد مستندي جديد' : 'Open new letter of credit'} />
+      <PageHeader title={tri(locale, { ar: 'فتح اعتماد مستندي جديد', ku: 'کردنەوەی خشتەی متمانەی نوێ', en: 'Open new letter of credit' })} />
 
       <form onSubmit={submit} className="space-y-6">
         <Card>
-          <CardHeader><CardTitle>{isAr ? 'تفاصيل الاعتماد' : 'LC details'}</CardTitle></CardHeader>
+          <CardHeader><CardTitle>{tri(locale, { ar: 'تفاصيل الاعتماد', ku: 'وردەکارییەکانی متمانە', en: 'LC details' })}</CardTitle></CardHeader>
           <CardContent className="grid gap-4 sm:grid-cols-2">
-            <Field label={isAr ? 'رقم الاعتماد' : 'LC number'} req>
+            <Field label={tri(locale, { ar: 'رقم الاعتماد', ku: 'ژمارەی متمانە', en: 'LC number' })} req>
               <Input dir="ltr" value={form.lcNumber} onChange={(e) => setForm({ ...form, lcNumber: e.target.value })} required />
             </Field>
-            <Field label={isAr ? 'مقدم الطلب' : 'Applicant'} req>
+            <Field label={tri(locale, { ar: 'مقدم الطلب', ku: 'داواکار', en: 'Applicant' })} req>
               <Input value={form.applicant} onChange={(e) => setForm({ ...form, applicant: e.target.value })} required />
             </Field>
-            <Field label={isAr ? 'البنك المُصدِر' : 'Issuing bank'} req>
+            <Field label={tri(locale, { ar: 'البنك المُصدِر', ku: 'بانکی دەرکەر', en: 'Issuing bank' })} req>
               <Input value={form.issuingBank} onChange={(e) => setForm({ ...form, issuingBank: e.target.value })} required />
             </Field>
-            <Field label={isAr ? 'البنك المُبلِّغ' : 'Advising bank'}>
+            <Field label={tri(locale, { ar: 'البنك المُبلّغ', ku: 'بانکی ئاگادارکەرەوە', en: 'Advising bank' })}>
               <Input value={form.advisingBank} onChange={(e) => setForm({ ...form, advisingBank: e.target.value })} />
             </Field>
-            <Field label={isAr ? 'المستفيد' : 'Beneficiary'} req>
+            <Field label={tri(locale, { ar: 'المستفيد', ku: 'سوودمەند', en: 'Beneficiary' })} req>
               <Input value={form.beneficiary} onChange={(e) => setForm({ ...form, beneficiary: e.target.value })} required />
             </Field>
-            <Field label={isAr ? 'بلد المستفيد' : 'Beneficiary country'}>
+            <Field label={tri(locale, { ar: 'بلد المستفيد', ku: 'وڵاتی سوودمەند', en: 'Beneficiary country' })}>
               <Input value={form.beneficiaryCountry} onChange={(e) => setForm({ ...form, beneficiaryCountry: e.target.value })} placeholder="CN, TR, AE…" />
             </Field>
             <Field label={t('invoice.currency')}>
               <Input dir="ltr" maxLength={3} value={form.currency}
                 onChange={(e) => setForm({ ...form, currency: e.target.value.toUpperCase() })} />
             </Field>
-            <Field label={isAr ? 'القيمة' : 'Amount'} req>
+            <Field label={tri(locale, { ar: 'القيمة', ku: 'بڕ', en: 'Amount' })} req>
               <Input type="number" step="0.01" dir="ltr" value={form.amount}
                 onChange={(e) => setForm({ ...form, amount: e.target.value })} required />
             </Field>
-            <Field label={isAr ? 'تاريخ الإصدار' : 'Issue date'} req>
+            <Field label={tri(locale, { ar: 'تاريخ الإصدار', ku: 'بەرواری دەرکردن', en: 'Issue date' })} req>
               <Input type="date" dir="ltr" value={form.issueDate}
                 onChange={(e) => setForm({ ...form, issueDate: e.target.value })} required />
             </Field>
-            <Field label={isAr ? 'تاريخ الانتهاء' : 'Expiry date'} req>
+            <Field label={tri(locale, { ar: 'تاريخ الانتهاء', ku: 'بەرواری بەسەرچوون', en: 'Expiry date' })} req>
               <Input type="date" dir="ltr" value={form.expiryDate}
                 onChange={(e) => setForm({ ...form, expiryDate: e.target.value })} required />
             </Field>
-            <Field label={isAr ? 'آخر تاريخ للشحن' : 'Last shipment date'}>
+            <Field label={tri(locale, { ar: 'آخر تاريخ للشحن', ku: 'دوایین بەرواری بارکردن', en: 'Last shipment date' })}>
               <Input type="date" dir="ltr" value={form.lastShipmentDate}
                 onChange={(e) => setForm({ ...form, lastShipmentDate: e.target.value })} />
             </Field>
@@ -120,7 +119,7 @@ export default function NewLcPage() {
               <Input dir="ltr" value={form.incoterms}
                 onChange={(e) => setForm({ ...form, incoterms: e.target.value })} placeholder="CIF / FOB / DAP" />
             </Field>
-            <Field label={isAr ? 'تاريخ مزاد CBI' : 'CBI window date'}>
+            <Field label={tri(locale, { ar: 'تاريخ مزاد CBI', ku: 'بەرواری مەزادی CBI', en: 'CBI window date' })}>
               <Input type="date" dir="ltr" value={form.cbiWindowDate}
                 onChange={(e) => setForm({ ...form, cbiWindowDate: e.target.value })} />
             </Field>

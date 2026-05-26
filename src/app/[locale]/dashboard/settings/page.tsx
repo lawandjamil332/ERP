@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { PageHeader } from '@/components/ui/page-header';
 import { toast } from '@/lib/toast';
+import { tri } from '@/lib/i18n/tri';
 
 interface Tenant {
   id: string;
@@ -48,39 +49,38 @@ export default function SettingsPage() {
   }
 
   if (!tenant) return <div className="py-12 text-center text-muted-foreground">{t('common.loading')}</div>;
-  const isAr = locale === 'ar';
 
   return (
     <div className="space-y-6">
-      <PageHeader title={t('nav.settings')} description={isAr ? 'إعدادات شركتك' : 'Company-wide preferences'} />
+      <PageHeader title={t('nav.settings')} description={tri(locale, { ar: 'إعدادات شركتك', ku: 'ڕێکخستنەکانی کۆمپانیاکەت', en: 'Company-wide preferences' })} />
 
       <Card>
         <CardHeader>
-          <CardTitle>{isAr ? 'الهوية' : 'Identity'}</CardTitle>
+          <CardTitle>{tri(locale, { ar: 'الهوية', ku: 'ناسنامە', en: 'Identity' })}</CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4 sm:grid-cols-2">
-          <Field label={isAr ? 'الاسم بالعربية' : 'Name (Arabic)'}>
+          <Field label={tri(locale, { ar: 'الاسم بالعربية', ku: 'ناو بە عەرەبی', en: 'Name (Arabic)' })}>
             <Input dir="rtl" value={tenant.nameAr}
               onChange={(e) => setTenant({ ...tenant, nameAr: e.target.value })}
               onBlur={() => save('nameAr', tenant.nameAr)} />
           </Field>
-          <Field label={isAr ? 'الاسم بالإنجليزية' : 'Name (English)'}>
+          <Field label={tri(locale, { ar: 'الاسم بالإنجليزية', ku: 'ناو بە ئینگلیزی', en: 'Name (English)' })}>
             <Input dir="ltr" value={tenant.nameEn}
               onChange={(e) => setTenant({ ...tenant, nameEn: e.target.value })}
               onBlur={() => save('nameEn', tenant.nameEn)} />
           </Field>
-          <Field label={isAr ? 'الرقم الضريبي' : 'Tax number'}>
+          <Field label={tri(locale, { ar: 'الرقم الضريبي', ku: 'ژمارەی باجی', en: 'Tax number' })}>
             <Input dir="ltr" readOnly value={tenant.taxNumber ?? ''} className="font-mono" />
           </Field>
-          <Field label={isAr ? 'السجل التجاري' : 'Commercial registration'}>
+          <Field label={tri(locale, { ar: 'السجل التجاري', ku: 'تۆماری بازرگانی', en: 'Commercial registration' })}>
             <Input dir="ltr" readOnly value={tenant.commercialReg ?? ''} className="font-mono" />
           </Field>
-          <Field label={isAr ? 'المحافظة' : 'Governorate'}>
+          <Field label={tri(locale, { ar: 'المحافظة', ku: 'پارێزگا', en: 'Governorate' })}>
             <Input value={tenant.governorate ?? ''}
               onChange={(e) => setTenant({ ...tenant, governorate: e.target.value })}
               onBlur={() => save('governorate', tenant.governorate)} />
           </Field>
-          <Field label={isAr ? 'اللغة الافتراضية' : 'Default language'}>
+          <Field label={tri(locale, { ar: 'اللغة الافتراضية', ku: 'زمانی بنەڕەت', en: 'Default language' })}>
             <Select value={tenant.defaultLocale}
               onValueChange={(v) => save('defaultLocale', v as any)}>
               <SelectTrigger><SelectValue /></SelectTrigger>
@@ -96,26 +96,28 @@ export default function SettingsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>{isAr ? 'إعدادات عراقية' : 'Iraq-specific preferences'}</CardTitle>
+          <CardTitle>{tri(locale, { ar: 'إعدادات عراقية', ku: 'ڕێکخستنە عێراقییەکان', en: 'Iraq-specific preferences' })}</CardTitle>
           <CardDescription>
-            {isAr ? 'تخصيصات قانون العمل العراقي والمتطلبات الضريبية' : 'Iraqi labor law and tax preferences'}
+            {tri(locale, { ar: 'تخصيصات قانون العمل العراقي والمتطلبات الضريبية', ku: 'ڕێکخستنەکانی یاسای کاری عێراقی و پێداویستییە باجییەکان', en: 'Iraqi labor law and tax preferences' })}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-5">
           <ToggleRow
-            title={isAr ? 'وضع شهر رمضان' : 'Ramadan mode'}
-            description={isAr
-              ? 'يطبّق ساعات العمل المخفّضة (٦ ساعات/يوم) خلال شهر رمضان وفقاً لقانون العمل العراقي'
-              : 'Apply 6-hour workdays during Ramadan per Iraqi Labor Law'}
+            title={tri(locale, { ar: 'وضع شهر رمضان', ku: 'دۆخی ڕەمەزان', en: 'Ramadan mode' })}
+            description={tri(locale, {
+              ar: 'يطبّق ساعات العمل المخفّضة (٦ ساعات/يوم) خلال شهر رمضان وفقاً لقانون العمل العراقي',
+              ku: 'کاتژمێری کاری کەمکراوە (٦ کاتژمێر/ڕۆژ) لە ماوەی ڕەمەزان جێبەجێ دەکات بەپێی یاسای کاری عێراقی',
+              en: 'Apply 6-hour workdays during Ramadan per Iraqi Labor Law' })}
             value={tenant.ramadanMode}
             onChange={(v) => save('ramadanMode', v)}
             disabled={busy}
           />
           <ToggleRow
-            title={isAr ? 'استخدام الأرقام العربية (٠١٢٣)' : 'Use Arabic-Indic numerals (٠١٢٣)'}
-            description={isAr
-              ? 'مطلوب على نماذج الهيئة العامة للضرائب'
-              : 'Required on General Commission for Taxes (GCT) forms'}
+            title={tri(locale, { ar: 'استخدام الأرقام العربية (٠١٢٣)', ku: 'بەکارهێنانی ژمارە عەرەبییەکان (٠١٢٣)', en: 'Use Arabic-Indic numerals (٠١٢٣)' })}
+            description={tri(locale, {
+              ar: 'مطلوب على نماذج الهيئة العامة للضرائب',
+              ku: 'پێویستە لەسەر فۆرمەکانی دەستەی گشتی باج',
+              en: 'Required on General Commission for Taxes (GCT) forms' })}
             value={tenant.useArabicNumerals}
             onChange={(v) => save('useArabicNumerals', v)}
             disabled={busy}
