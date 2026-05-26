@@ -3,7 +3,9 @@ import { Sidebar } from '@/components/layout/Sidebar';
 import { TopBar } from '@/components/layout/TopBar';
 import { MobileNav } from '@/components/layout/MobileNav';
 import { CommandPalette } from '@/components/layout/CommandPalette';
+import { ClickSound } from '@/components/layout/ClickSound';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
+import { SoundToggle } from '@/components/ui/sound-toggle';
 import { verifySession } from '@/lib/auth/session';
 import { db } from '@/lib/db';
 import { redirect } from 'next/navigation';
@@ -28,17 +30,19 @@ export default async function DashboardLayout({
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-background">
+      <ClickSound />
       <CommandPalette locale={locale} />
       <Sidebar locale={locale} />
       <div className="flex flex-1 flex-col overflow-hidden">
         <div className="flex items-center border-b bg-card px-3 py-2 md:hidden">
           <MobileNav locale={locale} />
           <span className="ms-2 text-sm font-semibold">{tenantName ?? ''}</span>
-          <span className="ms-auto"><ThemeToggle /></span>
+          <span className="ms-auto flex items-center gap-0.5"><SoundToggle /><ThemeToggle /></span>
         </div>
         <div className="flex items-center justify-between border-b bg-card">
           <TopBar locale={locale} userEmail={session.email} tenantName={tenantName ?? ''} />
-          <div className="hidden items-center gap-1 pe-3 md:flex">
+          <div className="hidden items-center gap-0.5 pe-3 md:flex">
+            <SoundToggle />
             <ThemeToggle />
           </div>
         </div>
