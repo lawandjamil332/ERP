@@ -2,11 +2,11 @@
 
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
 import { LOCALES, LOCALE_LABELS, type Locale } from '@/lib/i18n/config';
 import { LogOut, Languages, Search, ChevronDown, Settings as SettingsIcon, Shield } from 'lucide-react';
 import Link from 'next/link';
 import { NotificationBell } from './NotificationBell';
+import { useExclusiveDisclosure } from '@/lib/hooks/use-exclusive-disclosure';
 
 export function TopBar({ locale, userEmail, tenantName }: {
   locale: string; userEmail: string; tenantName: string;
@@ -14,8 +14,8 @@ export function TopBar({ locale, userEmail, tenantName }: {
   const t = useTranslations('nav');
   const tc = useTranslations('common');
   const router = useRouter();
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [langOpen, setLangOpen] = useState(false);
+  const { open: menuOpen, toggle: toggleMenu, close: closeMenu } = useExclusiveDisclosure('topbar-user');
+  const { open: langOpen, toggle: toggleLang, close: closeLang } = useExclusiveDisclosure('topbar-lang');
 
   async function logout() {
     await fetch('/api/auth/logout', { method: 'POST' });
@@ -51,7 +51,7 @@ export function TopBar({ locale, userEmail, tenantName }: {
         <div className="relative">
           <button
             type="button"
-            onClick={() => { setLangOpen((o) => !o); setMenuOpen(false); }}
+            onClick={toggleLang}
             className="inline-flex h-9 items-center gap-1.5 rounded-lg border bg-background px-2.5 text-xs font-medium transition-colors hover:bg-accent"
           >
             <Languages className="h-3.5 w-3.5 text-muted-foreground" />
@@ -60,12 +60,12 @@ export function TopBar({ locale, userEmail, tenantName }: {
           </button>
           {langOpen && (
             <>
-              <div className="fixed inset-0 z-30" onClick={() => setLangOpen(false)} />
+              <div className="fixed inset-0 z-30" onClick={closeLang} />
               <div className="absolute end-0 top-full z-40 mt-1 w-36 overflow-hidden rounded-lg border bg-popover py-1 shadow-lg">
                 {LOCALES.map((l: Locale) => (
                   <button
                     key={l}
-                    onClick={() => { switchLocale(l); setLangOpen(false); }}
+                    onClick={() => { switchLocale(l); closeLang(); }}
                     className={`flex w-full items-center justify-between px-3 py-1.5 text-sm transition-colors hover:bg-accent ${
                       l === locale ? 'font-medium text-primary' : ''
                     }`}
@@ -82,7 +82,7 @@ export function TopBar({ locale, userEmail, tenantName }: {
         <div className="relative">
           <button
             type="button"
-            onClick={() => { setMenuOpen((o) => !o); setLangOpen(false); }}
+            onClick={toggleMenu}
             className="flex h-9 items-center gap-2 rounded-lg border bg-background ps-1 pe-2 transition-colors hover:bg-accent"
           >
             <span className="flex h-7 w-7 items-center justify-center rounded-md bg-gradient-to-br from-emerald-500 to-emerald-700 text-xs font-bold text-white">
@@ -96,7 +96,7 @@ export function TopBar({ locale, userEmail, tenantName }: {
           </button>
           {menuOpen && (
             <>
-              <div className="fixed inset-0 z-30" onClick={() => setMenuOpen(false)} />
+              <div className="fixed inset-0 z-30" onClick={closeMenu} />
               <div className="absolute end-0 top-full z-40 mt-1 w-56 overflow-hidden rounded-lg border bg-popover py-1 shadow-lg">
                 <div className="border-b px-3 py-2">
                   <p className="truncate text-sm font-semibold">{tenantName || '—'}</p>
@@ -104,7 +104,7 @@ export function TopBar({ locale, userEmail, tenantName }: {
                 </div>
                 <Link
                   href={`/${locale}/dashboard/settings`}
-                  onClick={() => setMenuOpen(false)}
+                  onClick={closeMenu}
                   className="flex items-center gap-2 px-3 py-2 text-sm transition-colors hover:bg-accent"
                 >
                   <SettingsIcon className="h-4 w-4 text-muted-foreground" />
@@ -112,7 +112,7 @@ export function TopBar({ locale, userEmail, tenantName }: {
                 </Link>
                 <Link
                   href={`/${locale}/dashboard/settings/security`}
-                  onClick={() => setMenuOpen(false)}
+                  onClick={closeMenu}
                   className="flex items-center gap-2 px-3 py-2 text-sm transition-colors hover:bg-accent"
                 >
                   <Shield className="h-4 w-4 text-muted-foreground" />
@@ -121,7 +121,7 @@ export function TopBar({ locale, userEmail, tenantName }: {
                 <div className="my-1 border-t" />
                 <button
                   type="button"
-                  onClick={() => { setMenuOpen(false); logout(); }}
+                  onClick={() => { closeMenu(); logout(); }}
                   className="flex w-full items-center gap-2 px-3 py-2 text-sm text-destructive transition-colors hover:bg-destructive/10"
                 >
                   <LogOut className="h-4 w-4" />

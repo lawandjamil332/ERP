@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { useLocale } from 'next-intl';
 import { Bell, CheckCheck, Inbox } from 'lucide-react';
+import { useExclusiveDisclosure } from '@/lib/hooks/use-exclusive-disclosure';
 
 interface Notif {
   id: string;
@@ -18,7 +19,7 @@ interface Notif {
 export function NotificationBell() {
   const locale = useLocale();
   const isAr = locale === 'ar';
-  const [open, setOpen] = useState(false);
+  const { open, setOpen, toggle, close } = useExclusiveDisclosure('notifications');
   const [items, setItems] = useState<Notif[] | null>(null);
   const [marking, setMarking] = useState(false);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -64,7 +65,7 @@ export function NotificationBell() {
     <div className="relative">
       <button
         type="button"
-        onClick={() => setOpen((o) => !o)}
+        onClick={toggle}
         className="relative inline-flex h-9 w-9 items-center justify-center rounded-lg border bg-background text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
         aria-label={isAr ? 'الإشعارات' : 'Notifications'}
       >
@@ -78,7 +79,7 @@ export function NotificationBell() {
 
       {open && (
         <>
-          <div className="fixed inset-0 z-30" onClick={() => setOpen(false)} />
+          <div className="fixed inset-0 z-30" onClick={close} />
           <div className="absolute end-0 top-full z-40 mt-1 w-[22rem] overflow-hidden rounded-xl border bg-popover shadow-floating">
             <div className="flex items-center justify-between border-b px-3 py-2">
               <p className="text-sm font-semibold">{isAr ? 'الإشعارات' : 'Notifications'}</p>

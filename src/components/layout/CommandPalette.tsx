@@ -97,7 +97,11 @@ export function CommandPalette({ locale }: { locale: string }) {
   }, []);
 
   useEffect(() => {
-    if (open) { setQ(''); setActive(0); setTimeout(() => inputRef.current?.focus(), 30); }
+    if (open) {
+      setQ(''); setActive(0);
+      window.dispatchEvent(new CustomEvent('erp:popover-open', { detail: 'command-palette' }));
+      setTimeout(() => inputRef.current?.focus(), 30);
+    }
   }, [open]);
 
   useEffect(() => { setActive(0); }, [q]);
