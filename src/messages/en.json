@@ -354,7 +354,21 @@
     "calculate": "Calculate",
     "post": "Post",
     "payout": "Generate bank payout file",
-    "payslip": "Payslip"
+    "payslip": "Payslip",
+    "runDetails": "Run details",
+    "runIntro": "One run per month. Deductions below are optional and follow Iraqi rules when enabled.",
+    "postNow": "Post journal entries immediately",
+    "deductions": "Deductions",
+    "deductionsIntro": "Choose which deductions to apply for this run.",
+    "applyIncomeTax": "Apply income tax (PIT)",
+    "applyIncomeTaxHint": "Progressive 3–15% (federal) or 5% (KRG). Turn off for exempt staff.",
+    "applySocialSecurity": "Apply social security",
+    "applySocialSecurityHint": "Employee 5% + employer 12% (25% oil & gas). Turn off to skip.",
+    "overridesTitle": "Adjustments (optional)",
+    "overridesIntro": "Add allowances, overtime, bonuses, or other deductions per employee for this period.",
+    "empNo": "Emp #",
+    "name": "Name",
+    "noEmployees": "No employees"
   },
   "advance": {
     "title": "Salary advances",
