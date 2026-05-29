@@ -54,6 +54,10 @@ model Tenant {
   depreciationRuns DepreciationRun[]
   approvalRules   ApprovalRule[]
   approvals       Approval[]
+  accountingPeriods AccountingPeriod[]
+  documentSequences DocumentSequence[]
+  bankReconciliations BankReconciliation[]
+  savedViews      SavedView[]
   notifications   Notification[]
   totpSecrets     TotpSecret[]
   portalTokens    CustomerPortalToken[]
@@ -1053,6 +1057,8 @@ model User {
   fullName      String
   phone         String?
   role          UserRole @default(STAFF)
+  /// If set, this user is scoped to a single branch and only sees that branch's data.
+  branchId      String?
   locale        String   @default("ar")
   isActive      Boolean  @default(true)
   lastLoginAt   DateTime?
@@ -1061,6 +1067,76 @@ model User {
   auditLogs     AuditLog[]
 
   @@unique([tenantId, email])
+}
+
+/// Monthly accounting period lock. Once CLOSED, no entries may be posted/dated into it.
+model AccountingPeriod {
+  id          String   @id @default(cuid())
+  tenantId    String
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  year        Int
+  month       Int
+  status      PeriodStatus @default(OPEN)
+  closedAt    DateTime?
+  closedById  String?
+  createdAt   DateTime @default(now())
+
+  @@unique([tenantId, year, month])
+  @@index([tenantId, status])
+}
+
+enum PeriodStatus {
+  OPEN
+  CLOSED
+}
+
+/// Gapless, transaction-safe document numbering. One row per (tenant, key, year).
+model DocumentSequence {
+  id        String   @id @default(cuid())
+  tenantId  String
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  key       String
+  year      Int
+  counter   Int      @default(0)
+  updatedAt DateTime @updatedAt
+
+  @@unique([tenantId, key, year])
+}
+
+/// Bank reconciliation session: match bank-statement lines to ledger payments.
+model BankReconciliation {
+  id             String   @id @default(cuid())
+  tenantId       String
+  tenant         Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  bankAccountId  String
+  statementDate  DateTime
+  openingBalance Decimal  @db.Decimal(20, 4)
+  closingBalance Decimal  @db.Decimal(20, 4)
+  status         ReconStatus @default(IN_PROGRESS)
+  matchedJson    Json?
+  createdAt      DateTime @default(now())
+  completedAt    DateTime?
+
+  @@index([tenantId, bankAccountId])
+}
+
+enum ReconStatus {
+  IN_PROGRESS
+  COMPLETED
+}
+
+/// User-saved filter view on a list page (NetSuite-style saved searches).
+model SavedView {
+  id        String   @id @default(cuid())
+  tenantId  String
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  userId    String
+  page      String
+  name      String
+  filters   Json
+  createdAt DateTime @default(now())
+
+  @@index([tenantId, userId, page])
 }
 
 enum UserRole {

@@ -105,16 +105,18 @@ export function Sidebar({ locale }: { locale: string }) {
         {
           id: 'treasury', label: t('treasury'), icon: Wallet,
           items: [
-            { href: d('/payments'),               label: t('payments'),     icon: CreditCard },
-            { href: d('/finance/receipts'),       label: t('receipts'),     icon: Receipt },
-            { href: d('/cheques'),                label: t('cheques'),      icon: Receipt },
-            { href: d('/finance/bank-accounts'),  label: t('bankAccounts'), icon: Landmark },
+            { href: d('/payments'),                 label: t('payments'),       icon: CreditCard },
+            { href: d('/finance/receipts'),         label: t('receipts'),       icon: Receipt },
+            { href: d('/cheques'),                  label: t('cheques'),        icon: Receipt },
+            { href: d('/finance/bank-accounts'),    label: t('bankAccounts'),   icon: Landmark },
+            { href: d('/finance/reconciliation'),   label: t('reconciliation'), icon: Landmark },
           ],
         },
         {
           id: 'accounting', label: t('accounting'), icon: Calculator,
           items: [
             { href: d('/accounting'),                 label: t('accounting'),        icon: Wallet },
+            { href: d('/accounting/periods'),         label: t('periodClose'),       icon: Lock },
             { href: d('/finance/expense-categories'), label: t('expenseCategories'), icon: FolderTree },
             { href: d('/finance/income-categories'),  label: t('incomeCategories'),  icon: FolderTree },
             { href: d('/accounting/close'),           label: t('yearEndClose'),      icon: Lock },

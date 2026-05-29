@@ -132,9 +132,16 @@ export default async function DashboardHome({
 
       {/* Quick actions — colorful gradient cards */}
       <div>
-        <h2 className="text-xl font-bold">{tri(locale, { ar: 'الأقسام الأساسية', ku: 'بەشە سەرەکییەکان', en: 'Core sections' })}</h2>
+        <h2 className="text-xl font-bold">
+          {tri(locale, { ar: 'مخصّصة لدورك', ku: 'دیاریکراو بۆ ڕۆڵەکەت', en: 'Tailored to your role' })}{' '}
+          <span className="rounded-md bg-primary/10 px-2 py-0.5 align-middle text-xs font-medium text-primary">{session.role}</span>
+        </h2>
         <p className="mb-4 text-sm text-muted-foreground">
-          {tri(locale, { ar: 'الوصول السريع إلى الوحدات الرئيسية', ku: 'دەستگەیشتنی خێرا بۆ مۆدیولە سەرەکییەکان', en: 'Quick access to your main modules' })}
+          {session.role === 'CASHIER' ? tri(locale, { ar: 'مهامك السريعة: نقطة البيع وفتح وردية', ku: 'کارە خێراکانت: خاڵی فرۆشتن و کردنەوەی شیفت', en: 'Your quick actions: POS and shifts' })
+            : session.role === 'ACCOUNTANT' ? tri(locale, { ar: 'مهامك السريعة: القيود والمدفوعات والتقارير', ku: 'کارە خێراکانت: تۆمارەکان، پارەدان، ڕاپۆرتەکان', en: 'Your quick actions: journals, payments, reports' })
+            : session.role === 'SALES' ? tri(locale, { ar: 'مهامك السريعة: فاتورة جديدة وعرض سعر', ku: 'کارە خێراکانت: پسوڵەی نوێ و وەسڵی نرخدانان', en: 'Your quick actions: new invoice and quotation' })
+            : session.role === 'HR' ? tri(locale, { ar: 'مهامك السريعة: الموظفون والرواتب', ku: 'کارە خێراکانت: فەرمانبەرەکان و موچە', en: 'Your quick actions: employees and payroll' })
+            : tri(locale, { ar: 'الوصول السريع إلى الوحدات الرئيسية', ku: 'دەستگەیشتنی خێرا بۆ مۆدیولە سەرەکییەکان', en: 'Quick access to your main modules' })}
         </p>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {actions.map((a) => (

@@ -70,7 +70,9 @@
     "projectsHospitality": "پڕۆژە و میوانداری",
     "directory": "ڕێنما",
     "access": "کۆنترۆڵی دەستگەیشتن",
-    "configuration": "ڕێکخستنی گشتی"
+    "configuration": "ڕێکخستنی گشتی",
+    "periodClose": "داخستنی ماوەی مانگانە",
+    "reconciliation": "ڕێکخستنی بانک"
   },
   "auth": {
     "login": "چوونەژوورەوە",
@@ -305,7 +307,11 @@
     "title": "کڕیار و فرۆشیار",
     "new": "زیادکردن",
     "kind": "جۆر",
-    "kinds": { "CUSTOMER": "کڕیار", "SUPPLIER": "فرۆشیار", "BOTH": "هەردووکیان" },
+    "kinds": {
+      "CUSTOMER": "کڕیار",
+      "SUPPLIER": "فرۆشیار",
+      "BOTH": "هەردووکیان"
+    },
     "nameAr": "ناو (عەرەبی)",
     "nameEn": "ناو (ئینگلیزی)",
     "taxNumber": "ژمارەی باجی",
@@ -487,7 +493,11 @@
     "checkIn": "هاتنە ژوورەوە",
     "checkOut": "ڕۆیشتن",
     "charges": "خزمەتگوزارییەکان",
-    "statuses": { "OPEN": "کراوە", "CHECKED_OUT": "ڕۆیشتووە", "CANCELLED": "هەڵوەشاوەتەوە" }
+    "statuses": {
+      "OPEN": "کراوە",
+      "CHECKED_OUT": "ڕۆیشتووە",
+      "CANCELLED": "هەڵوەشاوەتەوە"
+    }
   },
   "report": {
     "title": "ڕاپۆرتەکان",

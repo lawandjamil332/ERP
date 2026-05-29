@@ -71,7 +71,9 @@
     "directory": "Directory",
     "access": "Access control",
     "configuration": "Configuration",
-    "approvals": "Approvals"
+    "approvals": "Approvals",
+    "periodClose": "Monthly period close",
+    "reconciliation": "Bank reconciliation"
   },
   "auth": {
     "login": "Sign in",

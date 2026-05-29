@@ -14,6 +14,18 @@ export interface SessionPayload {
   tenantId: string;
   role: string;
   email: string;
+  /// If set, the user is scoped to a single branch.
+  branchId?: string | null;
+}
+
+/**
+ * Branch-scoping filter. For a branch-scoped user returns a where-fragment that
+ * limits rows to their branch; for unscoped users (head office) returns {}.
+ * Pass the relation path to the branch field (default direct `branchId`).
+ */
+export function branchScope(session: SessionPayload, field = 'branchId'): Record<string, unknown> {
+  if (!session.branchId) return {};
+  return { [field]: session.branchId };
 }
 
 export async function signSession(payload: SessionPayload): Promise<string> {

@@ -42,6 +42,7 @@ export async function POST(req: Request) {
     tenantId: user.tenantId,
     role: user.role,
     email: user.email,
+    branchId: user.branchId ?? null,
   });
   await setSessionCookie(token);
   return NextResponse.json({ ok: true });

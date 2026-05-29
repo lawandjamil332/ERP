@@ -6,6 +6,8 @@ import { db } from '@/lib/db';
 import { requireSession } from '@/lib/auth/session';
 import { assertBalanced } from '@/lib/iraq/journals';
 import { evaluateApproval, requestApproval } from '@/lib/approvals/gate';
+import { nextSequence } from '@/lib/sequence/next';
+import { assertPeriodOpen, isPeriodClosedError } from '@/lib/accounting/period';
 
 const Application = z.object({
   invoiceId: z.string().optional(),
@@ -50,11 +52,15 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'applications_sum_mismatch' }, { status: 400 });
   }
 
-  const created = await db.$transaction(async (tx) => {
+  let created;
+  try {
+    created = await db.$transaction(async (tx) => {
+    await assertPeriodOpen(tx, session.tenantId, p.date);
+    const number = p.number || await nextSequence(tx, session.tenantId, 'PAY', p.date);
     const pay = await tx.payment.create({
       data: {
         tenantId: session.tenantId,
-        number: p.number,
+        number,
         date: p.date,
         contactId: p.contactId,
         direction: p.direction,
@@ -140,7 +146,13 @@ export async function POST(req: Request) {
     });
     await tx.payment.update({ where: { id: pay.id }, data: { postedJournalId: journal.id } });
     return pay;
-  });
+    });
+  } catch (e) {
+    if (isPeriodClosedError(e)) {
+      return NextResponse.json({ error: 'period_closed', year: e.year, month: e.month }, { status: 422 });
+    }
+    throw e;
+  }
 
   // Approval tracking (non-blocking): if this payment exceeds an active rule
   // threshold, raise a pending approval + notify the approver role.
