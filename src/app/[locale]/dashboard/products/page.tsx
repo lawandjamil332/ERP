@@ -27,7 +27,6 @@ const STATUSES = ['ALL', 'ACTIVE', 'INACTIVE'] as const;
 export default function ProductsPage() {
   const t = useTranslations();
   const locale = useLocale();
-  const isAr = locale === 'ar';
   const [rows, setRows] = useState<Product[] | null>(null);
   const [query, setQuery] = useState('');
   const [status, setStatus] = useState<typeof STATUSES[number]>('ALL');
@@ -151,10 +150,10 @@ export default function ProductsPage() {
                   <div className="min-w-0 flex-1">
                     <p className="text-xs font-mono text-muted-foreground">{p.sku}</p>
                     <h3 className="mt-1 truncate text-base font-bold">
-                      {isAr ? p.nameAr : p.nameEn}
+                      {tri(locale, { ar: p.nameAr, ku: p.nameEn || p.nameAr, en: p.nameEn })}
                     </h3>
                     <p className="mt-1.5 text-xl font-bold tabular-nums text-primary">
-                      {parseFloat(p.salePrice).toLocaleString(isAr ? 'ar-IQ' : 'en')}
+                      {parseFloat(p.salePrice).toLocaleString(locale === 'ar' ? 'ar-IQ' : locale === 'ku' ? 'ckb-IQ' : 'en')}
                       <span className="ms-1 text-xs font-normal text-muted-foreground">د.ع</span>
                     </p>
                   </div>
@@ -167,7 +166,7 @@ export default function ProductsPage() {
                   <span>
                     {p.isService
                       ? tri(locale, { ar: 'خدمة', ku: 'خزمەتگوزاری', en: 'Service' })
-                      : `${tri(locale, { ar: 'المخزون:', ku: 'کۆگا:', en: 'Stock:' })} ${(p.stockQty ?? 0).toLocaleString(isAr ? 'ar-IQ' : 'en')}`}
+                      : `${tri(locale, { ar: 'المخزون:', ku: 'کۆگا:', en: 'Stock:' })} ${(p.stockQty ?? 0).toLocaleString(locale === 'ar' ? 'ar-IQ' : locale === 'ku' ? 'ckb-IQ' : 'en')}`}
                   </span>
                   <div className="flex items-center gap-2">
                     <button onClick={() => copy(p.id)} title={tri(locale, { ar: 'نسخ', ku: 'کۆپیکردن', en: 'Copy' })}

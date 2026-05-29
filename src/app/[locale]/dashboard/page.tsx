@@ -9,6 +9,7 @@ import { getTranslations } from 'next-intl/server';
 import { Calendar, AlertCircle, Wallet, Users, FileText, Package, Building2, ShoppingCart, BookOpen, UserPlus, Receipt, Plus } from 'lucide-react';
 import { formatMoney } from '@/lib/iraq/money';
 import { DashboardCharts } from '@/components/dashboard/Charts';
+import { RecentActivity } from '@/components/dashboard/RecentActivity';
 import { StatCard } from '@/components/ui/stat-card';
 import { tri } from '@/lib/i18n/tri';
 
@@ -61,12 +62,13 @@ export default async function DashboardHome({
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
   }).format(now);
 
-  const isAr = locale === 'ar';
   const hour = now.getUTCHours() + 3; // Iraq UTC+3
-  const greeting = isAr
-    ? (hour < 12 ? 'صباح الخير' : 'مساء الخير')
-    : (hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening');
-  const companyName = isAr ? tenant?.nameAr : (tenant?.nameEn ?? tenant?.nameAr);
+  const greeting = tri(locale, {
+    ar: hour < 12 ? 'صباح الخير' : 'مساء الخير',
+    ku: hour < 12 ? 'بەیانیت باش' : hour < 18 ? 'ئێوارەت باش' : 'شەوت باش',
+    en: hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening',
+  });
+  const companyName = tri(locale, { ar: tenant?.nameAr ?? '', ku: tenant?.nameEn ?? tenant?.nameAr ?? '', en: tenant?.nameEn ?? tenant?.nameAr ?? '' });
 
   const actions = [
     {
@@ -174,6 +176,8 @@ export default async function DashboardHome({
         </p>
         <DashboardCharts />
       </div>
+
+      <RecentActivity />
 
       <div className="grid gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">

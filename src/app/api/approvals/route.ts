@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { db } from '@/lib/db';
 import { requireSession } from '@/lib/auth/session';
+import { advanceApproval } from '@/lib/approvals/gate';
 
 /** List approvals: pending ones the caller's role can decide, plus recent decided. */
 export async function GET() {
@@ -54,14 +55,12 @@ export async function PATCH(req: Request) {
     );
   }
 
-  const updated = await db.approval.update({
-    where: { id: approval.id },
-    data: {
-      status: parsed.data.decision,
-      decidedById: session.userId,
-      decidedAt: new Date(),
-      note: parsed.data.note,
-    },
-  });
+  const updated = await advanceApproval(
+    db,
+    approval.id,
+    parsed.data.decision,
+    session.userId,
+    parsed.data.note,
+  );
   return NextResponse.json({ data: updated });
 }
