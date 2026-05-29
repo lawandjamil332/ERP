@@ -9,6 +9,7 @@ const Body = z.object({
   email: z.string().email(),
   phone: z.string().optional(),
   role: z.enum(['OWNER', 'ADMIN', 'ACCOUNTANT', 'SALES', 'PURCHASES', 'INVENTORY', 'HR', 'CASHIER', 'STAFF', 'AUDITOR_READONLY']),
+  branchId: z.string().nullable().optional(),
   password: z.string().min(6),
   locale: z.string().optional(),
 });
@@ -20,7 +21,7 @@ export async function GET() {
   const rows = await db.user.findMany({
     where: { tenantId: session.tenantId },
     orderBy: { createdAt: 'desc' },
-    select: { id: true, email: true, fullName: true, phone: true, role: true, locale: true, isActive: true, lastLoginAt: true, createdAt: true },
+    select: { id: true, email: true, fullName: true, phone: true, role: true, branchId: true, locale: true, isActive: true, lastLoginAt: true, createdAt: true },
   });
   return NextResponse.json({ data: rows });
 }
@@ -41,6 +42,7 @@ export async function POST(req: Request) {
       fullName: b.fullName,
       phone: b.phone,
       role: b.role,
+      branchId: b.branchId ?? null,
       locale: b.locale ?? 'ar',
     },
     select: { id: true, email: true, fullName: true, role: true, isActive: true },
