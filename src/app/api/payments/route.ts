@@ -159,12 +159,12 @@ export async function POST(req: Request) {
   let approvalRequired = false;
   try {
     const gate = await evaluateApproval(db, session.tenantId, 'Payment', p.amount, p.currency);
-    if (gate.required && gate.approverRole) {
+    if (gate.required && gate.rules.length > 0) {
       approvalRequired = true;
       await requestApproval(db, {
         tenantId: session.tenantId, entity: 'Payment', entityId: created.id,
         amount: p.amount, currency: p.currency,
-        approverRole: gate.approverRole, ruleId: gate.ruleId, requestedById: session.userId,
+        rules: gate.rules, requestedById: session.userId,
       });
     }
   } catch { /* approvals are advisory; never block payment creation */ }

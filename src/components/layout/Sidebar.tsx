@@ -175,9 +175,10 @@ export function Sidebar({ locale }: { locale: string }) {
         {
           id: 'config', label: t('configuration'), icon: Settings,
           items: [
-            { href: d('/templates'), label: t('templates'), icon: FileBadge },
-            { href: d('/import'),    label: t('import'),    icon: Upload },
-            { href: d('/settings'),  label: t('settings'),  icon: Settings },
+            { href: d('/templates'),          label: t('templates'),  icon: FileBadge },
+            { href: d('/settings/tax-rules'), label: t('taxRules'),   icon: Calculator },
+            { href: d('/import'),             label: t('import'),     icon: Upload },
+            { href: d('/settings'),           label: t('settings'),   icon: Settings },
           ],
         },
       ],

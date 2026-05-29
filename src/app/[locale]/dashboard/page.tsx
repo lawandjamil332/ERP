@@ -9,6 +9,7 @@ import { getTranslations } from 'next-intl/server';
 import { Calendar, AlertCircle, Wallet, Users, FileText, Package, Building2, ShoppingCart, BookOpen, UserPlus, Receipt, Plus } from 'lucide-react';
 import { formatMoney } from '@/lib/iraq/money';
 import { DashboardCharts } from '@/components/dashboard/Charts';
+import { RecentActivity } from '@/components/dashboard/RecentActivity';
 import { StatCard } from '@/components/ui/stat-card';
 import { tri } from '@/lib/i18n/tri';
 
@@ -175,6 +176,8 @@ export default async function DashboardHome({
         </p>
         <DashboardCharts />
       </div>
+
+      <RecentActivity />
 
       <div className="grid gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
