@@ -70,7 +70,9 @@
     "projectsHospitality": "المشاريع والضيافة",
     "directory": "الدليل",
     "access": "التحكم بالوصول",
-    "configuration": "الإعدادات العامة"
+    "configuration": "الإعدادات العامة",
+    "periodClose": "إقفال الفترات الشهرية",
+    "reconciliation": "تسوية البنك"
   },
   "auth": {
     "login": "تسجيل الدخول",
@@ -305,7 +307,11 @@
     "title": "الزبائن والموردون",
     "new": "إضافة جهة",
     "kind": "النوع",
-    "kinds": { "CUSTOMER": "زبون", "SUPPLIER": "مورد", "BOTH": "زبون ومورد" },
+    "kinds": {
+      "CUSTOMER": "زبون",
+      "SUPPLIER": "مورد",
+      "BOTH": "زبون ومورد"
+    },
     "nameAr": "الاسم (عربي)",
     "nameEn": "الاسم (إنجليزي)",
     "taxNumber": "الرقم الضريبي",
@@ -487,7 +493,11 @@
     "checkIn": "تسجيل الدخول",
     "checkOut": "تسجيل المغادرة",
     "charges": "الخدمات والإضافات",
-    "statuses": { "OPEN": "مفتوح", "CHECKED_OUT": "غادر", "CANCELLED": "ملغى" }
+    "statuses": {
+      "OPEN": "مفتوح",
+      "CHECKED_OUT": "غادر",
+      "CANCELLED": "ملغى"
+    }
   },
   "report": {
     "title": "التقارير",
