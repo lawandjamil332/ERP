@@ -92,7 +92,7 @@ export default async function ReturnedInvoicesPage({ params }: { params: Promise
                   </TD>
                   <TD className="tabular-nums">{new Intl.DateTimeFormat(locale).format(inv.date)}</TD>
                   <TD>{tri(locale, { ar: inv.contact.nameAr, ku: inv.contact.nameEn ?? inv.contact.nameAr, en: inv.contact.nameEn ?? inv.contact.nameAr })}</TD>
-                  <TD className="font-mono text-xs text-muted-foreground">{inv.notes?.match(/REVERSAL OF\s+(\S+)/i)?.[1] ?? '—'}</TD>
+                  <TD className="font-mono text-xs text-muted-foreground">{inv.notes?.match(/REVERSAL OF\\s+(\\S+)/i)?.[1] ?? '—'}</TD>
                   <TD className="text-end tabular-nums text-rose-600">{formatMoney(Number(inv.total), inv.currency as 'IQD', locale as 'ar')}</TD>
                   <TD><Badge variant={inv.status === 'POSTED' ? 'default' : 'secondary'}>{inv.status}</Badge></TD>
                 </TR>
