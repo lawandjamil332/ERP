@@ -3,8 +3,10 @@ import { z } from 'zod';
 import BigNumber from 'bignumber.js';
 import { db } from '@/lib/db';
 import { requireSession } from '@/lib/auth/session';
-import { validateInvoice, formatInvoiceNumber, type InvoiceKind } from '@/lib/iraq/invoice';
+import { validateInvoice, type InvoiceKind } from '@/lib/iraq/invoice';
 import { buildInvoiceJournalLines, assertBalanced } from '@/lib/iraq/journals';
+import { nextSequence } from '@/lib/sequence/next';
+import { assertPeriodOpen, isPeriodClosedError } from '@/lib/accounting/period';
 import { Prisma } from '@prisma/client';
 
 const Line = z.object({
@@ -98,16 +100,11 @@ export async function POST(req: Request) {
     );
   }
 
-  const year = body.date.getUTCFullYear();
-  const last = await db.invoice.findFirst({
-    where: { tenantId: session.tenantId, number: { startsWith: `INV-${year}-` } },
-    orderBy: { number: 'desc' },
-    select: { number: true },
-  });
-  const seq = last ? parseInt(last.number.split('-')[2], 10) + 1 : 1;
-  const number = formatInvoiceNumber('INV', year, seq);
-
   const created = await db.$transaction(async (tx) => {
+    // Race-safe gapless number — atomic increment, never "count + 1".
+    const number = await nextSequence(tx, session.tenantId, 'INV', body.date);
+    // Block back-dating into a closed accounting period.
+    await assertPeriodOpen(tx, session.tenantId, body.date);
     const inv = await tx.invoice.create({
       data: {
         tenantId: session.tenantId,
@@ -164,7 +161,7 @@ export async function POST(req: Request) {
       });
       const map = new Map(accounts.map((a) => [a.code, a.id]));
 
-      const jRef = `JV-${year}-${String(seq).padStart(6, '0')}`;
+      const jRef = await nextSequence(tx, session.tenantId, 'JV', body.date);
       const journal = await tx.journal.create({
         data: {
           tenantId: session.tenantId,
@@ -199,7 +196,13 @@ export async function POST(req: Request) {
     }
 
     return inv;
+  }).catch((e) => {
+    if (isPeriodClosedError(e)) {
+      return NextResponse.json({ error: 'period_closed', year: e.year, month: e.month }, { status: 422 });
+    }
+    throw e;
   });
+  if (created instanceof NextResponse) return created;
 
   return NextResponse.json({ data: created }, { status: 201 });
 }
