@@ -70,7 +70,8 @@
     "projectsHospitality": "Projects & hospitality",
     "directory": "Directory",
     "access": "Access control",
-    "configuration": "Configuration"
+    "configuration": "Configuration",
+    "approvals": "Approvals"
   },
   "auth": {
     "login": "Sign in",
@@ -305,7 +306,11 @@
     "title": "Customers & suppliers",
     "new": "Add contact",
     "kind": "Type",
-    "kinds": { "CUSTOMER": "Customer", "SUPPLIER": "Supplier", "BOTH": "Both" },
+    "kinds": {
+      "CUSTOMER": "Customer",
+      "SUPPLIER": "Supplier",
+      "BOTH": "Both"
+    },
     "nameAr": "Name (Arabic)",
     "nameEn": "Name (English)",
     "taxNumber": "Tax number",
@@ -487,7 +492,11 @@
     "checkIn": "Check-in",
     "checkOut": "Check-out",
     "charges": "Charges",
-    "statuses": { "OPEN": "Open", "CHECKED_OUT": "Checked out", "CANCELLED": "Cancelled" }
+    "statuses": {
+      "OPEN": "Open",
+      "CHECKED_OUT": "Checked out",
+      "CANCELLED": "Cancelled"
+    }
   },
   "report": {
     "title": "Reports",
