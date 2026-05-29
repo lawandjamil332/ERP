@@ -5,6 +5,7 @@ import { Prisma } from '@prisma/client';
 import { db } from '@/lib/db';
 import { requireSession } from '@/lib/auth/session';
 import { assertBalanced } from '@/lib/iraq/journals';
+import { evaluateApproval, requestApproval } from '@/lib/approvals/gate';
 
 const Application = z.object({
   invoiceId: z.string().optional(),
@@ -141,5 +142,20 @@ export async function POST(req: Request) {
     return pay;
   });
 
-  return NextResponse.json({ data: created }, { status: 201 });
+  // Approval tracking (non-blocking): if this payment exceeds an active rule
+  // threshold, raise a pending approval + notify the approver role.
+  let approvalRequired = false;
+  try {
+    const gate = await evaluateApproval(db, session.tenantId, 'Payment', p.amount, p.currency);
+    if (gate.required && gate.approverRole) {
+      approvalRequired = true;
+      await requestApproval(db, {
+        tenantId: session.tenantId, entity: 'Payment', entityId: created.id,
+        amount: p.amount, currency: p.currency,
+        approverRole: gate.approverRole, ruleId: gate.ruleId, requestedById: session.userId,
+      });
+    }
+  } catch { /* approvals are advisory; never block payment creation */ }
+
+  return NextResponse.json({ data: created, approvalRequired }, { status: 201 });
 }

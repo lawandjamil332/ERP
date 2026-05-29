@@ -53,6 +53,7 @@ model Tenant {
   stockMovements  StockMovement[]
   depreciationRuns DepreciationRun[]
   approvalRules   ApprovalRule[]
+  approvals       Approval[]
   notifications   Notification[]
   totpSecrets     TotpSecret[]
   portalTokens    CustomerPortalToken[]
@@ -338,6 +339,36 @@ model ApprovalRule {
   currency    String   @default("IQD")
   approverRole String
   isActive    Boolean  @default(true)
+  approvals   Approval[]
+}
+
+/// A pending/decided approval request raised when a document exceeds a rule threshold.
+model Approval {
+  id            String   @id @default(cuid())
+  tenantId      String
+  tenant        Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  ruleId        String?
+  rule          ApprovalRule? @relation(fields: [ruleId], references: [id])
+  entity        String        // e.g. "Invoice", "Payment", "Bill"
+  entityId      String
+  amount        Decimal       @db.Decimal(20, 4)
+  currency      String        @default("IQD")
+  approverRole  String
+  status        ApprovalStatus @default(PENDING)
+  requestedById String?
+  decidedById   String?
+  decidedAt     DateTime?
+  note          String?
+  createdAt     DateTime @default(now())
+
+  @@index([tenantId, status, approverRole])
+  @@index([tenantId, entity, entityId])
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
 
 model Notification {

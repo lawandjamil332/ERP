@@ -14,6 +14,15 @@ export function runWithAudit<T>(c: AuditContext, fn: () => Promise<T>): Promise<
   return ctx.run(c, fn);
 }
 
+/**
+ * Establish the audit context for the remainder of the current async execution
+ * (Next.js route handler / server component). Lighter than wrapping every
+ * handler — call once from requireSession().
+ */
+export function enterAuditContext(c: AuditContext): void {
+  ctx.enterWith(c);
+}
+
 const SKIP = new Set(['AuditLog', 'Notification', 'BankStatement', 'TotpSecret', 'CustomerPortalToken', 'ExchangeRate']);
 const WRITE_OPS = new Set(['create', 'createMany', 'update', 'updateMany', 'delete', 'deleteMany', 'upsert']);
 
