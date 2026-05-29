@@ -164,8 +164,10 @@ export function Sidebar({ locale }: { locale: string }) {
         {
           id: 'access', label: t('access'), icon: UserCog,
           items: [
-            { href: d('/users'),       label: t('users'), icon: Users },
-            { href: d('/users/roles'), label: t('roles'), icon: ShieldCheck },
+            { href: d('/users'),       label: t('users'),     icon: Users },
+            { href: d('/users/roles'), label: t('roles'),     icon: ShieldCheck },
+            { href: d('/approvals'),   label: t('approvals'), icon: ShieldCheck },
+            { href: d('/audit'),       label: t('audit'),     icon: ShieldCheck },
           ],
         },
         {
