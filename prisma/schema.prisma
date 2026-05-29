@@ -342,6 +342,8 @@ model ApprovalRule {
   thresholdAmount Decimal @db.Decimal(20, 4)
   currency    String   @default("IQD")
   approverRole String
+  step        Int      @default(1)
+  escalationHours Int  @default(24)
   isActive    Boolean  @default(true)
   approvals   Approval[]
 }
@@ -358,6 +360,9 @@ model Approval {
   amount        Decimal       @db.Decimal(20, 4)
   currency      String        @default("IQD")
   approverRole  String
+  currentStep   Int           @default(1)
+  maxSteps      Int           @default(1)
+  escalateAt    DateTime?
   status        ApprovalStatus @default(PENDING)
   requestedById String?
   decidedById   String?
