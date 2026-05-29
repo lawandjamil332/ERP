@@ -46,6 +46,14 @@ export async function PATCH(req: Request) {
     session.role === 'OWNER' || session.role === 'ADMIN' || session.role === approval.approverRole;
   if (!canDecide) return NextResponse.json({ error: 'forbidden' }, { status: 403 });
 
+  // Segregation of Duties: whoever requested the action cannot decide it.
+  if (approval.requestedById && approval.requestedById === session.userId) {
+    return NextResponse.json(
+      { error: 'sod_violation', detail: 'You cannot approve a request you initiated.' },
+      { status: 403 },
+    );
+  }
+
   const updated = await db.approval.update({
     where: { id: approval.id },
     data: {
