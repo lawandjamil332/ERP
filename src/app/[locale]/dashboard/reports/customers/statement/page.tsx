@@ -20,7 +20,6 @@ interface Data {
 
 export default function CustomerStatementPage() {
   const locale = useLocale();
-  const isAr = locale === 'ar';
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [pick, setPick] = useState('');
   const [data, setData] = useState<Data | null>(null);
@@ -39,7 +38,7 @@ export default function CustomerStatementPage() {
     if (r.ok) setData(await r.json());
   }
 
-  const fmt = (n: number) => `${n.toLocaleString(isAr ? 'ar-IQ' : 'en')}`;
+  const fmt = (n: number) => `${n.toLocaleString(locale === 'ar' ? 'ar-IQ' : locale === 'ku' ? 'ckb-IQ' : 'en')}`;
 
   return (
     <div className="space-y-6">
@@ -68,7 +67,7 @@ export default function CustomerStatementPage() {
               <SelectTrigger><SelectValue placeholder={tri(locale, { ar: 'اختر العميل…', ku: 'کڕیار هەڵبژێرە…', en: 'Select customer…' })} /></SelectTrigger>
               <SelectContent>
                 {contacts.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>{isAr ? c.nameAr : (c.nameEn ?? c.nameAr)}</SelectItem>
+                  <SelectItem key={c.id} value={c.id}>{tri(locale, { ar: c.nameAr, ku: c.nameEn ?? c.nameAr, en: c.nameEn ?? c.nameAr })}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
