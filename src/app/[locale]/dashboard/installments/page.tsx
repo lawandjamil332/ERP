@@ -38,7 +38,6 @@ const STATUS_KU: Record<string, string> = {
 export default function InstallmentsPage() {
   const t = useTranslations();
   const locale = useLocale();
-  const isAr = locale === 'ar';
   const [plans, setPlans] = useState<Plan[] | null>(null);
 
   useEffect(() => {
@@ -84,7 +83,7 @@ export default function InstallmentsPage() {
             label={tri(locale, { ar: 'خطط نشطة', ku: 'پلانە چالاکەکان', en: 'Active plans' })} value={totals.activeCount.toString()} />
           <StatCard tone="warning" icon={Banknote}
             label={tri(locale, { ar: 'المتبقّي المستحَق', ku: 'ماوەی پێویست', en: 'Outstanding' })}
-            value={`${totals.outstanding.toLocaleString(isAr ? 'ar-IQ' : 'en')} IQD`} />
+            value={`${totals.outstanding.toLocaleString(locale === 'ar' ? 'ar-IQ' : locale === 'ku' ? 'ckb-IQ' : 'en')} IQD`} />
           <StatCard tone={totals.overdue > 0 ? 'destructive' : 'default'} icon={AlertTriangle}
             label={tri(locale, { ar: 'دفعات متأخرة', ku: 'پارەدانی دواکەوتوو', en: 'Overdue payments' })} value={totals.overdue.toString()} />
           <StatCard tone="success" icon={CheckCircle2}
@@ -130,14 +129,14 @@ export default function InstallmentsPage() {
                     </Link>
                   </TD>
                   <TD className="max-w-xs truncate">{p.productSummary}</TD>
-                  <TD className="text-end tabular-nums">{parseFloat(p.totalAmount).toLocaleString(isAr ? 'ar-IQ' : 'en')} {p.currency}</TD>
+                  <TD className="text-end tabular-nums">{parseFloat(p.totalAmount).toLocaleString(locale === 'ar' ? 'ar-IQ' : locale === 'ku' ? 'ckb-IQ' : 'en')} {p.currency}</TD>
                   <TD className="tabular-nums">
                     {p.numberOfInstallments} {tri(locale, { ar: 'شهر', ku: 'مانگ', en: 'mo' })}
                     {parseFloat(p.interestRatePct) > 0 && (
                       <span className="text-xs text-muted-foreground"> @ {(parseFloat(p.interestRatePct) * 100).toFixed(1)}%</span>
                     )}
                   </TD>
-                  <TD className="text-end tabular-nums">{parseFloat(p.installmentAmount).toLocaleString(isAr ? 'ar-IQ' : 'en')}</TD>
+                  <TD className="text-end tabular-nums">{parseFloat(p.installmentAmount).toLocaleString(locale === 'ar' ? 'ar-IQ' : locale === 'ku' ? 'ckb-IQ' : 'en')}</TD>
                   <TD>{p.guarantorName ?? '—'}</TD>
                   <TD>
                     <Badge variant={

@@ -4,6 +4,7 @@ import { verifySession } from '@/lib/auth/session';
 import { redirect } from 'next/navigation';
 import { Card } from '@/components/ui/card';
 import { Table, THead, TBody, TR, TH, TD } from '@/components/ui/table';
+import { tri } from '@/lib/i18n/tri';
 
 export default async function AccountingPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -29,11 +30,11 @@ export default async function AccountingPage({ params }: { params: Promise<{ loc
         <Table>
           <THead>
             <TR>
-              <TH>Code</TH>
-              <TH>{locale === 'en' ? 'Name (Arabic)' : 'الاسم'}</TH>
-              <TH>{locale === 'en' ? 'Name (English)' : 'الاسم بالإنجليزية'}</TH>
-              <TH>Type</TH>
-              <TH>Postable</TH>
+              <TH>{tri(locale, { ar: 'الرمز', ku: 'کۆد', en: 'Code' })}</TH>
+              <TH>{tri(locale, { ar: 'الاسم', ku: 'ناو (عەرەبی)', en: 'Name (Arabic)' })}</TH>
+              <TH>{tri(locale, { ar: 'الاسم بالإنجليزية', ku: 'ناو (ئینگلیزی)', en: 'Name (English)' })}</TH>
+              <TH>{tri(locale, { ar: 'النوع', ku: 'جۆر', en: 'Type' })}</TH>
+              <TH>{tri(locale, { ar: 'قابل للترحيل', ku: 'قابیلی تۆمارکردن', en: 'Postable' })}</TH>
             </TR>
           </THead>
           <TBody>

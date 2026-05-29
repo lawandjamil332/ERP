@@ -34,7 +34,6 @@ const KINDS_KU: Record<string, string> = {
 export default function BankGuaranteesPage() {
   const t = useTranslations();
   const locale = useLocale();
-  const isAr = locale === 'ar';
   const [rows, setRows] = useState<BG[] | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -150,7 +149,7 @@ export default function BankGuaranteesPage() {
                   <TD>{tri(locale, { ar: KINDS_AR[r.kind] ?? r.kind, ku: KINDS_KU[r.kind] ?? r.kind, en: r.kind })}</TD>
                   <TD>{r.issuingBank}</TD>
                   <TD>{r.beneficiary}</TD>
-                  <TD className="text-end tabular-nums">{parseFloat(r.amount).toLocaleString(isAr ? 'ar-IQ' : 'en')} {r.currency}</TD>
+                  <TD className="text-end tabular-nums">{parseFloat(r.amount).toLocaleString(locale === 'ar' ? 'ar-IQ' : locale === 'ku' ? 'ckb-IQ' : 'en')} {r.currency}</TD>
                   <TD className="tabular-nums">{new Intl.DateTimeFormat(locale).format(new Date(r.expiryDate))}</TD>
                   <TD><Badge variant={r.status === 'ACTIVE' ? 'default' : r.status === 'EXPIRED' ? 'destructive' : 'outline'}>{r.status}</Badge></TD>
                 </TR>

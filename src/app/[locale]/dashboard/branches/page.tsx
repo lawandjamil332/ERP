@@ -21,7 +21,6 @@ interface Branch {
 
 export default function BranchesPage() {
   const locale = useLocale();
-  const isAr = locale === 'ar';
   const [rows, setRows] = useState<Branch[] | null>(null);
   const [q, setQ] = useState('');
   const [status, setStatus] = useState<'ALL' | 'ACTIVE' | 'INACTIVE' | 'CLOSED'>('ALL');
@@ -102,7 +101,7 @@ export default function BranchesPage() {
                       <Building2 className="h-4 w-4" />
                     </div>
                     <div>
-                      <p className="font-semibold leading-tight">{isAr ? b.nameAr : b.nameEn}</p>
+                      <p className="font-semibold leading-tight">{tri(locale, { ar: b.nameAr, ku: b.nameEn || b.nameAr, en: b.nameEn })}</p>
                       <p className="font-mono text-[11px] text-muted-foreground">{b.code}</p>
                     </div>
                   </div>

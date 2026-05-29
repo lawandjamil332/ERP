@@ -20,7 +20,6 @@ const today = () => new Date().toISOString().slice(0, 10);
 export default function NewInstallmentPlanPage() {
   const t = useTranslations();
   const locale = useLocale();
-  const isAr = locale === 'ar';
   const router = useRouter();
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [busy, setBusy] = useState(false);
@@ -112,7 +111,7 @@ export default function NewInstallmentPlanPage() {
                   <SelectContent>
                     {contacts.map((c) => (
                       <SelectItem key={c.id} value={c.id}>
-                        {isAr ? c.nameAr : (c.nameEn ?? c.nameAr)}
+                        {tri(locale, { ar: c.nameAr, ku: c.nameEn ?? c.nameAr, en: c.nameEn ?? c.nameAr })}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -187,13 +186,13 @@ export default function NewInstallmentPlanPage() {
           </CardHeader>
           <CardContent>
             <dl className="space-y-2 text-sm">
-              <Row label={tri(locale, { ar: 'المبلغ المُموّل', ku: 'بڕی دارایی کراو', en: 'Financed amount' })} value={`${preview.financed.toLocaleString(isAr ? 'ar-IQ' : 'en')} ${form.currency}`} />
-              <Row label={tri(locale, { ar: 'الفائدة الكلية', ku: 'سوودی گشتی', en: 'Total interest' })} value={`${preview.interest.toLocaleString(isAr ? 'ar-IQ' : 'en')} ${form.currency}`} />
-              <Row label={tri(locale, { ar: 'إجمالي السداد', ku: 'کۆی گشتی گەڕانەوە', en: 'Total repayable' })} value={`${preview.repayable.toLocaleString(isAr ? 'ar-IQ' : 'en')} ${form.currency}`} />
+              <Row label={tri(locale, { ar: 'المبلغ المُموّل', ku: 'بڕی دارایی کراو', en: 'Financed amount' })} value={`${preview.financed.toLocaleString(locale === 'ar' ? 'ar-IQ' : locale === 'ku' ? 'ckb-IQ' : 'en')} ${form.currency}`} />
+              <Row label={tri(locale, { ar: 'الفائدة الكلية', ku: 'سوودی گشتی', en: 'Total interest' })} value={`${preview.interest.toLocaleString(locale === 'ar' ? 'ar-IQ' : locale === 'ku' ? 'ckb-IQ' : 'en')} ${form.currency}`} />
+              <Row label={tri(locale, { ar: 'إجمالي السداد', ku: 'کۆی گشتی گەڕانەوە', en: 'Total repayable' })} value={`${preview.repayable.toLocaleString(locale === 'ar' ? 'ar-IQ' : locale === 'ku' ? 'ckb-IQ' : 'en')} ${form.currency}`} />
               <div className="rounded-md bg-primary/10 p-3">
                 <p className="text-xs uppercase tracking-wide text-primary">{tri(locale, { ar: 'قسط شهري', ku: 'قیستی مانگانە', en: 'Monthly installment' })}</p>
                 <p className="mt-1 text-2xl font-bold tabular-nums text-primary">
-                  {preview.perInstallment.toLocaleString(isAr ? 'ar-IQ' : 'en')} {form.currency}
+                  {preview.perInstallment.toLocaleString(locale === 'ar' ? 'ar-IQ' : locale === 'ku' ? 'ckb-IQ' : 'en')} {form.currency}
                 </p>
                 <p className="mt-1 text-xs text-muted-foreground">
                   {tri(locale, { ar: `لـ ${preview.n} شهر`, ku: `بۆ ${preview.n} مانگ`, en: `for ${preview.n} months` })}

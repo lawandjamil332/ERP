@@ -13,7 +13,8 @@ import { tri } from '@/lib/i18n/tri';
 
 interface Approval {
   id: string; entity: string; entityId: string; amount: string; currency: string;
-  approverRole: string; status: 'PENDING' | 'APPROVED' | 'REJECTED'; createdAt: string; decidedAt: string | null; note: string | null;
+  approverRole: string; currentStep: number; maxSteps: number; escalateAt: string | null;
+  status: 'PENDING' | 'APPROVED' | 'REJECTED'; createdAt: string; decidedAt: string | null; note: string | null;
 }
 
 export default function ApprovalsPage() {
@@ -82,6 +83,15 @@ export default function ApprovalsPage() {
                       {tri(locale, { ar: 'دور المعتمِد', ku: 'ڕۆڵی پەسەندکار', en: 'Approver role' })}: {a.approverRole} ·{' '}
                       {new Intl.DateTimeFormat(locale).format(new Date(a.createdAt))}
                     </p>
+                    {a.maxSteps > 1 && (
+                      <p className="mt-1 text-xs font-medium text-blue-600">
+                        {tri(locale, {
+                          ar: `الخطوة ${a.currentStep} من ${a.maxSteps}`,
+                          ku: `هەنگاوی ${a.currentStep} لە ${a.maxSteps}`,
+                          en: `Step ${a.currentStep} of ${a.maxSteps}`,
+                        })}
+                      </p>
+                    )}
                   </div>
                   <div className="flex gap-2">
                     <Button size="sm" variant="outline" disabled={busy === a.id}
