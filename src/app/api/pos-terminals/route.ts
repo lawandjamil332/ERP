@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { db } from '@/lib/db';
 import { requirePermission } from '@/lib/auth/permissions';
+import { branchScope } from '@/lib/auth/session';
 
 const Body = z.object({
   code: z.string().min(1),
@@ -15,7 +16,7 @@ export async function GET() {
   if (guard instanceof NextResponse) return guard;
   const session = guard;
   const rows = await db.posTerminal.findMany({
-    where: { tenantId: session.tenantId },
+    where: { tenantId: session.tenantId, ...branchScope(session) },
     orderBy: { code: 'asc' },
   });
   return NextResponse.json({ data: rows });
