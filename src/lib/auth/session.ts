@@ -1,5 +1,5 @@
 import { SignJWT, jwtVerify } from 'jose';
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import type { NextRequest } from 'next/server';
 
 const COOKIE = process.env.SESSION_COOKIE_NAME || 'iraq_erp_session';
@@ -55,5 +55,16 @@ export async function clearSessionCookie() {
 export async function requireSession(): Promise<SessionPayload> {
   const s = await verifySession();
   if (!s) throw new Error('UNAUTHORIZED');
+  // Attribute all subsequent DB writes in this request to this user/tenant.
+  try {
+    const { enterAuditContext } = await import('@/lib/db/audit');
+    const h = await headers();
+    enterAuditContext({
+      tenantId: s.tenantId,
+      userId: s.userId,
+      ip: h.get('x-forwarded-for')?.split(',')[0]?.trim() ?? null,
+      userAgent: h.get('user-agent'),
+    });
+  } catch { /* headers() unavailable outside request scope — ignore */ }
   return s;
 }
