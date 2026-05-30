@@ -276,7 +276,7 @@ export default function NewInvoicePage({ params }: { params: Promise<{ locale: s
                   <>
                     <Field label={t('line.hsCode')}>
                       <Input dir="ltr" value={l.hsCode ?? ''} onChange={(e) => updateLine(i, { hsCode: e.target.value })}
-                        placeholder="100199" pattern="\\d{6,}" />
+                        placeholder="100199" pattern="\d{6,}" />
                     </Field>
                     <Field label={t('line.countryOfOrigin')}>
                       <Input dir="ltr" value={l.countryOfOrigin ?? ''}
