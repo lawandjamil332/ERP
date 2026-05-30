@@ -43,7 +43,7 @@ export default function CustomerStatementPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title={tri(locale, { ar: 'کشف حساب عميل', ku: 'کەشفی حیسابی کڕیار', en: 'Customer statement' })}
+        title={tri(locale, { ar: 'كشف حساب عميل', ku: 'کەشفی حیسابی کڕیار', en: 'Customer statement' })}
         description={tri(locale, { ar: 'كامل النشاط لكل عميل مع الرصيد الجاري', ku: 'هەموو چالاکی هەر کڕیارێک لەگەڵ باڵانسی جاری', en: 'Full account activity per customer with running balance' })}
         actions={
           data && (
