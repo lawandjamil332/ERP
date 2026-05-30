@@ -19,7 +19,6 @@ const today = () => new Date().toISOString().slice(0, 10);
 
 export default function NewStockOrderPage() {
   const locale = useLocale();
-  const isAr = locale === 'ar';
   const router = useRouter();
   const [products, setProducts] = useState<Product[]>([]);
   const [warehouses, setWarehouses] = useState<Warehouse[]>([]);
@@ -64,7 +63,7 @@ export default function NewStockOrderPage() {
         <Card>
           <CardHeader>
             <CardTitle>{tri(locale, { ar: 'تفاصيل الأمر', ku: 'وردەکاری داواکاری', en: 'Order details' })}</CardTitle>
-            <CardDescription>{tri(locale, { ar: 'يُولَّد المرجع تلقائياً بصيغة TRF-2026-00001 / ADJ-2026-00001', ku: 'ژمارەی ئاماژە بە شێوەی خۆکار دروست دەبێت بە فۆرماتی TRF-2026-00001 / ADJ-2026-00001', en: 'Reference auto-generated as TRF-2026-00001 / ADJ-2026-00001' })}</CardDescription>
+            <CardDescription>{tri(locale, { ar: 'يُولّد المرجع تلقائياً بصيغة TRF-2026-00001 / ADJ-2026-00001', ku: 'ژمارەی ئاماژە بە شێوەی خۆکار دروست دەبێت بە فۆرماتی TRF-2026-00001 / ADJ-2026-00001', en: 'Reference auto-generated as TRF-2026-00001 / ADJ-2026-00001' })}</CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
@@ -88,7 +87,7 @@ export default function NewStockOrderPage() {
                 <select className="h-9 w-full rounded-md border bg-background px-3 text-sm"
                   value={form.fromWarehouseId} onChange={(e) => setForm({ ...form, fromWarehouseId: e.target.value })}>
                   <option value="">—</option>
-                  {warehouses.map((w) => <option key={w.id} value={w.id}>{isAr ? w.nameAr : w.nameEn}</option>)}
+                  {warehouses.map((w) => <option key={w.id} value={w.id}>{tri(locale, { ar: w.nameAr, ku: w.nameEn ?? w.nameAr, en: w.nameEn ?? w.nameAr })}</option>)}
                 </select>
               </div>
             )}
@@ -98,7 +97,7 @@ export default function NewStockOrderPage() {
                 <select className="h-9 w-full rounded-md border bg-background px-3 text-sm"
                   value={form.toWarehouseId} onChange={(e) => setForm({ ...form, toWarehouseId: e.target.value })}>
                   <option value="">—</option>
-                  {warehouses.map((w) => <option key={w.id} value={w.id}>{isAr ? w.nameAr : w.nameEn}</option>)}
+                  {warehouses.map((w) => <option key={w.id} value={w.id}>{tri(locale, { ar: w.nameAr, ku: w.nameEn ?? w.nameAr, en: w.nameEn ?? w.nameAr })}</option>)}
                 </select>
               </div>
             )}
@@ -118,7 +117,7 @@ export default function NewStockOrderPage() {
                 <select className="h-9 rounded-md border bg-background px-3 text-sm"
                   value={l.productId} onChange={(e) => setLines(lines.map((x, j) => i === j ? { ...x, productId: e.target.value } : x))}>
                   <option value="">{tri(locale, { ar: 'اختر المنتج…', ku: 'بەرهەم هەڵبژێرە…', en: 'Select product…' })}</option>
-                  {products.map((p) => <option key={p.id} value={p.id}>{p.sku} — {isAr ? p.nameAr : p.nameEn}</option>)}
+                  {products.map((p) => <option key={p.id} value={p.id}>{p.sku} — {tri(locale, { ar: p.nameAr, ku: p.nameEn ?? p.nameAr, en: p.nameEn ?? p.nameAr })}</option>)}
                 </select>
                 <Input type="number" min={0} step="0.01" dir="ltr" placeholder="qty"
                   value={l.qty} onChange={(e) => setLines(lines.map((x, j) => i === j ? { ...x, qty: e.target.value } : x))} />
