@@ -10,6 +10,7 @@ import type { PrismaClient } from '@prisma/client';
 import BigNumber from 'bignumber.js';
 
 export interface ReportRow {
+  accountId: string;
   code: string;
   nameAr: string;
   nameEn: string;
@@ -41,7 +42,7 @@ export async function trialBalance(
   const acc = new Map<string, ReportRow>();
   for (const l of lines) {
     const row = acc.get(l.account.code) ?? {
-      code: l.account.code, nameAr: l.account.nameAr, nameEn: l.account.nameEn,
+      accountId: l.accountId, code: l.account.code, nameAr: l.account.nameAr, nameEn: l.account.nameEn,
       type: l.account.type,
       debit: new BigNumber(0), credit: new BigNumber(0), balance: new BigNumber(0),
     };
@@ -135,12 +136,12 @@ export async function balanceSheet(
 }
 
 function aggregateByAccount(
-  lines: Array<{ debit: any; credit: any; account: { code: string; nameAr: string; nameEn: string; type: any } }>
+  lines: Array<{ accountId: string; debit: any; credit: any; account: { code: string; nameAr: string; nameEn: string; type: any } }>
 ): ReportRow[] {
   const acc = new Map<string, ReportRow>();
   for (const l of lines) {
     const row = acc.get(l.account.code) ?? {
-      code: l.account.code, nameAr: l.account.nameAr, nameEn: l.account.nameEn,
+      accountId: l.accountId, code: l.account.code, nameAr: l.account.nameAr, nameEn: l.account.nameEn,
       type: l.account.type,
       debit: new BigNumber(0), credit: new BigNumber(0), balance: new BigNumber(0),
     };

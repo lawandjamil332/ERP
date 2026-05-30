@@ -15,8 +15,6 @@ export default async function ReturnedInvoicesPage({ params }: { params: Promise
   const { locale } = await params;
   const session = await verifySession();
   if (!session) redirect(`/${locale}/auth/login`);
-  const isAr = locale === 'ar';
-
   const rows = await db.invoice.findMany({
     where: { tenantId: session.tenantId, deletedAt: null, kind: 'CREDIT_NOTE' },
     include: { contact: true },
@@ -93,7 +91,7 @@ export default async function ReturnedInvoicesPage({ params }: { params: Promise
                     <Link href={`/${locale}/dashboard/invoices/${inv.id}`} className="hover:underline">{inv.number}</Link>
                   </TD>
                   <TD className="tabular-nums">{new Intl.DateTimeFormat(locale).format(inv.date)}</TD>
-                  <TD>{isAr ? inv.contact.nameAr : (inv.contact.nameEn ?? inv.contact.nameAr)}</TD>
+                  <TD>{tri(locale, { ar: inv.contact.nameAr, ku: inv.contact.nameEn ?? inv.contact.nameAr, en: inv.contact.nameEn ?? inv.contact.nameAr })}</TD>
                   <TD className="font-mono text-xs text-muted-foreground">{inv.notes?.match(/REVERSAL OF\s+(\S+)/i)?.[1] ?? '—'}</TD>
                   <TD className="text-end tabular-nums text-rose-600">{formatMoney(Number(inv.total), inv.currency as 'IQD', locale as 'ar')}</TD>
                   <TD><Badge variant={inv.status === 'POSTED' ? 'default' : 'secondary'}>{inv.status}</Badge></TD>

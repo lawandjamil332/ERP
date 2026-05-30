@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from '@/lib/toast';
 import { Plus, Trash2 } from 'lucide-react';
+import { tri } from '@/lib/i18n/tri';
 
 interface Contact { id: string; nameAr: string; nameEn: string | null }
 interface Line { description: string; quantity: string; unitOfMeasure: string; unitPrice: string; taxRate: string }
@@ -131,7 +132,7 @@ export default function NewRecurringTemplatePage() {
                 <SelectContent>
                   {contacts.map((c) => (
                     <SelectItem key={c.id} value={c.id}>
-                      {locale === 'ar' ? c.nameAr : (c.nameEn ?? c.nameAr)}
+                      {tri(locale, { ar: c.nameAr, ku: c.nameEn ?? c.nameAr, en: c.nameEn ?? c.nameAr })}
                     </SelectItem>
                   ))}
                 </SelectContent>

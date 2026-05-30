@@ -14,7 +14,6 @@ export default async function BomListPage({ params }: { params: Promise<{ locale
   const { locale } = await params;
   const session = await verifySession();
   if (!session) redirect(`/${locale}/auth/login`);
-  const isAr = locale === 'ar';
 
   const rows = await db.bom.findMany({
     where: { tenantId: session.tenantId },
@@ -64,7 +63,7 @@ export default async function BomListPage({ params }: { params: Promise<{ locale
                 const p = productMap.get(b.productId);
                 return (
                   <TR key={b.id}>
-                    <TD className="font-medium">{p ? (isAr ? p.nameAr : p.nameEn) : b.productId} <span className="text-xs text-muted-foreground">{p?.sku}</span></TD>
+                    <TD className="font-medium">{p ? tri(locale, { ar: p.nameAr, ku: p.nameEn ?? p.nameAr, en: p.nameEn ?? p.nameAr }) : b.productId} <span className="text-xs text-muted-foreground">{p?.sku}</span></TD>
                     <TD className="font-mono text-xs">v{b.version}</TD>
                     <TD className="tabular-nums">{b._count.components}</TD>
                     <TD><Badge variant={b.isActive ? 'default' : 'secondary'}>{b.isActive ? tri(locale, { ar: 'نشط', ku: 'چالاک', en: 'Active' }) : tri(locale, { ar: 'متوقف', ku: 'ناچالاک', en: 'Inactive' })}</Badge></TD>

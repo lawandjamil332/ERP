@@ -11,14 +11,13 @@ interface Row { contactId: string; name: string; notDue: number; d0_30: number; 
 
 export default function AgingLedgerPage() {
   const locale = useLocale();
-  const isAr = locale === 'ar';
   const [rows, setRows] = useState<Row[] | null>(null);
 
   useEffect(() => {
     fetch('/api/reports/aging?mode=ledger').then((r) => r.ok ? r.json() : { rows: [] }).then((b) => setRows(b.rows ?? []));
   }, []);
 
-  const fmt = (n: number) => n ? n.toLocaleString(isAr ? 'ar-IQ' : 'en') : '—';
+  const fmt = (n: number) => n ? n.toLocaleString(locale === 'ar' ? 'ar-IQ' : locale === 'ku' ? 'ckb-IQ' : 'en') : '—';
   const total = (rows ?? []).reduce((s, r) => s + r.total, 0);
 
   return (

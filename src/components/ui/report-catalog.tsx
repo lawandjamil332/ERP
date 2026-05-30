@@ -5,6 +5,7 @@ import { useLocale } from 'next-intl';
 import { Card, CardContent } from '@/components/ui/card';
 import { PageHeader } from '@/components/ui/page-header';
 import { FileText, ArrowLeft, type LucideIcon } from 'lucide-react';
+import { tri } from '@/lib/i18n/tri';
 
 export interface ReportItem {
   href: string;
@@ -28,13 +29,12 @@ export function ReportCatalog({
   sections: ReportSection[];
 }) {
   const locale = useLocale();
-  const isAr = locale === 'ar';
 
   return (
     <div className="space-y-6">
       <PageHeader
-        title={isAr ? 'التقارير والتحليلات' : 'Reports & Analytics'}
-        description={isAr ? 'اختر تقريراً من الفئة المعروضة' : 'Pick a report from this category'}
+        title={tri(locale, { ar: 'التقارير والتحليلات', ku: 'ڕاپۆرت و شیکاری', en: 'Reports & Analytics' })}
+        description={tri(locale, { ar: 'اختر تقريراً من الفئة المعروضة', ku: 'ڕاپۆرتێک لە پۆلەکە هەڵبژێرە', en: 'Pick a report from this category' })}
       />
 
       <div className={`flex items-center gap-3 rounded-xl bg-gradient-to-r ${bannerTone} p-4 text-white shadow-sm`}>
@@ -42,15 +42,15 @@ export function ReportCatalog({
           <BannerIcon className="h-5 w-5" />
         </div>
         <div>
-          <p className="text-lg font-bold leading-tight">{isAr ? bannerTitleAr : bannerTitleEn}</p>
-          <p className="text-xs text-white/85">{isAr ? bannerDescAr : bannerDescEn}</p>
+          <p className="text-lg font-bold leading-tight">{tri(locale, { ar: bannerTitleAr, ku: bannerTitleEn ?? bannerTitleAr, en: bannerTitleEn ?? bannerTitleAr })}</p>
+          <p className="text-xs text-white/85">{tri(locale, { ar: bannerDescAr, ku: bannerDescEn ?? bannerDescAr, en: bannerDescEn ?? bannerDescAr })}</p>
         </div>
       </div>
 
       {sections.map((sec) => (
         <div key={sec.labelEn} className="space-y-3">
           <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-            {isAr ? sec.labelAr : sec.labelEn}
+            {tri(locale, { ar: sec.labelAr, ku: sec.labelEn ?? sec.labelAr, en: sec.labelEn ?? sec.labelAr })}
           </p>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {sec.items.map((it) => {
@@ -64,13 +64,13 @@ export function ReportCatalog({
                           <Icon className="h-4 w-4 text-muted-foreground" />
                         </div>
                         <div className="flex-1 space-y-0.5">
-                          <p className="text-sm font-semibold leading-tight">{isAr ? it.titleAr : it.titleEn}</p>
-                          <p className="text-xs text-muted-foreground">{isAr ? it.descAr : it.descEn}</p>
+                          <p className="text-sm font-semibold leading-tight">{tri(locale, { ar: it.titleAr, ku: it.titleEn ?? it.titleAr, en: it.titleEn ?? it.titleAr })}</p>
+                          <p className="text-xs text-muted-foreground">{tri(locale, { ar: it.descAr, ku: it.descEn ?? it.descAr, en: it.descEn ?? it.descAr })}</p>
                         </div>
                       </div>
                       <p className="flex items-center gap-1 text-[11px] font-medium text-primary opacity-0 transition-opacity group-hover:opacity-100">
                         <ArrowLeft className="h-3 w-3 rtl:rotate-180" />
-                        {isAr ? 'فتح التقرير' : 'Open report'}
+                        {tri(locale, { ar: 'فتح التقرير', ku: 'کردنەوەی ڕاپۆرت', en: 'Open report' })}
                       </p>
                     </CardContent>
                   </Card>

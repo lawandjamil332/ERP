@@ -16,7 +16,6 @@ interface Brand { id: string; nameAr: string; nameEn: string; slug: string; isAc
 
 export default function BrandsPage() {
   const locale = useLocale();
-  const isAr = locale === 'ar';
   const [rows, setRows] = useState<Brand[] | null>(null);
   const [form, setForm] = useState({ nameAr: '', nameEn: '' });
   const [busy, setBusy] = useState(false);
@@ -91,7 +90,7 @@ export default function BrandsPage() {
                 {rows.map((b) => (
                   <li key={b.id} className="flex items-center justify-between py-3">
                     <div>
-                      <p className="font-medium">{isAr ? b.nameAr : b.nameEn}</p>
+                      <p className="font-medium">{tri(locale, { ar: b.nameAr, ku: b.nameEn || b.nameAr, en: b.nameEn })}</p>
                       <p className="font-mono text-xs text-muted-foreground">{b.slug}</p>
                     </div>
                     <Badge variant={b.isActive ? 'default' : 'secondary'}>

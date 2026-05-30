@@ -33,7 +33,6 @@ export default function QuotationsPage() {
   const t = useTranslations();
   const locale = useLocale();
   const router = useRouter();
-  const isAr = locale === 'ar';
   const [rows, setRows] = useState<Q[] | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
 
@@ -103,7 +102,7 @@ export default function QuotationsPage() {
                   <TD className="font-mono text-xs">{q.number}</TD>
                   <TD className="tabular-nums">{new Intl.DateTimeFormat(locale).format(new Date(q.date))}</TD>
                   <TD className="tabular-nums">{q.validUntil ? new Intl.DateTimeFormat(locale).format(new Date(q.validUntil)) : '—'}</TD>
-                  <TD className="text-end tabular-nums">{parseFloat(q.total).toLocaleString(isAr ? 'ar-IQ' : 'en')} {q.currency}</TD>
+                  <TD className="text-end tabular-nums">{parseFloat(q.total).toLocaleString(locale === 'ar' ? 'ar-IQ' : locale === 'ku' ? 'ckb-IQ' : 'en')} {q.currency}</TD>
                   <TD>
                     <Badge variant={
                       q.status === 'ACCEPTED' || q.status === 'CONVERTED' ? 'success' :

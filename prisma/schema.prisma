@@ -97,6 +97,7 @@ model Tenant {
   expenseCategories   ExpenseCategory[]
   incomeCategories    IncomeCategory[]
   roles               Role[]
+  attachments         Attachment[]
   uiSettings          Json?
 }
 
@@ -342,6 +343,8 @@ model ApprovalRule {
   thresholdAmount Decimal @db.Decimal(20, 4)
   currency    String   @default("IQD")
   approverRole String
+  step        Int      @default(1)
+  escalationHours Int  @default(24)
   isActive    Boolean  @default(true)
   approvals   Approval[]
 }
@@ -358,6 +361,9 @@ model Approval {
   amount        Decimal       @db.Decimal(20, 4)
   currency      String        @default("IQD")
   approverRole  String
+  currentStep   Int           @default(1)
+  maxSteps      Int           @default(1)
+  escalateAt    DateTime?
   status        ApprovalStatus @default(PENDING)
   requestedById String?
   decidedById   String?
@@ -1137,6 +1143,22 @@ model SavedView {
   createdAt DateTime @default(now())
 
   @@index([tenantId, userId, page])
+}
+
+model Attachment {
+  id          String   @id @default(cuid())
+  tenantId    String
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  entity      String
+  entityId    String
+  fileName    String
+  fileSize    Int
+  mimeType    String
+  storageKey  String
+  uploadedById String?
+  createdAt   DateTime @default(now())
+
+  @@index([tenantId, entity, entityId])
 }
 
 enum UserRole {

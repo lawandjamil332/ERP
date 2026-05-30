@@ -17,7 +17,6 @@ export default async function ManufacturingOrdersPage({ params }: { params: Prom
   const { locale } = await params;
   const session = await verifySession();
   if (!session) redirect(`/${locale}/auth/login`);
-  const isAr = locale === 'ar';
 
   const rows = await db.workOrder.findMany({
     where: { tenantId: session.tenantId },
@@ -60,7 +59,7 @@ export default async function ManufacturingOrdersPage({ params }: { params: Prom
                 return (
                   <TR key={w.id}>
                     <TD className="font-mono text-xs">{w.number}</TD>
-                    <TD>{p ? (isAr ? p.nameAr : p.nameEn) : w.bom.productId}</TD>
+                    <TD>{p ? tri(locale, { ar: p.nameAr, ku: p.nameEn ?? p.nameAr, en: p.nameEn ?? p.nameAr }) : w.bom.productId}</TD>
                     <TD className="tabular-nums">{w.quantity.toString()}</TD>
                     <TD className="tabular-nums">{w.startDate ? new Intl.DateTimeFormat(locale).format(w.startDate) : '—'}</TD>
                     <TD><Badge variant={STATUS_VARIANT[w.status] ?? 'outline'}>{w.status}</Badge></TD>

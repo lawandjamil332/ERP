@@ -13,6 +13,7 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { Plus, Trash2 } from 'lucide-react';
 import BigNumber from 'bignumber.js';
+import { tri } from '@/lib/i18n/tri';
 
 type ContactLite = { id: string; nameAr: string; nameEn: string | null; currency: string };
 type ProductLite = {
@@ -78,7 +79,7 @@ export default function NewInvoicePage({ params }: { params: Promise<{ locale: s
     if (!p) return;
     updateLine(i, {
       productId,
-      description: locale === 'ar' ? p.nameAr : p.nameEn,
+      description: tri(locale, { ar: p.nameAr, ku: p.nameEn ?? p.nameAr, en: p.nameEn ?? p.nameAr }),
       hsCode: p.hsCode ?? undefined,
       countryOfOrigin: p.countryOfOrigin ?? undefined,
       trademark: p.trademark ?? undefined,
@@ -177,7 +178,7 @@ export default function NewInvoicePage({ params }: { params: Promise<{ locale: s
               <SelectContent>
                 {contacts.map((c) => (
                   <SelectItem key={c.id} value={c.id}>
-                    {locale === 'ar' ? c.nameAr : (c.nameEn ?? c.nameAr)}
+                    {tri(locale, { ar: c.nameAr, ku: c.nameEn ?? c.nameAr, en: c.nameEn ?? c.nameAr })}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -262,7 +263,7 @@ export default function NewInvoicePage({ params }: { params: Promise<{ locale: s
                     <SelectContent>
                       {products.map((p) => (
                         <SelectItem key={p.id} value={p.id}>
-                          {p.sku} — {locale === 'ar' ? p.nameAr : p.nameEn}
+                          {p.sku} — {tri(locale, { ar: p.nameAr, ku: p.nameEn ?? p.nameAr, en: p.nameEn ?? p.nameAr })}
                         </SelectItem>
                       ))}
                     </SelectContent>

@@ -21,7 +21,6 @@ interface Resp {
 
 export default function ProfitReportsPage() {
   const locale = useLocale();
-  const isAr = locale === 'ar';
   const [data, setData] = useState<Resp | null>(null);
   const [tab, setTab] = useState<'byClient' | 'byEmployee' | 'daily' | 'monthly' | 'yearly'>('byClient');
 
@@ -33,7 +32,7 @@ export default function ProfitReportsPage() {
   useEffect(() => { load(); }, []);
 
   const rows = data?.[tab] ?? [];
-  const fmt = (n: number) => n.toLocaleString(isAr ? 'ar-IQ' : 'en');
+  const fmt = (n: number) => n.toLocaleString(locale === 'ar' ? 'ar-IQ' : locale === 'ku' ? 'ckb-IQ' : 'en');
 
   return (
     <div className="space-y-6">

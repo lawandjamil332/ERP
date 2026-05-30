@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocale } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -11,6 +11,8 @@ import { PageHeader } from '@/components/ui/page-header';
 import { Save, RefreshCw } from 'lucide-react';
 import { toast } from '@/lib/toast';
 import { tri } from '@/lib/i18n/tri';
+
+interface Branch { id: string; nameAr: string; nameEn: string; code: string }
 
 function genTempPassword() {
   return Math.random().toString(36).slice(2, 10).toUpperCase();
@@ -25,12 +27,18 @@ export default function NewUserPage() {
   const locale = useLocale();
   const router = useRouter();
   const [busy, setBusy] = useState(false);
+  const [branches, setBranches] = useState<Branch[]>([]);
   const [form, setForm] = useState({
     userId: genUserId(),
     fullName: '', email: '', phone: '',
     role: 'STAFF', password: genTempPassword(),
     locale: 'ar',
+    branchId: '' as string | null,
   });
+
+  useEffect(() => {
+    fetch('/api/branches').then((r) => r.ok ? r.json() : { data: [] }).then((b) => setBranches(b.data ?? []));
+  }, []);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -38,7 +46,7 @@ export default function NewUserPage() {
     setBusy(true);
     const res = await fetch('/api/users', {
       method: 'POST', headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ ...form }),
+      body: JSON.stringify({ fullName: form.fullName, email: form.email, phone: form.phone, role: form.role, password: form.password, locale: form.locale, branchId: form.branchId }),
     });
     setBusy(false);
     if (res.ok) { toast.success(tri(locale, { ar: 'تم إنشاء المستخدم', ku: 'بەکارهێنەر دروستکرا', en: 'User created' })); router.push(`/${locale}/dashboard/users`); }
@@ -81,6 +89,23 @@ export default function NewUserPage() {
                 <option value="CASHIER">{tri(locale, { ar: 'كاشير', ku: 'کاشێر', en: 'Cashier' })}</option>
                 <option value="STAFF">{tri(locale, { ar: 'موظف', ku: 'کارمەند', en: 'Staff' })}</option>
                 <option value="AUDITOR_READONLY">{tri(locale, { ar: 'مدقق (قراءة فقط)', ku: 'پشکنەر (تەنها خوێندنەوە)', en: 'Auditor (read-only)' })}</option>
+              </select>
+            </Fld>
+            <Fld label={tri(locale, { ar: 'الفرع', ku: 'لق', en: 'Branch' })}>
+              <select className="h-9 w-full rounded-md border bg-background px-3 text-sm"
+                value={form.branchId ?? ''} onChange={(e) => setForm({ ...form, branchId: e.target.value || null })}>
+                <option value="">{tri(locale, { ar: 'جميع الفروع', ku: 'هەموو لقەکان', en: 'All branches' })}</option>
+                {branches.map((br) => (
+                  <option key={br.id} value={br.id}>{locale === 'ar' ? br.nameAr : br.nameEn} ({br.code})</option>
+                ))}
+              </select>
+            </Fld>
+            <Fld label={tri(locale, { ar: 'لغة الواجهة', ku: 'زمانی ڕووکار', en: 'UI language' })}>
+              <select className="h-9 w-full rounded-md border bg-background px-3 text-sm"
+                value={form.locale} onChange={(e) => setForm({ ...form, locale: e.target.value })}>
+                <option value="ar">العربية</option>
+                <option value="ku">کوردی</option>
+                <option value="en">English</option>
               </select>
             </Fld>
             <Fld label={tri(locale, { ar: 'كلمة المرور المؤقتة', ku: 'وشەی نهێنی کاتی', en: 'Temporary password' })}>

@@ -16,24 +16,23 @@ type Permissions = Record<string, Perm[]>;
 interface Role { id: string; name: string; description: string | null; permissions: Permissions; isSystem: boolean }
 
 const SECTIONS = [
-  { k: 'sales', ar: 'المبيعات', en: 'Sales' },
-  { k: 'purchases', ar: 'المشتريات', en: 'Purchases' },
-  { k: 'inventory', ar: 'المخزون', en: 'Inventory' },
-  { k: 'manufacturing', ar: 'التصنيع', en: 'Manufacturing' },
-  { k: 'accounting', ar: 'المحاسبة', en: 'Accounting' },
-  { k: 'finance', ar: 'الخزينة والبنوك', en: 'Finance / Banks' },
-  { k: 'hr', ar: 'الموارد البشرية', en: 'HR' },
-  { k: 'payroll', ar: 'الرواتب', en: 'Payroll' },
-  { k: 'pos', ar: 'نقطة البيع', en: 'POS' },
-  { k: 'reports', ar: 'التقارير', en: 'Reports' },
-  { k: 'settings', ar: 'الإعدادات', en: 'Settings' },
-  { k: 'users', ar: 'المستخدمون', en: 'Users' },
+  { k: 'sales', ar: 'المبيعات', ku: 'فرۆشتن', en: 'Sales' },
+  { k: 'purchases', ar: 'المشتريات', ku: 'کڕین', en: 'Purchases' },
+  { k: 'inventory', ar: 'المخزون', ku: 'کۆگا', en: 'Inventory' },
+  { k: 'manufacturing', ar: 'التصنيع', ku: 'دروستکردن', en: 'Manufacturing' },
+  { k: 'accounting', ar: 'المحاسبة', ku: 'ژمێریاری', en: 'Accounting' },
+  { k: 'finance', ar: 'الخزينة والبنوك', ku: 'دارایی / بانکەکان', en: 'Finance / Banks' },
+  { k: 'hr', ar: 'الموارد البشرية', ku: 'سەرچاوە مرۆییەکان', en: 'HR' },
+  { k: 'payroll', ar: 'الرواتب', ku: 'مووچەکان', en: 'Payroll' },
+  { k: 'pos', ar: 'نقطة البيع', ku: 'خاڵی فرۆشتن', en: 'POS' },
+  { k: 'reports', ar: 'التقارير', ku: 'ڕاپۆرتەکان', en: 'Reports' },
+  { k: 'settings', ar: 'الإعدادات', ku: 'ڕێکخستنەکان', en: 'Settings' },
+  { k: 'users', ar: 'المستخدمون', ku: 'بەکارهێنەران', en: 'Users' },
 ];
 const ALL_PERMS: Perm[] = ['view', 'create', 'edit', 'delete', 'approve', 'post'];
 
 export default function RolesPage() {
   const locale = useLocale();
-  const isAr = locale === 'ar';
   const [roles, setRoles] = useState<Role[]>([]);
   const [editing, setEditing] = useState<Role | null>(null);
   const [name, setName] = useState('');
@@ -133,14 +132,14 @@ export default function RolesPage() {
                   <tr>
                     <th className="py-2 text-start font-semibold">{tri(locale, { ar: 'القسم', ku: 'بەش', en: 'Section' })}</th>
                     {ALL_PERMS.map((p) => (
-                      <th key={p} className="px-1 text-center font-semibold text-xs">{PERM_LABEL[p][isAr ? 'ar' : 'en']}</th>
+                      <th key={p} className="px-1 text-center font-semibold text-xs">{tri(locale, PERM_LABEL[p])}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {SECTIONS.map((s) => (
                     <tr key={s.k} className="border-b">
-                      <td className="py-2 font-medium">{isAr ? s.ar : s.en}</td>
+                      <td className="py-2 font-medium">{tri(locale, { ar: s.ar, ku: s.ku, en: s.en })}</td>
                       {ALL_PERMS.map((p) => (
                         <td key={p} className="text-center">
                           <input type="checkbox" className="h-4 w-4"
@@ -164,11 +163,11 @@ export default function RolesPage() {
   );
 }
 
-const PERM_LABEL: Record<Perm, { ar: string; en: string }> = {
-  view: { ar: 'عرض', en: 'View' },
-  create: { ar: 'إنشاء', en: 'Create' },
-  edit: { ar: 'تعديل', en: 'Edit' },
-  delete: { ar: 'حذف', en: 'Delete' },
-  approve: { ar: 'اعتماد', en: 'Approve' },
-  post: { ar: 'ترحيل', en: 'Post' },
+const PERM_LABEL: Record<Perm, { ar: string; ku: string; en: string }> = {
+  view: { ar: 'عرض', ku: 'بینین', en: 'View' },
+  create: { ar: 'إنشاء', ku: 'دروستکردن', en: 'Create' },
+  edit: { ar: 'تعديل', ku: 'دەستکاری', en: 'Edit' },
+  delete: { ar: 'حذف', ku: 'سڕینەوە', en: 'Delete' },
+  approve: { ar: 'اعتماد', ku: 'پەسەندکردن', en: 'Approve' },
+  post: { ar: 'ترحيل', ku: 'تۆمارکردن', en: 'Post' },
 };

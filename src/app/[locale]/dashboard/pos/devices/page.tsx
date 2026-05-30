@@ -15,7 +15,6 @@ interface Device { id: string; code: string; nameAr: string; nameEn: string; isA
 
 export default function PosDevicesPage() {
   const locale = useLocale();
-  const isAr = locale === 'ar';
   const [rows, setRows] = useState<Device[]>([]);
   const [form, setForm] = useState({ nameAr: '', nameEn: '', code: '' });
 
@@ -79,7 +78,7 @@ export default function PosDevicesPage() {
                       <Monitor className="h-5 w-5" />
                     </div>
                     <div className="flex-1">
-                      <p className="font-semibold">{isAr ? d.nameAr : d.nameEn}</p>
+                      <p className="font-semibold">{tri(locale, { ar: d.nameAr, ku: d.nameEn ?? d.nameAr, en: d.nameEn ?? d.nameAr })}</p>
                       <p className="font-mono text-xs text-muted-foreground">{d.code}</p>
                     </div>
                     <Badge variant={d.isActive ? 'default' : 'secondary'}>{d.isActive ? tri(locale, { ar: 'نشط', ku: 'چالاک', en: 'Active' }) : tri(locale, { ar: 'متوقف', ku: 'ڕاگیراو', en: 'Inactive' })}</Badge>

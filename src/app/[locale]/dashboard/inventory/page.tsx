@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Plus } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { formatMoney } from '@/lib/iraq/money';
+import { tri } from '@/lib/i18n/tri';
 
 export default async function InventoryPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -26,7 +27,7 @@ export default async function InventoryPage({ params }: { params: Promise<{ loca
         <h1 className="text-2xl font-bold">{t('inventory')}</h1>
         <Button asChild>
           <Link href={`/${locale}/dashboard/products/new`}>
-            <Plus className="h-4 w-4" /> New product
+            <Plus className="h-4 w-4" /> {tri(locale, { ar: 'منتج جديد', ku: 'بەرهەمی نوێ', en: 'New product' })}
           </Link>
         </Button>
       </div>
@@ -35,24 +36,24 @@ export default async function InventoryPage({ params }: { params: Promise<{ loca
           <THead>
             <TR>
               <TH>SKU</TH>
-              <TH>{locale === 'en' ? 'Name' : 'الاسم'}</TH>
-              <TH>HS Code</TH>
-              <TH>{locale === 'en' ? 'Origin' : 'المنشأ'}</TH>
-              <TH>UoM</TH>
-              <TH className="text-end">{locale === 'en' ? 'Price' : 'السعر'}</TH>
-              <TH className="text-end">{locale === 'en' ? 'On hand' : 'الرصيد'}</TH>
+              <TH>{tri(locale, { ar: 'الاسم', ku: 'ناو', en: 'Name' })}</TH>
+              <TH>{tri(locale, { ar: 'رمز HS', ku: 'کۆدی HS', en: 'HS Code' })}</TH>
+              <TH>{tri(locale, { ar: 'المنشأ', ku: 'وڵاتی بەرهەمهێنان', en: 'Origin' })}</TH>
+              <TH>{tri(locale, { ar: 'الوحدة', ku: 'یەکە', en: 'UoM' })}</TH>
+              <TH className="text-end">{tri(locale, { ar: 'السعر', ku: 'نرخ', en: 'Price' })}</TH>
+              <TH className="text-end">{tri(locale, { ar: 'الرصيد', ku: 'لە ئەمبار', en: 'On hand' })}</TH>
             </TR>
           </THead>
           <TBody>
             {products.length === 0 && (
-              <TR><TD colSpan={7} className="py-12 text-center text-muted-foreground">No products yet</TD></TR>
+              <TR><TD colSpan={7} className="py-12 text-center text-muted-foreground">{tri(locale, { ar: 'لا توجد منتجات بعد', ku: 'هێشتا هیچ بەرهەمێک نییە', en: 'No products yet' })}</TD></TR>
             )}
             {products.map((p) => {
               const onHand = p.stock.reduce((s, st) => s + Number(st.quantity), 0);
               return (
                 <TR key={p.id}>
                   <TD className="font-mono text-xs">{p.sku}</TD>
-                  <TD>{locale === 'ar' ? p.nameAr : p.nameEn}</TD>
+                  <TD>{tri(locale, { ar: p.nameAr, ku: p.nameEn ?? p.nameAr, en: p.nameEn ?? p.nameAr })}</TD>
                   <TD className="font-mono text-xs">{p.hsCode ?? '—'}</TD>
                   <TD>{p.countryOfOrigin ?? '—'}</TD>
                   <TD>{p.unitOfMeasure}</TD>

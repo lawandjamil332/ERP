@@ -16,7 +16,6 @@ interface Cat { id: string; nameAr: string; nameEn: string; accountCode: string 
 
 export default function ExpenseCategoriesPage() {
   const locale = useLocale();
-  const isAr = locale === 'ar';
   const [rows, setRows] = useState<Cat[]>([]);
   const [form, setForm] = useState({ nameAr: '', nameEn: '', accountCode: '', parentId: '' });
 
@@ -67,7 +66,7 @@ export default function ExpenseCategoriesPage() {
                   value={form.parentId} onChange={(e) => setForm({ ...form, parentId: e.target.value })}>
                   <option value="">—</option>
                   {rows.filter((r) => !r.parentId).map((r) => (
-                    <option key={r.id} value={r.id}>{isAr ? r.nameAr : r.nameEn}</option>
+                    <option key={r.id} value={r.id}>{tri(locale, { ar: r.nameAr, ku: r.nameEn ?? r.nameAr, en: r.nameEn ?? r.nameAr })}</option>
                   ))}
                 </select>
               </div>
@@ -89,7 +88,7 @@ export default function ExpenseCategoriesPage() {
                 {rows.map((c) => (
                   <li key={c.id} className="flex items-center justify-between py-2">
                     <div>
-                      <p className="font-medium">{c.parentId && <span className="text-muted-foreground">↳ </span>}{isAr ? c.nameAr : c.nameEn}</p>
+                      <p className="font-medium">{c.parentId && <span className="text-muted-foreground">↳ </span>}{tri(locale, { ar: c.nameAr, ku: c.nameEn ?? c.nameAr, en: c.nameEn ?? c.nameAr })}</p>
                       {c.accountCode && <p className="font-mono text-xs text-muted-foreground">acct: {c.accountCode}</p>}
                     </div>
                     <Badge variant={c.isActive ? 'default' : 'secondary'}>{c.isActive ? tri(locale, { ar: 'نشط', ku: 'چالاک', en: 'Active' }) : tri(locale, { ar: 'متوقف', ku: 'ناچالاک', en: 'Inactive' })}</Badge>

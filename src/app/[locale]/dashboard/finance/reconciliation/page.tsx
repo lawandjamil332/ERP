@@ -17,7 +17,6 @@ interface Payment { id: string; number: string; date: string; amount: string; di
 
 export default function ReconciliationPage() {
   const locale = useLocale();
-  const isAr = locale === 'ar';
   const [accounts, setAccounts] = useState<BankAccount[]>([]);
   const [bankAccountId, setBankAccountId] = useState('');
   const [statementDate, setStatementDate] = useState(new Date().toISOString().slice(0, 10));
@@ -80,7 +79,7 @@ export default function ReconciliationPage() {
     } else toast.error(tri(locale, { ar: 'فشل', ku: 'نەکرا', en: 'Failed' }));
   }
 
-  const fmt = (n: number) => n.toLocaleString(locale === 'ar' ? 'ar-IQ' : 'en', { minimumFractionDigits: 2 });
+  const fmt = (n: number) => n.toLocaleString(locale === 'ar' ? 'ar-IQ' : locale === 'ku' ? 'ckb-IQ' : 'en', { minimumFractionDigits: 2 });
 
   return (
     <div className="space-y-6">

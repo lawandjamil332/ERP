@@ -12,7 +12,6 @@ interface Row { id: string; number: string; date: string; amount: string; method
 
 export default function ReceiptsPage() {
   const locale = useLocale();
-  const isAr = locale === 'ar';
   const [totals, setTotals] = useState({ d7: 0, d30: 0, d365: 0 });
   const [rows, setRows] = useState<Row[] | null>(null);
 
@@ -21,10 +20,10 @@ export default function ReceiptsPage() {
     fetch('/api/payments?direction=IN').then((r) => r.ok ? r.json() : { data: [] }).then((b) => {
       setRows((b.data ?? []).map((p: { id: string; number: string; date: string; amount: string; method: string; contact?: { nameAr: string; nameEn?: string } }) => ({
         id: p.id, number: p.number, date: p.date, amount: p.amount, method: p.method,
-        contactName: (isAr ? p.contact?.nameAr : (p.contact?.nameEn ?? p.contact?.nameAr)) ?? '—',
+        contactName: tri(locale, { ar: p.contact?.nameAr ?? '—', ku: p.contact?.nameEn ?? p.contact?.nameAr ?? '—', en: p.contact?.nameEn ?? p.contact?.nameAr ?? '—' }),
       })));
     });
-  }, [isAr]);
+  }, [locale]);
 
   return (
     <div className="space-y-6">
@@ -59,7 +58,7 @@ export default function ReceiptsPage() {
                   <td className="py-1.5 tabular-nums">{new Intl.DateTimeFormat(locale).format(new Date(p.date))}</td>
                   <td className="py-1.5">{p.contactName}</td>
                   <td className="py-1.5 text-xs">{p.method}</td>
-                  <td className="py-1.5 text-end tabular-nums">{parseFloat(p.amount).toLocaleString(isAr ? 'ar-IQ' : 'en')}</td>
+                  <td className="py-1.5 text-end tabular-nums">{parseFloat(p.amount).toLocaleString(locale === 'ar' ? 'ar-IQ' : locale === 'ku' ? 'ckb-IQ' : 'en')}</td>
                 </tr>
               ))}
             </tbody>
