@@ -15,7 +15,6 @@ interface Period { id: string | null; year: number; month: number; status: 'OPEN
 
 export default function PeriodsPage() {
   const locale = useLocale();
-  const isAr = locale === 'ar';
   const [year, setYear] = useState(new Date().getUTCFullYear());
   const [periods, setPeriods] = useState<Period[]>([]);
   const [busy, setBusy] = useState<number | null>(null);
@@ -108,7 +107,7 @@ export default function PeriodsPage() {
               <CardTitle>{tri(locale, { ar: 'تأكيد كلمة المرور', ku: 'پشتڕاستکردنەوەی تێپەڕەوشە', en: 'Confirm your password' })}</CardTitle>
             </div>
             <CardDescription>{tri(locale, { ar: 'إجراء حساس — يلزم تأكيد كلمة المرور', ku: 'کرداری هەستیار — پێویستە تێپەڕەوشە بپشتڕاستبکرێتەوە', en: 'Sensitive action — password confirmation required' })}</CardDescription>
-            <Input type="password" autoFocus value={pwd} onChange={(e) => setPwd(e.target.value)} placeholder={isAr ? 'كلمة المرور' : 'Password'} />
+            <Input type="password" autoFocus value={pwd} onChange={(e) => setPwd(e.target.value)} placeholder={tri(locale, { ar: 'كلمة المرور', ku: 'تێپەڕەوشە', en: 'Password' })} />
             <div className="flex justify-end gap-2">
               <Button type="button" variant="ghost" onClick={() => { setReauthOpen(false); setPwd(''); setPending(null); }}>
                 {tri(locale, { ar: 'إلغاء', ku: 'هەڵوەشاندنەوە', en: 'Cancel' })}

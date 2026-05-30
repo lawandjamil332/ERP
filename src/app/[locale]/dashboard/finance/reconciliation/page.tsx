@@ -17,7 +17,6 @@ interface Payment { id: string; number: string; date: string; amount: string; di
 
 export default function ReconciliationPage() {
   const locale = useLocale();
-  const isAr = locale === 'ar';
   const [accounts, setAccounts] = useState<BankAccount[]>([]);
   const [bankAccountId, setBankAccountId] = useState('');
   const [statementDate, setStatementDate] = useState(new Date().toISOString().slice(0, 10));
@@ -80,7 +79,7 @@ export default function ReconciliationPage() {
     } else toast.error(tri(locale, { ar: 'فشل', ku: 'نەکرا', en: 'Failed' }));
   }
 
-  const fmt = (n: number) => n.toLocaleString(locale === 'ar' ? 'ar-IQ' : 'en', { minimumFractionDigits: 2 });
+  const fmt = (n: number) => n.toLocaleString(locale === 'ar' ? 'ar-IQ' : locale === 'ku' ? 'ckb-IQ' : 'en', { minimumFractionDigits: 2 });
 
   return (
     <div className="space-y-6">
@@ -90,7 +89,7 @@ export default function ReconciliationPage() {
       />
 
       <Card>
-        <CardHeader><CardTitle>{tri(locale, { ar: 'كشف الحساب', ku: 'کەشفی هەژمار', en: 'Statement' })}</CardTitle></CardHeader>
+        <CardHeader><CardTitle>{tri(locale, { ar: 'کشف الحساب', ku: 'کەشفی هەژمار', en: 'Statement' })}</CardTitle></CardHeader>
         <CardContent className="grid gap-4 sm:grid-cols-4">
           <div className="space-y-1.5">
             <Label>{tri(locale, { ar: 'الحساب البنكي', ku: 'هەژماری بانک', en: 'Bank account' })}</Label>
