@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useLocale } from 'next-intl';
 import { Bell, CheckCheck, Inbox } from 'lucide-react';
 import { useExclusiveDisclosure } from '@/lib/hooks/use-exclusive-disclosure';
+import { tri } from '@/lib/i18n/tri';
 
 interface Notif {
   id: string;
@@ -18,7 +19,6 @@ interface Notif {
 
 export function NotificationBell() {
   const locale = useLocale();
-  const isAr = locale === 'ar';
   const { open, setOpen, toggle, ref } = useExclusiveDisclosure<HTMLDivElement>('notifications');
   const [items, setItems] = useState<Notif[] | null>(null);
   const [marking, setMarking] = useState(false);
@@ -55,10 +55,13 @@ export function NotificationBell() {
 
   function timeAgo(iso: string): string {
     const diff = (Date.now() - new Date(iso).getTime()) / 1000;
-    if (diff < 60) return isAr ? 'الآن' : 'just now';
-    if (diff < 3600) return isAr ? `قبل ${Math.floor(diff / 60)} د` : `${Math.floor(diff / 60)}m ago`;
-    if (diff < 86400) return isAr ? `قبل ${Math.floor(diff / 3600)} س` : `${Math.floor(diff / 3600)}h ago`;
-    return isAr ? `قبل ${Math.floor(diff / 86400)} يوم` : `${Math.floor(diff / 86400)}d ago`;
+    if (diff < 60) return tri(locale, { ar: 'الآن', ku: 'ئێستا', en: 'just now' });
+    const m = Math.floor(diff / 60);
+    if (diff < 3600) return tri(locale, { ar: `قبل ${m} د`, ku: `${m} خولەک لەمەوپێش`, en: `${m}m ago` });
+    const h = Math.floor(diff / 3600);
+    if (diff < 86400) return tri(locale, { ar: `قبل ${h} س`, ku: `${h} کاتژمێر لەمەوپێش`, en: `${h}h ago` });
+    const d = Math.floor(diff / 86400);
+    return tri(locale, { ar: `قبل ${d} يوم`, ku: `${d} ڕۆژ لەمەوپێش`, en: `${d}d ago` });
   }
 
   return (
@@ -67,7 +70,7 @@ export function NotificationBell() {
         type="button"
         onClick={toggle}
         className="relative inline-flex h-9 w-9 items-center justify-center rounded-lg border bg-background text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-        aria-label={isAr ? 'الإشعارات' : 'Notifications'}
+        aria-label={tri(locale, { ar: 'الإشعارات', ku: 'ئاگادارییەکان', en: 'Notifications' })}
       >
         <Bell className="h-4 w-4" />
         {unread > 0 && (
@@ -80,27 +83,27 @@ export function NotificationBell() {
       {open && (
           <div className="absolute end-0 top-full z-40 mt-1 w-[22rem] overflow-hidden rounded-xl border bg-popover shadow-floating">
             <div className="flex items-center justify-between border-b px-3 py-2">
-              <p className="text-sm font-semibold">{isAr ? 'الإشعارات' : 'Notifications'}</p>
+              <p className="text-sm font-semibold">{tri(locale, { ar: 'الإشعارات', ku: 'ئاگادارییەکان', en: 'Notifications' })}</p>
               {unread > 0 && (
                 <button
                   type="button" onClick={markAll} disabled={marking}
                   className="flex items-center gap-1 text-[11px] font-medium text-primary hover:underline disabled:opacity-50"
                 >
                   <CheckCheck className="h-3 w-3" />
-                  {isAr ? 'تعليم الكل كمقروء' : 'Mark all as read'}
+                  {tri(locale, { ar: 'تعليم الكل كمقروء', ku: 'هەموو وەک خوێندراوە نیشانبکە', en: 'Mark all as read' })}
                 </button>
               )}
             </div>
             <div className="max-h-96 overflow-y-auto">
               {items === null ? (
                 <div className="py-8 text-center text-sm text-muted-foreground">
-                  {isAr ? 'جارٍ التحميل…' : 'Loading…'}
+                  {tri(locale, { ar: 'جارٍ التحميل…', ku: 'بارکردن…', en: 'Loading…' })}
                 </div>
               ) : items.length === 0 ? (
                 <div className="px-3 py-12 text-center">
                   <Inbox className="mx-auto h-8 w-8 text-muted-foreground/40" />
                   <p className="mt-2 text-sm text-muted-foreground">
-                    {isAr ? 'لا توجد إشعارات' : 'No notifications'}
+                    {tri(locale, { ar: 'لا توجد إشعارات', ku: 'هیچ ئاگاداریەک نییە', en: 'No notifications' })}
                   </p>
                 </div>
               ) : (
