@@ -63,7 +63,7 @@ export default function NewStockOrderPage() {
         <Card>
           <CardHeader>
             <CardTitle>{tri(locale, { ar: 'تفاصيل الأمر', ku: 'وردەکاری داواکاری', en: 'Order details' })}</CardTitle>
-            <CardDescription>{tri(locale, { ar: 'يُولّد المرجع تلقائياً بصيغة TRF-2026-00001 / ADJ-2026-00001', ku: 'ژمارەی ئاماژە بە شێوەی خۆکار دروست دەبێت بە فۆرماتی TRF-2026-00001 / ADJ-2026-00001', en: 'Reference auto-generated as TRF-2026-00001 / ADJ-2026-00001' })}</CardDescription>
+            <CardDescription>{tri(locale, { ar: 'يُولَّد المرجع تلقائياً بصيغة TRF-2026-00001 / ADJ-2026-00001', ku: 'ژمارەی ئاماژە بە شێوەی خۆکار دروست دەبێت بە فۆرماتی TRF-2026-00001 / ADJ-2026-00001', en: 'Reference auto-generated as TRF-2026-00001 / ADJ-2026-00001' })}</CardDescription>
           </CardHeader>
           <CardContent className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
