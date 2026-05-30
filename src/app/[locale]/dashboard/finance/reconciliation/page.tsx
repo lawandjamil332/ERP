@@ -89,7 +89,7 @@ export default function ReconciliationPage() {
       />
 
       <Card>
-        <CardHeader><CardTitle>{tri(locale, { ar: 'کشف الحساب', ku: 'کەشفی هەژمار', en: 'Statement' })}</CardTitle></CardHeader>
+        <CardHeader><CardTitle>{tri(locale, { ar: 'كشف الحساب', ku: 'کەشفی هەژمار', en: 'Statement' })}</CardTitle></CardHeader>
         <CardContent className="grid gap-4 sm:grid-cols-4">
           <div className="space-y-1.5">
             <Label>{tri(locale, { ar: 'الحساب البنكي', ku: 'هەژماری بانک', en: 'Bank account' })}</Label>
