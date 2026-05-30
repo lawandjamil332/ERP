@@ -9,6 +9,7 @@ import {
   CreditCard, Factory, Hotel, Boxes, Plus, CornerDownLeft, Tag, Landmark,
   type LucideIcon,
 } from 'lucide-react';
+import { tri } from '@/lib/i18n/tri';
 
 interface Cmd { id: string; label: string; href: string; icon: LucideIcon; keywords?: string }
 
@@ -17,7 +18,6 @@ export function CommandPalette({ locale }: { locale: string }) {
   const tc = useTranslations('common');
   const router = useRouter();
   const lc = useLocale();
-  const isAr = lc === 'ar';
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState('');
   const [active, setActive] = useState(0);
@@ -27,7 +27,7 @@ export function CommandPalette({ locale }: { locale: string }) {
 
   const commands: Cmd[] = useMemo(() => [
     { id: 'home', label: t('dashboard'), href: d(''), icon: LayoutDashboard, keywords: 'home main' },
-    { id: 'new-invoice', label: isAr ? 'فاتورة جديدة' : 'New invoice', href: d('/invoices/new'), icon: Plus, keywords: 'create sale' },
+    { id: 'new-invoice', label: tri(lc, { ar: 'فاتورة جديدة', ku: 'پسوڵەی نوێ', en: 'New invoice' }), href: d('/invoices/new'), icon: Plus, keywords: 'create sale' },
     { id: 'invoices', label: t('invoices'), href: d('/invoices'), icon: FileText },
     { id: 'quotations', label: t('quotations'), href: d('/quotations'), icon: ScrollText },
     { id: 'installments', label: t('installments'), href: d('/installments'), icon: CreditCard },
@@ -53,7 +53,7 @@ export function CommandPalette({ locale }: { locale: string }) {
     { id: 'users', label: t('users'), href: d('/users'), icon: Users },
     { id: 'templates', label: t('templates'), href: d('/templates'), icon: FileText },
     { id: 'settings', label: t('settings'), href: d('/settings'), icon: Settings },
-  ], [locale, isAr]); // eslint-disable-line react-hooks/exhaustive-deps
+  ], [locale, lc]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const [results, setResults] = useState<{ kind: string; href: string; title: string; subtitle: string; meta: string }[]>([]);
 
@@ -127,7 +127,7 @@ export function CommandPalette({ locale }: { locale: string }) {
             value={q}
             onChange={(e) => setQ(e.target.value)}
             onKeyDown={onKeyDown}
-            placeholder={isAr ? 'ابحث أو انتقل إلى…' : 'Search or jump to…'}
+            placeholder={tri(lc, { ar: 'ابحث أو انتقل إلى…', ku: 'بگەڕێ یان بچۆ بۆ…', en: 'Search or jump to…' })}
             className="h-12 w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
           />
           <kbd className="hidden rounded border bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground sm:inline">ESC</kbd>
@@ -140,7 +140,7 @@ export function CommandPalette({ locale }: { locale: string }) {
               {filtered.length > 0 && (
                 <>
                   <p className="px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">
-                    {isAr ? 'انتقال' : 'Navigate'}
+                    {tri(lc, { ar: 'انتقال', ku: 'ڕێنیشاندەر', en: 'Navigate' })}
                   </p>
                   {filtered.map((c, i) => {
                     const Icon = c.icon;
@@ -164,7 +164,7 @@ export function CommandPalette({ locale }: { locale: string }) {
               {results.length > 0 && (
                 <>
                   <p className="px-3 pb-1 pt-2 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">
-                    {isAr ? 'نتائج' : 'Results'}
+                    {tri(lc, { ar: 'نتائج', ku: 'ئەنجامەکان', en: 'Results' })}
                   </p>
                   {results.map((r, i) => (
                     <button
@@ -188,7 +188,7 @@ export function CommandPalette({ locale }: { locale: string }) {
           )}
         </div>
         <div className="flex items-center justify-between border-t px-4 py-2 text-[11px] text-muted-foreground">
-          <span>{isAr ? 'تنقّل ↑↓ · افتح ⏎' : 'Navigate ↑↓ · Open ⏎'}</span>
+          <span>{tri(lc, { ar: 'تنقّل ↑↓ · افتح ⏎', ku: 'گەڕان ↑↓ · کردنەوە ⏎', en: 'Navigate ↑↓ · Open ⏎' })}</span>
           <span className="flex items-center gap-1">
             <kbd className="rounded border bg-muted px-1 py-0.5">⌘</kbd>
             <kbd className="rounded border bg-muted px-1 py-0.5">K</kbd>
